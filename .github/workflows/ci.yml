@@ -42,7 +42,7 @@ jobs:
           dnf -y install cargo rust clippy rustfmt gcc gcc-c++ lld git-core make \
             gtk4-devel libadwaita-devel qt6-qtbase-devel qt6-qtdeclarative-devel \
             kf6-kirigami kf6-qqc2-desktop-style rpm-build createrepo_c python3 curl \
-            desktop-file-utils appstream gettext glibc-langpack-fr man-db
+            desktop-file-utils appstream gettext glibc-langpack-fr man-db gdb
       - uses: actions/checkout@v6
       - name: Format
         run: cargo fmt --all --check

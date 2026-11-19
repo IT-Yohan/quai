@@ -28,7 +28,7 @@ jobs:
             rpm-build python3 curl dbus-daemon dbus-tools xorg-x11-server-Xvfb xdotool ImageMagick oxipng \
             adwaita-sans-fonts adwaita-mono-fonts adwaita-icon-theme \
             kf6-kirigami kf6-qqc2-desktop-style plasma-integration plasma-breeze plasma-breeze-common \
-            breeze-icon-theme google-noto-sans-fonts
+            breeze-icon-theme google-noto-sans-fonts gdb
       - uses: actions/checkout@v6
       - name: Build
         run: |
