@@ -1,0 +1,4 @@
+/target
+/vendor
+*.tar.*
+!tests/fixtures/rpms/*.rpm
