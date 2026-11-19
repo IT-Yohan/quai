@@ -1,6 +1,8 @@
 # Screenshots for the AppStream metadata and the README, rendered from the
 # real windows on Fedora with each desktop's fonts, icons and style. The images
-# are an artifact: commit them to data/screenshots/ (see docs/RELEASING.md).
+# land on the `screenshots` branch (one commit on top of the commit they were
+# rendered from) and in the run's artifacts; bring them into data/screenshots/
+# with `git checkout origin/screenshots -- data/screenshots` (docs/RELEASING.md).
 name: Screenshots
 
 on:
@@ -11,7 +13,11 @@ on:
       - ".github/workflows/screenshots.yml"
 
 permissions:
-  contents: read
+  contents: write
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
   screenshots:
@@ -36,6 +42,17 @@ jobs:
           make translations
       - name: Render
         run: tests/screenshots/run.sh screenshots target/release
+      - name: Push the images to the screenshots branch
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          mkdir -p data/screenshots
+          cp screenshots/*.png data/screenshots/
+          git checkout -B screenshots
+          git add data/screenshots/*.png
+          git commit -q -m "Screenshots rendered from ${GITHUB_SHA::7}"
+          git push -f origin screenshots
       - uses: actions/upload-artifact@v7
         if: always()
         with:

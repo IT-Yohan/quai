@@ -30,6 +30,10 @@ on:
 permissions:
   contents: read
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   srpm:
     name: Source RPM

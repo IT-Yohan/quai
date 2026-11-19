@@ -12,8 +12,9 @@ which publishes the GitHub release and builds the same source RPM in COPR.
 3. Add the matching first entry to `%changelog` in `packaging/quai.spec`
    (`* Day Mon DD YYYY Name <email> - X.Y.Z-1`).
 4. `make update-po`, then translate the new release notes in `po/*.po`.
-5. If the windows changed, run the **Screenshots** workflow and commit its images to
-   `data/screenshots/`: the AppStream file points at them under the release tag.
+5. If the windows changed, run the **Screenshots** workflow, then bring its images in with
+   `git checkout origin/screenshots -- data/screenshots`: the AppStream file points at them
+   under the release tag.
 6. Commit, wait for CI to pass on `main`, then:
 
    ```
