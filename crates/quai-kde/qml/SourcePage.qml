@@ -11,8 +11,10 @@ Kirigami.ScrollablePage {
     required property var app
     required property string sourceId
 
-    /** Current status of this source; follows every reload. */
-    readonly property var s: app.sourceById(sourceId)
+    /** Current status of this source; follows every reload. Assigned rather than
+     *  bound: Kirigami's page row reads the page while a bound `s` would still be
+     *  updating, which Qt reports as a binding loop. */
+    property var s: null
     readonly property bool installed: s !== null && s.packages.some(p => p.installed)
     readonly property bool updatable: s !== null && s.packages.some(p => p.update_available)
 
@@ -20,6 +22,18 @@ Kirigami.ScrollablePage {
 
     /** The source was found at least once (not merely loading). */
     property bool seen: false
+
+    function reload() {
+        s = app.sourceById(sourceId);
+    }
+    Component.onCompleted: reload()
+    onSourceIdChanged: reload()
+    Connections {
+        target: page.app
+        function onReportChanged() {
+            page.reload();
+        }
+    }
 
     // The source disappeared (removed elsewhere): go back to the list, once the
     // change has settled (popping inside the binding update would loop on `s`).
