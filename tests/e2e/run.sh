@@ -1,14 +1,17 @@
 #!/usr/bin/env bash
 # End-to-end test: mock forge -> quaid -> real dnf, in a throw-away tree.
 #
-# Requires: rpmbuild, dnf (4 or 5), python3, gpg not needed. Run as root
-# (dnf --installroot needs it). Usage: tests/e2e/run.sh [path/to/target/debug]
+# Requires: rpmbuild, dnf (4 or 5), python3, curl. Run as root (dnf
+# --installroot needs it). Usage: tests/e2e/run.sh [path/to/target/debug]
+# QUAI, QUAID and QUAI_KDE may point at installed binaries instead.
 set -euo pipefail
 
 here="$(cd "$(dirname "$0")" && pwd)"
-bin="$(realpath "${1:-$here/../../target/debug}")"
-QUAI="$bin/quai"
-QUAID="$bin/quaid"
+bin="$(realpath -m "${1:-$here/../../target/debug}")"
+# QUAI, QUAID and QUAI_KDE override the binaries (installed-package tests).
+QUAI="${QUAI:-$bin/quai}"
+QUAID="${QUAID:-$bin/quaid}"
+QUAI_KDE="${QUAI_KDE:-$bin/quai-kde}"
 FORGE_PORT=18800
 QUAID_PORT=18741
 API="http://127.0.0.1:$FORGE_PORT"
@@ -272,11 +275,11 @@ PY
   "$QUAI" add test/variants --api-url "$API" --yes --json > "$root/kde-add.json" \
     || die "cannot add variants: $(cat "$root/kde-add.json")"
   QUAI_BIN="$QUAI" QUAI_API_URL="$API" KIRIGAMI="$QUAI_E2E_KDE" \
-    "$here/../../crates/quai-kde/tests/kde-ui-test.sh" "$bin/quai-kde" || die "KDE frontend test failed"
+    "$here/../../crates/quai-kde/tests/kde-ui-test.sh" "$QUAI_KDE" || die "KDE frontend test failed"
   ok "the Kirigami frontend lists, opens, previews, configures and refreshes sources"
   if [[ -n "$french" ]]; then
     LC_ALL=$french QUAI_BIN="$QUAI" QUAI_API_URL="$API" KIRIGAMI="$QUAI_E2E_KDE" \
-      "$here/../../crates/quai-kde/tests/kde-ui-test.sh" "$bin/quai-kde" >/dev/null || die "KDE frontend test failed in French"
+      "$here/../../crates/quai-kde/tests/kde-ui-test.sh" "$QUAI_KDE" >/dev/null || die "KDE frontend test failed in French"
     ok "the same Kirigami run passes in French, with translated pages"
   fi
 fi
