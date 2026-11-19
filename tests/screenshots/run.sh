@@ -183,11 +183,14 @@ kde_shots() { # suffix colors
   { [[ -n "$2" ]] && cat "$2"; printf '\n[General]\nfont=Noto Sans,10,-1,5,400,0,0,0,0,0,0,0,0,0,0,1\n'
     printf '[Icons]\nTheme=breeze%s\n' "$([[ "$1" == -dark ]] && echo -dark)"; } > "$cfg/kdeglobals"
   sed -e "s|@OUT@|$out|" -e "s|@SUFFIX@|$1|" "$here/kde-shots.qml" > "$cfg/shots.qml"
-  XDG_CONFIG_HOME="$cfg" QT_QPA_PLATFORM=offscreen QT_QPA_PLATFORMTHEME=kde QT_QUICK_BACKEND=software \
-    QT_SCALE_FACTOR="$SCALE" QUAI_KDE_MAIN="$cfg/shots.qml" \
-    timeout 120 "$bin/quai-kde" > "$root/kde$1.log" 2>&1 || true
+  # Offscreen, with its own session bus (the Plasma platform theme asks D-Bus), and the
+  # debug messages Fedora's Qt hides by default (console.log is one).
+  env -u DISPLAY XDG_CONFIG_HOME="$cfg" QT_QPA_PLATFORM=offscreen QT_QPA_PLATFORMTHEME=kde \
+    QT_QUICK_BACKEND=software QT_SCALE_FACTOR="$SCALE" QUAI_KDE_MAIN="$cfg/shots.qml" \
+    QT_LOGGING_RULES="qml.debug=true;js.debug=true" \
+    timeout 120 dbus-run-session -- "$bin/quai-kde" > "$root/kde$1.log" 2>&1 || true
   grep -E "^qml: shot" "$root/kde$1.log" | sed 's/^qml: /   /' || true
-  grep -q "^qml: SHOTS DONE" "$root/kde$1.log" || { tail -30 "$root/kde$1.log"; exit 1; }
+  grep -q "^qml: SHOTS DONE" "$root/kde$1.log" || { echo "   Kirigami captures failed:"; tail -40 "$root/kde$1.log"; exit 1; }
 }
 kde_shots "" ""
 dark=/usr/share/color-schemes/BreezeDark.colors

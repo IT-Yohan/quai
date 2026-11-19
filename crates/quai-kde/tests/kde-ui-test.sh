@@ -29,6 +29,8 @@ case "${KIRIGAMI:-stub}" in
   *) echo "KIRIGAMI must be stub or system" >&2; exit 2 ;;
 esac
 
+# Fedora's Qt turns debug messages off (qtlogging.ini); console.log is one of them.
+export QT_LOGGING_RULES="${QT_LOGGING_RULES:+$QT_LOGGING_RULES;}qml.debug=true;js.debug=true"
 QT_QPA_PLATFORM=offscreen QUAI_KDE_MAIN="$here/ui-test.qml" timeout 120 "$bin" >"$log" 2>&1 || true
 grep -E "^qml: (ok|UI TEST)" "$log" | sed 's/^qml: /    /' || true
 errors='TypeError|ReferenceError|is not defined|Cannot assign|Unable to assign|Binding loop|non-existent|is not a type|unavailable|Cannot read property|module .* is not installed'
