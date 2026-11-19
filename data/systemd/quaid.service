@@ -19,8 +19,7 @@ UMask=0022
 #   [Service]
 #   Environment=HTTPS_PROXY=http://proxy.example.com:3128
 
-# Hardening: quaid only reads /etc/quai and writes its cache.
-ReadOnlyPaths=/etc/quai
+# Hardening: with ProtectSystem=strict, quaid can only write its cache directory.
 NoNewPrivileges=yes
 ProtectSystem=strict
 ProtectHome=yes
@@ -41,6 +40,7 @@ MemoryDenyWriteExecute=yes
 SystemCallArchitectures=native
 SystemCallFilter=@system-service
 SystemCallFilter=~@privileged @resources
+SystemCallErrorNumber=EPERM
 CapabilityBoundingSet=
 AmbientCapabilities=
-RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX AF_NETLINK
