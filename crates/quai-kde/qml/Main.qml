@@ -100,9 +100,14 @@ Kirigami.ApplicationWindow {
         });
     }
 
+    /** A message from quai (written lowercase for the command line) as a sentence. */
+    function sentence(text) {
+        return text ? text.charAt(0).toUpperCase() + text.slice(1) : "";
+    }
+
     function notify(text, timeout) {
-        lastNotification = text;
-        showPassiveNotification(text, timeout);
+        lastNotification = sentence(text);
+        showPassiveNotification(lastNotification, timeout);
     }
 
     function sourceById(id) {

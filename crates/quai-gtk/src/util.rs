@@ -91,3 +91,12 @@ pub fn source_subtitle(s: &SourceStatus) -> String {
 pub fn esc(s: &str) -> String {
     gtk::glib::markup_escape_text(s).to_string()
 }
+
+/// A message from quai (written lowercase for the command line) as a sentence.
+pub fn sentence(text: &str) -> String {
+    let mut chars = text.chars();
+    match chars.next() {
+        Some(first) => first.to_uppercase().chain(chars).collect(),
+        None => String::new(),
+    }
+}

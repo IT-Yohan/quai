@@ -94,7 +94,7 @@ Kirigami.ScrollablePage {
                 return;
             }
             if (!data.ok) {
-                errorText = data.message;
+                errorText = app.sentence(data.message);
                 return;
             }
             app.notify(data.message + (data.reboot_required ? " — " + I18n.tr("restart to finish installing") : ""));
@@ -268,7 +268,7 @@ Kirigami.ScrollablePage {
                 type: modelData.severity === "danger" ? Kirigami.MessageType.Error
                       : modelData.severity === "warning" ? Kirigami.MessageType.Warning
                       : Kirigami.MessageType.Information
-                text: modelData.message
+                text: page.app.sentence(modelData.message)
             }
         }
     }

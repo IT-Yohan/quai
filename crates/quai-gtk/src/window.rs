@@ -538,13 +538,13 @@ impl Ui {
             ui.end();
             match res {
                 Ok(r) if r.ok => {
-                    let mut msg = r.message.clone();
+                    let mut msg = sentence(&r.message);
                     if r.reboot_required {
                         msg = format!("{msg} — {}", tr("restart to apply"));
                     }
                     ui.toast(&msg);
                 }
-                Ok(r) => ui.error_toast(&r.message),
+                Ok(r) => ui.error_toast(&sentence(&r.message)),
                 Err(e) => ui.error_toast(&e),
             }
             ui.reload();
