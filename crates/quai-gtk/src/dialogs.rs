@@ -206,7 +206,8 @@ pub fn doctor(ui: &Rc<Ui>) {
                 subtitle = format!("{subtitle}\n{}", trf("Fix: {command}", &[("command", fix)]));
             }
             let row = adw::ActionRow::builder().title(esc(&c.title)).subtitle(esc(&subtitle)).subtitle_lines(0).build();
-            let icon = gtk::Image::from_icon_name(if c.ok { "emblem-ok-symbolic" } else { "dialog-warning-symbolic" });
+            let icon =
+                gtk::Image::from_icon_name(if c.ok { "object-select-symbolic" } else { "dialog-warning-symbolic" });
             icon.add_css_class(if c.ok { "success" } else { "warning" });
             row.add_prefix(&icon);
             list.append(&row);

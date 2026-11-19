@@ -1,0 +1,61 @@
+# Screenshots for the AppStream metadata and the README, rendered from the
+# real windows on Fedora with each desktop's fonts, icons and style. The images
+# land on the `screenshots` branch (one commit on top of the commit they were
+# rendered from) and in the run's artifacts; bring them into data/screenshots/
+# with `git checkout origin/screenshots -- data/screenshots` (docs/RELEASING.md).
+name: Screenshots
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "tests/screenshots/**"
+      - ".github/workflows/screenshots.yml"
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  screenshots:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    container:
+      image: registry.fedoraproject.org/fedora:latest
+      options: --privileged
+    steps:
+      - name: Install build dependencies, both desktops' look, and the capture tools
+        run: |
+          dnf -y install --skip-unavailable cargo rust gcc gcc-c++ lld git-core make \
+            gtk4-devel libadwaita-devel qt6-qtbase-devel qt6-qtdeclarative-devel gettext appstream \
+            rpm-build python3 curl dbus-daemon dbus-tools xorg-x11-server-Xvfb xdotool ImageMagick oxipng \
+            adwaita-sans-fonts adwaita-mono-fonts adwaita-icon-theme \
+            kf6-kirigami kf6-qqc2-desktop-style plasma-integration plasma-breeze plasma-breeze-common \
+            breeze-icon-theme google-noto-sans-fonts gdb
+      - uses: actions/checkout@v6
+      - name: Build
+        run: |
+          cargo build --release --workspace
+          make translations
+      - name: Render
+        run: tests/screenshots/run.sh screenshots target/release
+      - name: Push the images to the screenshots branch
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          mkdir -p data/screenshots
+          cp screenshots/*.png data/screenshots/
+          git checkout -B screenshots
+          git add data/screenshots/*.png
+          git commit -q -m "Screenshots rendered from ${GITHUB_SHA::7}"
+          git push -f origin screenshots
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: screenshots
+          path: screenshots/
+          if-no-files-found: error

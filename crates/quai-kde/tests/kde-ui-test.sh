@@ -29,12 +29,27 @@ case "${KIRIGAMI:-stub}" in
   *) echo "KIRIGAMI must be stub or system" >&2; exit 2 ;;
 esac
 
-QT_QPA_PLATFORM=offscreen QUAI_KDE_MAIN="$here/ui-test.qml" timeout 120 "$bin" >"$log" 2>&1 || true
-grep -E "^qml: (ok|UI TEST)" "$log" | sed 's/^qml: /    /'
+# Fedora's Qt sends its messages to journald when stderr is not a terminal, and
+# turns debug messages off (qtlogging.ini); console.log is one of them.
+export QT_FORCE_STDERR_LOGGING=1 QT_LOGGING_TO_CONSOLE=1
+export QT_LOGGING_RULES="${QT_LOGGING_RULES:+$QT_LOGGING_RULES;}qml.debug=true;js.debug=true"
+status=0
+QT_QPA_PLATFORM=offscreen QUAI_KDE_MAIN="$here/ui-test.qml" timeout 120 "$bin" >"$log" 2>&1 || status=$?
+grep -E "^qml: (ok|UI TEST)" "$log" | sed 's/^qml: /    /' || true
 errors='TypeError|ReferenceError|is not defined|Cannot assign|Unable to assign|Binding loop|non-existent|is not a type|unavailable|Cannot read property|module .* is not installed'
-if grep -qE "$errors" "$log"; then
+# Ours only: Kirigami's own files have binding loops of their own with some Qt versions.
+if grep -E "$errors" "$log" | grep -qv '/org/kde/kirigami/'; then
   echo "QML runtime errors:"
-  grep -E "$errors" "$log" | sort -u | head -20
+  grep -E "$errors" "$log" | grep -v '/org/kde/kirigami/' | sort -u | head -20
   exit 1
 fi
-grep -q "UI TEST PASSED" "$log" || { tail -20 "$log"; exit 1; }
+if ! grep -q "UI TEST PASSED" "$log"; then
+  echo "quai-kde exited with status $status$([[ $status == 124 ]] && echo ' (timeout)')"
+  tail -20 "$log"
+  # Killed by a signal: show where.
+  if [[ $status -gt 128 && $status != 124 ]] && command -v gdb >/dev/null; then
+    QT_QPA_PLATFORM=offscreen QUAI_KDE_MAIN="$here/ui-test.qml" timeout 180 \
+      gdb -q -batch -ex run -ex "thread apply all bt 25" "$bin" 2>&1 | grep -v "^\[New Thread\|^\[Thread" | tail -80
+  fi
+  exit 1
+fi

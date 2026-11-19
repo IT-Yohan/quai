@@ -2152,59 +2152,127 @@ msgid "rpm;dnf;github;gitlab;codeberg;releases;updates;repository;"
 msgstr ""
 
 #: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
-msgid "Keep RPMs from forge releases up to date with dnf"
+msgid "Keep GitHub release RPMs up to date"
 msgstr ""
 
 #: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid ""
-"Many projects publish their Fedora packages only as .rpm files attached to "
-"GitHub, GitLab or Codeberg releases. Installed by hand, those packages never "
-"receive updates."
+"Many applications publish their Fedora packages only as .rpm files attached "
+"to releases on GitHub, GitLab or Codeberg. Installed by hand, those packages "
+"never receive updates."
 msgstr ""
 
 #: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid ""
-"Quai turns each project into a small signed dnf repository served on your "
-"own machine. dnf, GNOME Software, Discover and rpm-ostree then install, "
-"update and roll back these packages like any other Fedora package."
+"Quai follows these projects for you. Each one becomes a small signed "
+"repository served on your own computer, so new releases arrive like any "
+"other update, in Software, Discover or dnf, and can be rolled back the same "
+"way."
+msgstr ""
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid "Add a project by typing owner/repo or pasting its address"
 msgstr ""
 
 #: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid ""
-"Its window is native on both main Fedora desktops: GTK and libadwaita on "
-"GNOME, Kirigami on KDE Plasma."
+"See which packages it ships, and anything worth knowing, before adding it"
 msgstr ""
 
 #: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
-msgid "Add a project by typing owner/repo or pasting its URL"
+msgid "Get the build made for your Fedora release when a project ships several"
 msgstr ""
 
 #: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
-msgid "See what it ships before adding it, with clear warnings"
+msgid ""
+"Packages that would replace system ones are held back until you allow them"
 msgstr ""
 
 #: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
-msgid "Updates arrive through dnf, GNOME Software and Discover"
+msgid "Metadata signed with a key that never leaves your computer"
 msgstr ""
 
 #: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
-msgid "Metadata signed with a key local to your machine"
+msgid "Works on Fedora Workstation, KDE Plasma and the Atomic desktops"
 msgstr ""
 
 #: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
-msgid "Works on Fedora Workstation and Fedora Atomic desktops"
+msgid ""
+"Quai looks at home on both main Fedora desktops: GTK and libadwaita on "
+"GNOME, Kirigami on KDE Plasma. Everything is also available from the quai "
+"command."
 msgstr ""
 
 #: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
-msgid "Tracked sources and their update state"
+msgid "update"
 msgstr ""
 
 #: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
-msgid "Adding a project after previewing its packages"
+msgid "repository"
 msgstr ""
 
 #: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
-msgid "First release."
+msgid "package"
+msgstr ""
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid "Followed projects, and what is waiting to be updated"
+msgstr ""
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid "A project's packages and settings"
+msgstr ""
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid "Adding a project after seeing what it ships"
+msgstr ""
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid "The same window on KDE Plasma"
+msgstr ""
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid "A project's page on KDE Plasma"
+msgstr ""
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid "In the dark style"
+msgstr ""
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid "With Breeze Dark"
+msgstr ""
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid "First release of Quai."
+msgstr ""
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid ""
+"Follow GitHub, GitLab and Forgejo or Codeberg projects that publish RPM "
+"packages in their releases"
+msgstr ""
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid ""
+"Updates through dnf, GNOME Software, Discover and rpm-ostree, from signed "
+"metadata served on your computer"
+msgstr ""
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid ""
+"The build made for your Fedora release is chosen automatically, and follows "
+"system upgrades"
+msgstr ""
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid ""
+"Native windows for GNOME and KDE Plasma, and the quai command with man pages "
+"and completions"
+msgstr ""
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid "Available in English and French"
 msgstr ""
 
 #: data/polkit/io.github.it-yohan.quai.policy.in

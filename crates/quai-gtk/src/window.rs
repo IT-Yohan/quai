@@ -21,6 +21,8 @@ pub struct Ui {
     detail: RefCell<Option<(String, gtk::Box)>>,
     busy: Cell<u32>,
     spinner: gtk::Spinner,
+    /// QUAI_GTK_OPEN was honoured.
+    opened: Cell<bool>,
 }
 
 pub fn build(app: &adw::Application) -> Rc<Ui> {
@@ -139,6 +141,7 @@ pub fn build(app: &adw::Application) -> Rc<Ui> {
         detail: RefCell::new(None),
         busy: Cell::new(0),
         spinner,
+        opened: Cell::new(false),
     });
 
     {
@@ -194,6 +197,10 @@ impl Ui {
                 Ok(report) => {
                     ui.status.replace(Some(report));
                     ui.populate();
+                    // Tests and screenshots: QUAI_GTK_OPEN=<source id> opens that source once loaded.
+                    if let Some(id) = std::env::var("QUAI_GTK_OPEN").ok().filter(|_| !ui.opened.replace(true)) {
+                        ui.open_detail(&id);
+                    }
                 }
                 Err(e) => {
                     if let Some(page) = ui.stack.child_by_name("error").and_downcast::<adw::StatusPage>() {
@@ -531,13 +538,13 @@ impl Ui {
             ui.end();
             match res {
                 Ok(r) if r.ok => {
-                    let mut msg = r.message.clone();
+                    let mut msg = sentence(&r.message);
                     if r.reboot_required {
                         msg = format!("{msg} — {}", tr("restart to apply"));
                     }
                     ui.toast(&msg);
                 }
-                Ok(r) => ui.error_toast(&r.message),
+                Ok(r) => ui.error_toast(&sentence(&r.message)),
                 Err(e) => ui.error_toast(&e),
             }
             ui.reload();

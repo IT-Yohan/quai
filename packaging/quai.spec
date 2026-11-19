@@ -1,4 +1,6 @@
-# RPM spec for quai, suitable for COPR. Build the two sources with `make dist`.
+# RPM spec for quai. packaging/make-srpm.sh builds the source RPM (and its
+# two archives) from a checkout; CI builds it for every supported Fedora
+# release and COPR publishes it.
 %global appid io.github.it_yohan.Quai
 
 # Licenses of the crates linked into each binary, quai's own Apache-2.0
@@ -17,12 +19,18 @@ Summary:        Keep RPMs published as GitHub, GitLab or Forgejo releases update
 License:        %{license_core}
 URL:            https://github.com/IT-Yohan/quai
 Source0:        %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
-Source1:        %{name}-%{version}-vendor.tar.xz
+# The crates from Cargo.lock, for every architecture Fedora builds Rust on:
+#   cargo vendor-filterer --versioned-dirs --platform=<arch>-unknown-linux-gnu... vendor
+# packaging/make-srpm.sh makes it; each release attaches it.
+Source1:        %{url}/releases/download/v%{version}/%{name}-%{version}-vendor.tar.xz
 
 ExclusiveArch:  %{rust_arches}
 
-BuildRequires:  cargo-rpm-macros >= 24
+BuildRequires:  cargo-rpm-macros >= 25
 BuildRequires:  gcc-c++
+# cxx-qt links quai-kde with lld or mold: GNU ld.bfd resolves Qt's static
+# registration objects in the wrong order.
+BuildRequires:  lld
 BuildRequires:  pkgconfig(gtk4) >= 4.14
 BuildRequires:  pkgconfig(libadwaita-1) >= 1.5
 # quai-kde (cxx-qt finds Qt through qmake6)
@@ -30,7 +38,6 @@ BuildRequires:  qt6-qtbase-devel >= 6.6
 BuildRequires:  qt6-qtdeclarative-devel >= 6.6
 BuildRequires:  systemd-rpm-macros
 BuildRequires:  desktop-file-utils
-BuildRequires:  libappstream-glib
 # Catalogues, and the translated desktop, AppStream and polkit files (msgfmt
 # --desktop/--xml; the AppStream rules come with appstream).
 BuildRequires:  gettext >= 0.20
@@ -110,8 +117,18 @@ export QMAKE=%{?_qt6_qmake}%{!?_qt6_qmake:qmake6}
 # Catalogues, translated data files, man pages and completions (target/generated).
 %make_build translations docs TARGET_DIR=target/rpm
 %{cargo_license_summary}
-%{cargo_license} > LICENSE.dependencies
-%cargo_vendor_manifest
+# Per binary package, the crates linked in: cargo-vendor.txt (from which rpm
+# generates the bundled(crate(...)) Provides) and their licenses.
+for spec in core:quai-cli,quaid gtk:quai-gtk kde:quai-kde; do
+    dir=deps/$(echo "$spec" | cut -d: -f1)
+    pkgs=$(echo "$spec" | cut -d: -f2 | sed 's/^/-p /; s/,/ -p /g')
+    mkdir -p "$dir"
+    %{__cargo} tree $pkgs --offline --edges normal,build --no-dedupe --prefix none --format '{p}' \
+        | sed -e '/ (\//d' -e 's/ (proc-macro)//' -e 's/ (\*)//' | sort -u > "$dir/cargo-vendor.txt"
+    %{__cargo} tree $pkgs --offline --edges no-build,no-dev,no-proc-macro --no-dedupe --prefix none \
+        --format '{l}: {p}' | sed -e '/([*/]/d' -e 's: / :/:g' -e 's:/: OR :g' | sort -u > "$dir/LICENSE.dependencies"
+    test -s "$dir/cargo-vendor.txt"
+done
 
 %install
 %make_install TARGET_DIR=target/rpm PREFIX=%{_prefix} LIBEXECDIR=%{_libexecdir} \
@@ -123,7 +140,7 @@ install -dm0750 %{buildroot}%{_sysconfdir}/quai/private
 export QMAKE=%{?_qt6_qmake}%{!?_qt6_qmake:qmake6}
 %cargo_test
 desktop-file-validate %{buildroot}%{_datadir}/applications/%{appid}.desktop
-appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{appid}.metainfo.xml
+appstreamcli validate --no-net --explain %{buildroot}%{_metainfodir}/%{appid}.metainfo.xml
 
 %post
 %systemd_post quaid.socket
@@ -143,7 +160,7 @@ fi
 :
 
 %files -f %{name}.lang
-%license LICENSE LICENSE.dependencies cargo-vendor.txt
+%license LICENSE deps/core/LICENSE.dependencies deps/core/cargo-vendor.txt
 %doc README.md
 %{_bindir}/quai
 %{_libexecdir}/quaid
@@ -162,15 +179,18 @@ fi
 %config(noreplace) %{_sysconfdir}/quai/quai.toml
 
 %files gui
+%license LICENSE
 %{_datadir}/applications/%{appid}.desktop
 %{_metainfodir}/%{appid}.metainfo.xml
 %{_datadir}/icons/hicolor/scalable/apps/%{appid}.svg
 %{_datadir}/icons/hicolor/symbolic/apps/%{appid}-symbolic.svg
 
 %files gtk
+%license LICENSE deps/gtk/LICENSE.dependencies deps/gtk/cargo-vendor.txt
 %{_bindir}/quai-gtk
 
 %files kde
+%license LICENSE deps/kde/LICENSE.dependencies deps/kde/cargo-vendor.txt
 %{_bindir}/quai-kde
 
 %changelog

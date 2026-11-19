@@ -4,6 +4,7 @@ description = "quai: track RPMs published as forge releases, through dnf"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
+repository.workspace = true
 rust-version.workspace = true
 
 [[bin]]

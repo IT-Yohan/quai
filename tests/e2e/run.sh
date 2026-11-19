@@ -1,14 +1,17 @@
 #!/usr/bin/env bash
 # End-to-end test: mock forge -> quaid -> real dnf, in a throw-away tree.
 #
-# Requires: rpmbuild, dnf (4 or 5), python3, gpg not needed. Run as root
-# (dnf --installroot needs it). Usage: tests/e2e/run.sh [path/to/target/debug]
+# Requires: rpmbuild, dnf (4 or 5), python3, curl. Run as root (dnf
+# --installroot needs it). Usage: tests/e2e/run.sh [path/to/target/debug]
+# QUAI, QUAID and QUAI_KDE may point at installed binaries instead.
 set -euo pipefail
 
 here="$(cd "$(dirname "$0")" && pwd)"
-bin="$(realpath "${1:-$here/../../target/debug}")"
-QUAI="$bin/quai"
-QUAID="$bin/quaid"
+bin="$(realpath -m "${1:-$here/../../target/debug}")"
+# QUAI, QUAID and QUAI_KDE override the binaries (installed-package tests).
+QUAI="${QUAI:-$bin/quai}"
+QUAID="${QUAID:-$bin/quaid}"
+QUAI_KDE="${QUAI_KDE:-$bin/quai-kde}"
 FORGE_PORT=18800
 QUAID_PORT=18741
 API="http://127.0.0.1:$FORGE_PORT"
@@ -33,6 +36,8 @@ export QUAI_CONFIG_DIR="$root/etc/quai" QUAI_REPOS_DIR="$root/repos.d" QUAI_CACH
 export QUAI_SYSTEMD_DIR="$root/systemd" QUAI_RPM_ROOT="$root/sysroot"
 # The release quai serves builds for, whatever the host runs (matches --releasever below).
 export QUAI_DIST=fc43
+# Test packages are built for this machine's architecture.
+ARCH="$(rpm --eval '%{_arch}')"
 if dnf --version 2>/dev/null | grep -qi dnf5; then
   # dnf5 reads config and repos from the installroot unless told otherwise.
   dnf_flavour="--use-host-config --no-plugins"
@@ -56,7 +61,7 @@ Version: $2
 Release: $3
 Summary: quai e2e package $1
 License: MIT
-BuildArch: x86_64
+BuildArch: $ARCH
 AutoReqProv: no
 $4
 %description
@@ -84,22 +89,22 @@ mkspec multi 2.0 1.suse ""
 find "$root/rpmbuild/RPMS" -name '*.rpm' -exec cp {} "$root/assets/" \;
 ls "$root/assets" | sed 's/^/   /'
 
-publish() { # json
-  echo "$1" > "$root/releases.json"
+publish() { # json, with @ARCH@ for the architecture
+  echo "${1//@ARCH@/$ARCH}" > "$root/releases.json"
 }
 publish '{"test/app": [
   {"tag_name": "v1.0", "name": "1.0", "draft": false, "prerelease": false, "published_at": "2026-11-01T10:00:00Z",
-   "assets": ["app-1.0-1.x86_64.rpm"]}],
+   "assets": ["app-1.0-1.@ARCH@.rpm"]}],
  "test/variants": [
   {"tag_name": "v2.0", "name": "2.0", "draft": false, "prerelease": false, "published_at": "2026-11-01T10:00:00Z",
-   "assets": ["multi-2.0-1.el9.x86_64.rpm", "multi-2.0-1.fc42.x86_64.rpm", "multi-2.0-1.fc43.x86_64.rpm",
-              "multi-2.0-1.fc44.x86_64.rpm"]}],
+   "assets": ["multi-2.0-1.el9.@ARCH@.rpm", "multi-2.0-1.fc42.@ARCH@.rpm", "multi-2.0-1.fc43.@ARCH@.rpm",
+              "multi-2.0-1.fc44.@ARCH@.rpm"]}],
  "test/older": [
   {"tag_name": "v2.0", "name": "2.0", "draft": false, "prerelease": false, "published_at": "2026-11-01T10:00:00Z",
-   "assets": ["multi-2.0-1.fc42.x86_64.rpm", "multi-2.0-1.fc44.x86_64.rpm"]}],
+   "assets": ["multi-2.0-1.fc42.@ARCH@.rpm", "multi-2.0-1.fc44.@ARCH@.rpm"]}],
  "test/flavours": [
   {"tag_name": "v2.0", "name": "2.0", "draft": false, "prerelease": false, "published_at": "2026-11-01T10:00:00Z",
-   "assets": ["multi-2.0-1.fedora.x86_64.rpm", "multi-2.0-1.suse.x86_64.rpm"]}],
+   "assets": ["multi-2.0-1.fedora.@ARCH@.rpm", "multi-2.0-1.suse.@ARCH@.rpm"]}],
  "test/appimage-only": [
   {"tag_name": "v1", "draft": false, "prerelease": false, "published_at": "2026-11-01T10:00:00Z", "assets": []}]}'
 
@@ -159,12 +164,12 @@ ok "add wrote sources.d/app.toml and quai-app.repo (repo_gpgcheck=1, includepkgs
 ok "dnf validated the signed metadata: $(jq_ "[x for x in d['details'] if x.startswith('dnf')][0]" < "$root/add.json")"
 
 dnf_ -q repoquery --repo=quai-app --qf '%{name}-%{evr}.%{arch}\n' > "$root/rq.txt" 2>/dev/null
-grep -qx 'app-1.0-1.x86_64' "$root/rq.txt" || die "repoquery: $(cat "$root/rq.txt")"
-ok "dnf repoquery sees app-1.0-1.x86_64 through quaid"
+grep -qx "app-1.0-1.$ARCH" "$root/rq.txt" || die "repoquery: $(cat "$root/rq.txt")"
+ok "dnf repoquery sees app-1.0-1.$ARCH through quaid"
 
 echo "== install through the 302 redirect"
 dnf_ -y -q install app >/dev/null 2>&1 || die "dnf install failed"
-rpm --root "$root/sysroot" -q app | grep -qx 'app-1.0-1.x86_64' || die "app not installed"
+rpm --root "$root/sysroot" -q app | grep -qx "app-1.0-1.$ARCH" || die "app not installed"
 ok "dnf installed app 1.0 (download redirected to the forge, SHA-256 checked)"
 [[ "$("$QUAI" status app --json | jq_ "d['sources'][0]['state']")" == up_to_date ]] || die "status should be up_to_date"
 ok "quai status: up_to_date"
@@ -172,13 +177,13 @@ ok "quai status: up_to_date"
 echo "== new upstream release"
 publish '{"test/app": [
   {"tag_name": "v1.2", "draft": false, "prerelease": false, "published_at": "2026-11-03T10:00:00Z",
-   "assets": ["app-1.2-1.x86_64.rpm"]},
+   "assets": ["app-1.2-1.@ARCH@.rpm"]},
   {"tag_name": "v1.1", "draft": false, "prerelease": false, "published_at": "2026-11-02T10:00:00Z",
-   "assets": ["app-1.1-1.x86_64.rpm", "app-extras-1.1-1.x86_64.rpm"]},
+   "assets": ["app-1.1-1.@ARCH@.rpm", "app-extras-1.1-1.@ARCH@.rpm"]},
   {"tag_name": "v1.0", "draft": false, "prerelease": false, "published_at": "2026-11-01T10:00:00Z",
-   "assets": ["app-1.0-1.x86_64.rpm"]},
+   "assets": ["app-1.0-1.@ARCH@.rpm"]},
   {"tag_name": "v2.0-rc1", "draft": false, "prerelease": true, "published_at": "2026-11-04T10:00:00Z",
-   "assets": ["app-1.2-1.x86_64.rpm"]}]}'
+   "assets": ["app-1.2-1.@ARCH@.rpm"]}]}'
 "$QUAI" refresh app --json > "$root/refresh.json"
 "$QUAI" status app --json > "$root/status.json"
 [[ "$(jq_ "d['sources'][0]['state']" < "$root/status.json")" == update_available ]] || die "no update seen: $(cat "$root/status.json")"
@@ -190,11 +195,11 @@ grep -q "^app-extras: not in this source's package list" "$root/excluded.txt" ||
 ok "app 1.2 (Obsoletes: bash) and app-extras (not allowed) are excluded and reported"
 
 "$QUAI" upgrade app --json > "$root/upgrade.json" || die "upgrade failed: $(cat "$root/upgrade.json")"
-rpm --root "$root/sysroot" -q app | grep -qx 'app-1.1-1.x86_64' || die "app not upgraded"
+rpm --root "$root/sysroot" -q app | grep -qx "app-1.1-1.$ARCH" || die "app not upgraded"
 ok "quai upgrade: $(jq_ "d['details'][-1]" < "$root/upgrade.json")"
 
 dnf_ -y -q downgrade app >/dev/null 2>&1 || die "downgrade failed"
-rpm --root "$root/sysroot" -q app | grep -qx 'app-1.0-1.x86_64' || die "downgrade did not happen"
+rpm --root "$root/sysroot" -q app | grep -qx "app-1.0-1.$ARCH" || die "downgrade did not happen"
 ok "dnf downgrade works (keep_versions=3 keeps 1.0 available)"
 
 echo "== tampering"
@@ -227,7 +232,7 @@ if rpm --root "$root/sysroot" -q app >/dev/null 2>&1; then die "app still instal
 [[ ! -e "$QUAI_REPOS_DIR/quai-app.repo" ]] || die "repo file left behind"
 ok "remove --uninstall cleans package, source and repo file"
 "$QUAI" import "$root/export.toml" --install --yes --json > "$root/import.json" || die "import: $(cat "$root/import.json")"
-rpm --root "$root/sysroot" -q app | grep -qx 'app-1.1-1.x86_64' || die "import --install did not install 1.1"
+rpm --root "$root/sysroot" -q app | grep -qx "app-1.1-1.$ARCH" || die "import --install did not install 1.1"
 ok "import --install restores the source and installs app 1.1"
 
 echo "== doctor"
@@ -259,24 +264,25 @@ fi
 if [[ -n "${QUAI_E2E_KDE:-}" ]]; then
   echo "== KDE frontend (${QUAI_E2E_KDE} Kirigami)"
   # Earlier steps republished the forge; bring back the two-variant projects.
-  python3 - "$root/releases.json" <<'PY'
+  python3 - "$root/releases.json" "$ARCH" <<'PY'
 import json, sys
 d = json.load(open(sys.argv[1]))
+arch = sys.argv[2]
 def release(assets):
     return [{"tag_name": "v2.0", "name": "2.0", "draft": False, "prerelease": False,
              "published_at": "2026-11-10T10:00:00Z", "assets": assets}]
-d["test/variants"] = release(["multi-2.0-1.el9.x86_64.rpm", "multi-2.0-1.fc43.x86_64.rpm"])
-d["test/newtool"] = release(["multi-2.0-1.fedora.x86_64.rpm", "multi-2.0-1.suse.x86_64.rpm"])
+d["test/variants"] = release([f"multi-2.0-1.el9.{arch}.rpm", f"multi-2.0-1.fc43.{arch}.rpm"])
+d["test/newtool"] = release([f"multi-2.0-1.fedora.{arch}.rpm", f"multi-2.0-1.suse.{arch}.rpm"])
 json.dump(d, open(sys.argv[1], "w"))
 PY
   "$QUAI" add test/variants --api-url "$API" --yes --json > "$root/kde-add.json" \
     || die "cannot add variants: $(cat "$root/kde-add.json")"
   QUAI_BIN="$QUAI" QUAI_API_URL="$API" KIRIGAMI="$QUAI_E2E_KDE" \
-    "$here/../../crates/quai-kde/tests/kde-ui-test.sh" "$bin/quai-kde" || die "KDE frontend test failed"
+    "$here/../../crates/quai-kde/tests/kde-ui-test.sh" "$QUAI_KDE" || die "KDE frontend test failed"
   ok "the Kirigami frontend lists, opens, previews, configures and refreshes sources"
   if [[ -n "$french" ]]; then
     LC_ALL=$french QUAI_BIN="$QUAI" QUAI_API_URL="$API" KIRIGAMI="$QUAI_E2E_KDE" \
-      "$here/../../crates/quai-kde/tests/kde-ui-test.sh" "$bin/quai-kde" >/dev/null || die "KDE frontend test failed in French"
+      "$here/../../crates/quai-kde/tests/kde-ui-test.sh" "$QUAI_KDE" >/dev/null || die "KDE frontend test failed in French"
     ok "the same Kirigami run passes in French, with translated pages"
   fi
 fi

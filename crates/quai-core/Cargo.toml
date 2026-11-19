@@ -4,6 +4,7 @@ description = "Engine of quai: forges, RPM headers, repodata generation and sign
 version.workspace = true
 edition.workspace = true
 license.workspace = true
+repository.workspace = true
 rust-version.workspace = true
 
 [dependencies]

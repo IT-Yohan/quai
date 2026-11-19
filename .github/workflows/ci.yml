@@ -2,28 +2,52 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: ["**"]
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
-  fedora:
-    name: Fedora ${{ matrix.fedora }} (dnf5)
-    runs-on: ubuntu-latest
+  releases:
+    name: Supported Fedora releases
+    runs-on: ubuntu-24.04
+    outputs:
+      fedora: ${{ steps.r.outputs.fedora }}
+      newest: ${{ steps.r.outputs.newest }}
+      with_rawhide: ${{ steps.rawhide.outputs.list }}
+    steps:
+      - uses: actions/checkout@v6
+      - id: r
+        run: python3 .github/fedora-releases.py
+      - id: rawhide
+        run: echo "list=$(echo '${{ steps.r.outputs.fedora }}' | python3 -c 'import json,sys; print(json.dumps(json.load(sys.stdin) + ["rawhide"]))')" >> "$GITHUB_OUTPUT"
+
+  test:
+    name: Tests on Fedora ${{ matrix.fedora }}
+    needs: releases
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
     container:
       image: registry.fedoraproject.org/fedora:${{ matrix.fedora }}
       options: --privileged
     strategy:
       fail-fast: false
       matrix:
-        fedora: ["42", "43"]
+        fedora: ${{ fromJSON(needs.releases.outputs.fedora) }}
     steps:
       - name: Install build dependencies
         run: |
-          dnf -y install cargo rust clippy rustfmt gcc gcc-c++ git make \
+          dnf -y install cargo rust clippy rustfmt gcc gcc-c++ lld git-core make \
             gtk4-devel libadwaita-devel qt6-qtbase-devel qt6-qtdeclarative-devel \
-            kf6-kirigami kf6-qqc2-desktop-style rpm-build createrepo_c python3 \
-            desktop-file-utils libappstream-glib appstream gettext glibc-langpack-fr man-db
-      - uses: actions/checkout@v4
+            kf6-kirigami kf6-qqc2-desktop-style rpm-build createrepo_c python3 curl \
+            desktop-file-utils appstream gettext glibc-langpack-fr man-db gdb
+      - uses: actions/checkout@v6
       - name: Format
         run: cargo fmt --all --check
       - name: Clippy
@@ -44,10 +68,18 @@ jobs:
       - name: Validate the translated desktop integration files
         run: |
           desktop-file-validate target/generated/io.github.it_yohan.Quai.desktop
-          appstream-util validate-relax --nonet target/generated/io.github.it_yohan.Quai.metainfo.xml
-          appstreamcli validate --no-net target/generated/io.github.it_yohan.Quai.metainfo.xml
+          appstreamcli validate --no-net --strict --explain target/generated/io.github.it_yohan.Quai.metainfo.xml
       - name: Man pages and shell completions
         run: |
           make docs TARGET_DIR=target/debug
           bash -n target/generated/completions/quai.bash
           LC_ALL=C man --warnings -l target/generated/man/quai-add.1 >/dev/null
+
+  packages:
+    name: Packages
+    needs: releases
+    uses: ./.github/workflows/packages.yml
+    with:
+      mode: snapshot
+      fedora: ${{ needs.releases.outputs.with_rawhide }}
+      newest: ${{ needs.releases.outputs.newest }}

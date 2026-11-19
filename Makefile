@@ -5,7 +5,7 @@
 #   make e2e             end-to-end test against dnf (root, needs rpmbuild + dnf)
 #   make kde-ui-test     drive the Kirigami frontend (needs a running e2e tree)
 #   sudo make install    install under PREFIX (default /usr)
-#   make dist            source and vendored-dependency tarballs for the RPM spec
+#   make srpm            source RPM, source and vendored-crate archives in dist/
 #
 # Translations (gettext, one catalogue for every program and data file):
 #   make pot             regenerate po/quai.pot from the sources
@@ -44,7 +44,7 @@ DATA_IN     := data/desktop/$(APPID).desktop.in data/metainfo/$(APPID).metainfo.
 export GETTEXTDATADIRS := $(CURDIR)/po
 
 .PHONY: all build translations docs check e2e kde-ui-test fixtures lint pot update-po check-po \
-	install install-core install-gui install-translations uninstall dist clean $(addprefix install-,$(FRONTENDS))
+	install install-core install-gui install-translations uninstall srpm clean $(addprefix install-,$(FRONTENDS))
 
 all: build
 
@@ -60,7 +60,10 @@ translations:
 	done
 	mkdir -p $(GEN)
 	msgfmt --desktop -d po --template data/desktop/$(APPID).desktop.in -o $(GEN)/$(APPID).desktop
-	msgfmt --xml -d po --template data/metainfo/$(APPID).metainfo.xml.in -o $(GEN)/$(APPID).metainfo.xml
+	msgfmt --xml -d po --template data/metainfo/$(APPID).metainfo.xml.in -o $(GEN)/$(APPID).metainfo.xml.tmp
+	@# Screenshots are pinned to the release tag, so a release keeps its own.
+	sed 's/@VERSION@/$(VERSION)/g' $(GEN)/$(APPID).metainfo.xml.tmp > $(GEN)/$(APPID).metainfo.xml
+	rm -f $(GEN)/$(APPID).metainfo.xml.tmp
 	msgfmt --xml -d po --template data/polkit/$(POLICY).in -o $(GEN)/$(POLICY)
 
 # Man pages and shell completions, from quai's command line definition
@@ -103,16 +106,22 @@ pot:
 
 update-po: pot
 	@for lang in $(LINGUAS); do \
-		msgmerge --quiet --update --backup=none --previous --add-location=file po/$$lang.po po/quai.pot || exit 1; \
+		msgmerge --quiet --update --backup=none --previous --add-location=file po/$$lang.po po/quai.pot && \
+		msgattrib --no-obsolete --output-file=po/$$lang.po po/$$lang.po || exit 1; \
 		printf '%s: ' $$lang; msgfmt --statistics -o /dev/null po/$$lang.po; \
 	done
 
 check-po:
 	cp po/quai.pot $(GEN)/quai.pot.committed 2>/dev/null || { mkdir -p $(GEN) && cp po/quai.pot $(GEN)/quai.pot.committed; }
 	$(MAKE) -s pot
-	@diff -u $(GEN)/quai.pot.committed po/quai.pot >/dev/null || { \
-		cp $(GEN)/quai.pot.committed po/quai.pot; \
-		echo "po/quai.pot is out of date: run 'make pot' (and 'make update-po') and commit the result"; exit 1; }
+	@# Same messages, whatever the gettext version's layout: no locations, no wrapping, sorted.
+	@cp po/quai.pot $(GEN)/quai.pot.fresh; \
+	for f in committed fresh; do \
+		msgcat --no-location --no-wrap --sort-output $(GEN)/quai.pot.$$f | sed -e '/^"POT-Creation-Date:/d' > $(GEN)/quai.pot.$$f.norm; \
+	done; \
+	cp $(GEN)/quai.pot.committed po/quai.pot; \
+	diff -u $(GEN)/quai.pot.committed.norm $(GEN)/quai.pot.fresh.norm || { \
+		echo "po/quai.pot is out of date: run 'make update-po' and commit the result"; exit 1; }
 	@for lang in $(LINGUAS); do \
 		msgfmt --check --check-format -o /dev/null po/$$lang.po || exit 1; \
 		printf '%s: ' $$lang; msgfmt --statistics -o /dev/null po/$$lang.po; \
@@ -167,11 +176,9 @@ uninstall:
 	rm -f $(DESTDIR)$(LOCALEDIR)/*/LC_MESSAGES/quai.mo
 	@echo "Configuration in $(SYSCONFDIR)/quai and $(SYSCONFDIR)/yum.repos.d/quai-*.repo was kept."
 
-dist:
-	git archive --format=tar.gz --prefix=quai-$(VERSION)/ -o quai-$(VERSION).tar.gz HEAD
-	rm -rf vendor && $(CARGO) vendor --locked --versioned-dirs vendor >/dev/null
-	tar -cJf quai-$(VERSION)-vendor.tar.xz vendor && rm -rf vendor
-	@ls -l quai-$(VERSION).tar.gz quai-$(VERSION)-vendor.tar.xz
+# Source RPM and its two archives in dist/ (see packaging/make-srpm.sh).
+srpm:
+	packaging/make-srpm.sh --outdir dist
 
 clean:
 	$(CARGO) clean

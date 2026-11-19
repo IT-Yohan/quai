@@ -94,10 +94,10 @@ Kirigami.ScrollablePage {
                 return;
             }
             if (!data.ok) {
-                errorText = data.message;
+                errorText = app.sentence(data.message);
                 return;
             }
-            app.showPassiveNotification(data.message + (data.reboot_required ? " — " + I18n.tr("restart to finish installing") : ""));
+            app.notify(data.message + (data.reboot_required ? " — " + I18n.tr("restart to finish installing") : ""));
             app.reload();
             app.pageStack.layers.pop();
         });
@@ -268,7 +268,7 @@ Kirigami.ScrollablePage {
                 type: modelData.severity === "danger" ? Kirigami.MessageType.Error
                       : modelData.severity === "warning" ? Kirigami.MessageType.Warning
                       : Kirigami.MessageType.Information
-                text: modelData.message
+                text: page.app.sentence(modelData.message)
             }
         }
     }

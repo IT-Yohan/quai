@@ -2,6 +2,9 @@
 
 # Quai
 
+[![CI](https://github.com/IT-Yohan/quai/actions/workflows/ci.yml/badge.svg)](https://github.com/IT-Yohan/quai/actions/workflows/ci.yml)
+[![Latest release](https://img.shields.io/github/v/release/IT-Yohan/quai)](https://github.com/IT-Yohan/quai/releases/latest)
+
 **Keep RPMs published as GitHub, GitLab or Forgejo releases up to date — through dnf.**
 
 Many tools (Orca, Cursor-like editors, terminals, AI agents…) ship their Fedora build only as a
@@ -17,7 +20,10 @@ $ sudo quai add stablyai/orca     # track it: dnf now sees updates of orca-ide
 $ sudo dnf upgrade                # …or GNOME Software, Discover, or dnf-automatic
 ```
 
-![Sources, a source's page, adding a project, diagnostics](docs/screenshots/overview.png)
+<p align="center">
+  <img src="data/screenshots/gnome-sources.png" width="49%" alt="Quai on GNOME: followed projects and their update state">
+  <img src="data/screenshots/plasma-sources.png" width="49%" alt="Quai on KDE Plasma: the same window with Kirigami">
+</p>
 
 ## How it works
 
@@ -60,7 +66,13 @@ No toolkit is native on both GNOME and Plasma, so Quai has two thin frontends ov
 
 ## Install
 
-Quai targets Fedora 41+ (dnf5) and Fedora Atomic desktops.
+Quai targets the supported Fedora releases (dnf5) and the Fedora Atomic desktops.
+
+From a [release](https://github.com/IT-Yohan/quai/releases/latest): download the files for your
+Fedora release (`.fcNN`) and architecture, then
+`sudo dnf install ./quai-*.rpm` (pick `quai-gtk` or `quai-kde`, or both). Once installed, Quai can
+keep itself up to date: `sudo quai add IT-Yohan/quai` (it serves the build made for your Fedora
+release, and switches after a system upgrade).
 
 From source (Rust ≥ 1.82, `gtk4-devel`, `libadwaita-devel`, `qt6-qtbase-devel`,
 `qt6-qtdeclarative-devel`, `gcc-c++`, `gettext`, `appstream`; `kf6-kirigami` and
@@ -73,10 +85,15 @@ $ sudo systemd-sysusers && sudo systemctl daemon-reload
 $ sudo quai setup          # signing key, /etc/quai, enables quaid.socket
 ```
 
-As an RPM: `make dist` produces the source and vendored-crates tarballs for
-[`packaging/quai.spec`](packaging/quai.spec), ready for COPR. Each binary subpackage's
-`License:` covers the crates linked into it;
-[`packaging/licenses.py`](packaging/licenses.py) recomputes them after a dependency change.
+As an RPM: `make srpm` builds the source RPM of [`packaging/quai.spec`](packaging/quai.spec)
+(sources and vendored crates, Linux targets only) into `dist/`; `mock --rebuild` builds it like
+COPR does. Each binary subpackage's `License:` covers the crates linked into it, and its
+`bundled(crate(…))` Provides list them; [`packaging/licenses.py`](packaging/licenses.py) recomputes
+the licences after a dependency change.
+
+CI builds and tests the packages for every supported Fedora release, on x86_64 and aarch64,
+including an end-to-end test of the installed RPMs; a tag publishes them as a GitHub release
+and in COPR. See [docs/RELEASING.md](docs/RELEASING.md).
 
 ## Languages
 

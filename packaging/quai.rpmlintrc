@@ -1,0 +1,16 @@
+# rpmlint filters for quai: each one is a deliberate choice, not noise hiding.
+
+# Project names and technical terms, not spelling mistakes.
+addFilter(r"spelling-error .* (quai|quaid|dnf|ostree|libadwaita|Kirigami|GitLab|Forgejo|Codeberg|polkit|frontend|Plasma)")
+# /etc/quai/private holds the repository signing key: root:quai 0750 on purpose;
+# the quai group comes from sysusers.d (quai.conf).
+addFilter(r"non-standard-dir-perm .*/etc/quai/private 750")
+addFilter(r"non-standard-gid /etc/quai/private quai")
+# %postun removes the dnf .repo files quai generated, and only those.
+addFilter(r"dangerous-command-in-%postun rm")
+# The graphical frontends are started through `quai gui` (quai(1) documents it).
+addFilter(r"no-manual-page-for-binary quai-(gtk|kde)")
+# quai-gui carries the launcher; `quai gui` comes from the quai package it requires.
+addFilter(r"quai-gui\.noarch: W: desktopfile-without-binary .* quai$")
+# Documentation is in the quai package; the others ship their licences only.
+addFilter(r"quai-(gui|gtk|kde)\.[a-z0-9_]+: W: no-documentation")

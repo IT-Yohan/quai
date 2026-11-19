@@ -215,7 +215,9 @@ impl AddDialog {
             b.remove(&c);
         }
 
-        let mut title = p.release.name.clone().filter(|n| n != &p.release.tag).unwrap_or_default();
+        // The release name, unless it only repeats the tag ("1.2.0" for v1.2.0).
+        let bare = |s: &str| s.trim().trim_start_matches(['v', 'V']).to_string();
+        let mut title = p.release.name.clone().filter(|n| bare(n) != bare(&p.release.tag)).unwrap_or_default();
         if !title.is_empty() {
             title = format!(" — {title}");
         }
@@ -306,7 +308,7 @@ impl AddDialog {
         if !warnings.is_empty() {
             let g = adw::PreferencesGroup::builder().title(tr("Good to Know")).build();
             for w in warnings {
-                let row = adw::ActionRow::builder().title(esc(&w.message)).title_lines(0).build();
+                let row = adw::ActionRow::builder().title(esc(&sentence(&w.message))).title_lines(0).build();
                 let icon = gtk::Image::from_icon_name(severity_icon(w.severity));
                 icon.add_css_class(severity_css(w.severity));
                 row.add_prefix(&icon);
@@ -362,7 +364,7 @@ impl AddDialog {
             s.set_busy(false);
             match res {
                 Ok(r) if r.ok => {
-                    let mut msg = r.message.clone();
+                    let mut msg = sentence(&r.message);
                     if r.reboot_required {
                         msg = format!("{msg} — {}", tr("restart to finish installing"));
                     }
@@ -371,7 +373,7 @@ impl AddDialog {
                     s.ui.reload();
                 }
                 Ok(r) => {
-                    s.preview_error.set_text(&r.message);
+                    s.preview_error.set_text(&sentence(&r.message));
                     s.preview_error.set_visible(true);
                 }
                 Err(e) => {

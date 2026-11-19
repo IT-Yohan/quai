@@ -906,8 +906,8 @@ msgstr ""
 msgid ""
 "{package} is only built for {built} and later; it may not install on {system}"
 msgstr ""
-"{package} n’est construit que pour {built} et suivantes ; il risque de ne pas "
-"s’installer sur {system}"
+"{package} n’est construit que pour {built} et suivantes ; il risque de ne "
+"pas s’installer sur {system}"
 
 #: crates/quai-core/src/engine.rs
 #, python-brace-format
@@ -2270,71 +2270,152 @@ msgstr ""
 "jour;dépôt;paquets;"
 
 #: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
-msgid "Keep RPMs from forge releases up to date with dnf"
-msgstr "Maintenez à jour avec dnf les RPM publiés sur les forges"
+msgid "Keep GitHub release RPMs up to date"
+msgstr "Les RPM publiés sur GitHub, toujours à jour"
 
 #: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid ""
-"Many projects publish their Fedora packages only as .rpm files attached to "
-"GitHub, GitLab or Codeberg releases. Installed by hand, those packages never "
-"receive updates."
+"Many applications publish their Fedora packages only as .rpm files attached "
+"to releases on GitHub, GitLab or Codeberg. Installed by hand, those packages "
+"never receive updates."
 msgstr ""
-"Beaucoup de projets ne publient leurs paquets Fedora que sous forme de "
+"Beaucoup d’applications ne publient leurs paquets Fedora que sous forme de "
 "fichiers .rpm joints à leurs versions sur GitHub, GitLab ou Codeberg. "
-"Installés à la main, ces paquets ne reçoivent jamais de mises à jour."
+"Installés à la main, ces paquets ne sont jamais mis à jour."
 
 #: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid ""
-"Quai turns each project into a small signed dnf repository served on your "
-"own machine. dnf, GNOME Software, Discover and rpm-ostree then install, "
-"update and roll back these packages like any other Fedora package."
+"Quai follows these projects for you. Each one becomes a small signed "
+"repository served on your own computer, so new releases arrive like any "
+"other update, in Software, Discover or dnf, and can be rolled back the same "
+"way."
 msgstr ""
-"Quai transforme chaque projet en un petit dépôt dnf signé, servi sur votre "
-"propre machine. dnf, GNOME Logiciels, Discover et rpm-ostree installent, "
-"mettent à jour et restaurent alors ces paquets comme n’importe quel paquet "
-"Fedora."
+"Quai suit ces projets pour vous. Chacun devient un petit dépôt signé servi "
+"par votre propre ordinateur : les nouvelles versions arrivent comme "
+"n’importe quelle mise à jour, dans Logiciels, Discover ou dnf, et se "
+"désinstallent ou reviennent en arrière de la même façon."
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid "Add a project by typing owner/repo or pasting its address"
+msgstr ""
+"Ajoutez un projet en tapant propriétaire/dépôt ou en collant son adresse"
 
 #: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid ""
-"Its window is native on both main Fedora desktops: GTK and libadwaita on "
-"GNOME, Kirigami on KDE Plasma."
+"See which packages it ships, and anything worth knowing, before adding it"
 msgstr ""
-"Sa fenêtre est native sur les deux principaux bureaux de Fedora : GTK et "
-"libadwaita sous GNOME, Kirigami sous KDE Plasma."
+"Voyez quels paquets il fournit, et ce qu’il faut savoir, avant de l’ajouter"
 
 #: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
-msgid "Add a project by typing owner/repo or pasting its URL"
+msgid "Get the build made for your Fedora release when a project ships several"
 msgstr ""
-"Ajoutez un projet en tapant propriétaire/projet ou en collant son adresse"
+"Recevez le build prévu pour votre version de Fedora quand un projet en "
+"publie plusieurs"
 
 #: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
-msgid "See what it ships before adding it, with clear warnings"
+msgid ""
+"Packages that would replace system ones are held back until you allow them"
 msgstr ""
-"Voyez ce qu’il fournit avant de l’ajouter, avec des avertissements clairs"
+"Les paquets qui remplaceraient ceux du système sont retenus tant que vous ne "
+"les autorisez pas"
 
 #: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
-msgid "Updates arrive through dnf, GNOME Software and Discover"
-msgstr "Les mises à jour arrivent par dnf, GNOME Logiciels et Discover"
+msgid "Metadata signed with a key that never leaves your computer"
+msgstr "Métadonnées signées avec une clé qui ne quitte jamais votre ordinateur"
 
 #: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
-msgid "Metadata signed with a key local to your machine"
-msgstr "Métadonnées signées avec une clé propre à votre machine"
+msgid "Works on Fedora Workstation, KDE Plasma and the Atomic desktops"
+msgstr "Fonctionne sur Fedora Workstation, KDE Plasma et les bureaux Atomic"
 
 #: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
-msgid "Works on Fedora Workstation and Fedora Atomic desktops"
-msgstr "Fonctionne sur Fedora Workstation et les bureaux Fedora Atomic"
+msgid ""
+"Quai looks at home on both main Fedora desktops: GTK and libadwaita on "
+"GNOME, Kirigami on KDE Plasma. Everything is also available from the quai "
+"command."
+msgstr ""
+"Quai est chez lui sur les deux principaux bureaux de Fedora : GTK et "
+"libadwaita sur GNOME, Kirigami sur KDE Plasma. Tout est aussi disponible "
+"avec la commande quai."
 
 #: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
-msgid "Tracked sources and their update state"
-msgstr "Les sources suivies et leur état de mise à jour"
+msgid "update"
+msgstr "mise à jour"
 
 #: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
-msgid "Adding a project after previewing its packages"
+msgid "repository"
+msgstr "dépôt"
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid "package"
+msgstr "paquet"
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid "Followed projects, and what is waiting to be updated"
+msgstr "Les projets suivis, et ce qui attend une mise à jour"
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid "A project's packages and settings"
+msgstr "Les paquets et réglages d’un projet"
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid "Adding a project after seeing what it ships"
 msgstr "L’ajout d’un projet après l’aperçu de ses paquets"
 
 #: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
-msgid "First release."
-msgstr "Première version."
+msgid "The same window on KDE Plasma"
+msgstr "La même fenêtre sur KDE Plasma"
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid "A project's page on KDE Plasma"
+msgstr "La page d’un projet sur KDE Plasma"
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid "In the dark style"
+msgstr "En style sombre"
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid "With Breeze Dark"
+msgstr "Avec Breeze sombre"
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid "First release of Quai."
+msgstr "Première version de Quai."
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid ""
+"Follow GitHub, GitLab and Forgejo or Codeberg projects that publish RPM "
+"packages in their releases"
+msgstr ""
+"Suivez les projets GitHub, GitLab et Forgejo ou Codeberg qui publient des "
+"paquets RPM dans leurs versions"
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid ""
+"Updates through dnf, GNOME Software, Discover and rpm-ostree, from signed "
+"metadata served on your computer"
+msgstr ""
+"Mises à jour par dnf, Logiciels de GNOME, Discover et rpm-ostree, à partir "
+"de métadonnées signées servies par votre ordinateur"
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid ""
+"The build made for your Fedora release is chosen automatically, and follows "
+"system upgrades"
+msgstr ""
+"Le build prévu pour votre version de Fedora est choisi automatiquement, et "
+"suit les mises à niveau du système"
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid ""
+"Native windows for GNOME and KDE Plasma, and the quai command with man pages "
+"and completions"
+msgstr ""
+"Fenêtres natives pour GNOME et KDE Plasma, et la commande quai avec pages de "
+"manuel et complétion"
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid "Available in English and French"
+msgstr "Disponible en anglais et en français"
 
 #: data/polkit/io.github.it-yohan.quai.policy.in
 msgid "Manage quai package sources"
