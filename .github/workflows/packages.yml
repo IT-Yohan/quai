@@ -1,0 +1,97 @@
+# Source RPM, then binary RPMs built by mock for each Fedora release and
+# architecture, linted, installed and tested. Called by ci.yml (snapshots)
+# and release.yml (tagged releases); the RPMs are kept as artifacts.
+name: Packages
+
+on:
+  workflow_call:
+    inputs:
+      mode:
+        description: snapshot or release (see packaging/make-srpm.sh)
+        type: string
+        default: snapshot
+      ref:
+        description: Commit or tag to build (default: the triggering one)
+        type: string
+        default: ""
+      fedora:
+        description: JSON list of Fedora releases to build for ("rawhide" allowed)
+        type: string
+        required: true
+      newest:
+        description: Fedora release that makes the source RPM
+        type: string
+        required: true
+    outputs:
+      version:
+        description: Package version
+        value: ${{ jobs.srpm.outputs.version }}
+
+permissions:
+  contents: read
+
+jobs:
+  srpm:
+    name: Source RPM
+    runs-on: ubuntu-24.04
+    container: registry.fedoraproject.org/fedora:${{ inputs.newest }}
+    outputs:
+      version: ${{ steps.make.outputs.version }}
+    steps:
+      - name: Install tools
+        run: dnf -y install git-core cargo rpm-build python3 xz cargo-vendor-filterer
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref }}
+          fetch-depth: 0 # tags, for the snapshot version
+      - name: Build the source RPM
+        id: make
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          packaging/make-srpm.sh --${{ inputs.mode }} --outdir dist
+      - uses: actions/upload-artifact@v7
+        with:
+          name: srpm
+          path: dist/
+          if-no-files-found: error
+
+  rpm:
+    name: Fedora ${{ matrix.fedora }} ${{ matrix.arch }}
+    needs: srpm
+    runs-on: ${{ matrix.arch == 'aarch64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
+    # Rawhide is a moving target: a failure there is worth seeing, not blocking.
+    continue-on-error: ${{ matrix.fedora == 'rawhide' }}
+    timeout-minutes: 150
+    container:
+      image: registry.fedoraproject.org/fedora:${{ matrix.fedora }}
+      # mock needs to mount and chroot.
+      options: --privileged
+    strategy:
+      fail-fast: false
+      matrix:
+        fedora: ${{ fromJSON(inputs.fedora) }}
+        arch: [x86_64, aarch64]
+    steps:
+      - name: Install tools
+        run: dnf -y install git-core rpmlint
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref }}
+      - uses: actions/download-artifact@v8
+        with:
+          name: srpm
+          path: dist
+      - name: Build with mock (clean buildroot, no network)
+        run: packaging/ci/mock-build.sh dist/*.src.rpm "${{ matrix.fedora }}" out
+      - name: rpmlint
+        run: rpmlint -r packaging/quai.rpmlintrc $(ls out/*.rpm | grep -v -e '\.src\.rpm$' -e debuginfo -e debugsource)
+      - name: Install the packages and test them
+        run: packaging/ci/installed-test.sh out
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: rpms-fedora-${{ matrix.fedora }}-${{ matrix.arch }}
+          path: |
+            out/*.rpm
+            out/*.log
+          if-no-files-found: warn
