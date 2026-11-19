@@ -11,11 +11,11 @@ on:
         type: string
         default: snapshot
       ref:
-        description: Commit or tag to build (default: the triggering one)
+        description: "Commit or tag to build (default: the triggering one)"
         type: string
         default: ""
       fedora:
-        description: JSON list of Fedora releases to build for ("rawhide" allowed)
+        description: "JSON list of Fedora releases to build for (rawhide allowed)"
         type: string
         required: true
       newest:
