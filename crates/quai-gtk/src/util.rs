@@ -25,7 +25,7 @@ pub fn relative_time(rfc3339: &str) -> String {
 
 pub fn state_icon(state: SourceState) -> &'static str {
     match state {
-        SourceState::UpToDate => "emblem-ok-symbolic",
+        SourceState::UpToDate => "object-select-symbolic",
         SourceState::UpdateAvailable => "go-up-symbolic",
         SourceState::NotInstalled => "folder-download-symbolic",
         SourceState::NeverChecked => "content-loading-symbolic",

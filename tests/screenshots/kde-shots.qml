@@ -2,7 +2,6 @@
 // tests/screenshots/run.sh fills in @OUT@ and @SUFFIX@ and loads this file
 // through QUAI_KDE_MAIN, offscreen, with the Breeze style and colours.
 import QtQuick
-import QtQuick.Window
 import io.github.quai.kde
 
 QtObject {
@@ -41,14 +40,16 @@ QtObject {
         // Kirigami's page stack: the page header and the pages, layers included. (The
         // window's own items are made in C++, outside the QML engine: not grabbable.)
         const root = win.pageStack;
-        const dpr = win.screen ? win.screen.devicePixelRatio : Screen.devicePixelRatio;
         const path = out + "/" + name + suffix + ".png";
+        // No keyboard focus ring on the first row: nobody is typing.
+        root.forceActiveFocus();
         pending++;
+        // At the window's device pixel ratio (QT_SCALE_FACTOR).
         root.grabToImage(r => {
             r.saveToFile(path);
             console.log("shot " + path);
             pending--;
-        }, Qt.size(root.width * dpr, root.height * dpr));
+        });
     }
 
     function fail(what) {
