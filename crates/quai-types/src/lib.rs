@@ -120,6 +120,8 @@ pub struct VariantGroup {
     pub name: String,
     pub arch: String,
     pub assets: Vec<String>,
+    /// One `--asset-pattern` per asset, matching it whatever the version.
+    pub patterns: Vec<String>,
 }
 
 /// What `quai add` would do, computed without root.

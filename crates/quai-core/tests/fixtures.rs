@@ -164,7 +164,9 @@ async fn serve(data: Vec<u8>, honour_range: bool) -> String {
     let addr = listener.local_addr().unwrap();
     tokio::spawn(async move {
         loop {
-            let Ok((mut sock, _)) = listener.accept().await else { return };
+            let Ok((mut sock, _)) = listener.accept().await else {
+                return;
+            };
             let data = data.clone();
             tokio::spawn(async move {
                 let mut buf = vec![0u8; 4096];
@@ -186,10 +188,8 @@ async fn serve(data: Vec<u8>, honour_range: bool) -> String {
                     }
                     _ => ("200 OK", data.clone(), String::new()),
                 };
-                let head = format!(
-                    "HTTP/1.1 {status}\r\nContent-Length: {}\r\n{extra}Connection: close\r\n\r\n",
-                    body.len()
-                );
+                let head =
+                    format!("HTTP/1.1 {status}\r\nContent-Length: {}\r\n{extra}Connection: close\r\n\r\n", body.len());
                 let _ = sock.write_all(head.as_bytes()).await;
                 let _ = sock.write_all(&body).await;
             });

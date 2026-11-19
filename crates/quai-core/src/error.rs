@@ -42,29 +42,30 @@ impl fmt::Display for QuaiError {
 impl std::error::Error for QuaiError {}
 
 impl QuaiError {
-    pub fn new(kind: Kind, message: impl Into<String>) -> anyhow::Error {
+    /// Build an `anyhow::Error` carrying a [`QuaiError`].
+    pub fn wrap(kind: Kind, message: impl Into<String>) -> anyhow::Error {
         anyhow::Error::new(QuaiError { kind, message: message.into() })
     }
 }
 
 pub fn usage(message: impl Into<String>) -> anyhow::Error {
-    QuaiError::new(Kind::Usage, message)
+    QuaiError::wrap(Kind::Usage, message)
 }
 
 pub fn not_found(message: impl Into<String>) -> anyhow::Error {
-    QuaiError::new(Kind::NotFound, message)
+    QuaiError::wrap(Kind::NotFound, message)
 }
 
 pub fn conflict(message: impl Into<String>) -> anyhow::Error {
-    QuaiError::new(Kind::Conflict, message)
+    QuaiError::wrap(Kind::Conflict, message)
 }
 
 pub fn network(message: impl Into<String>) -> anyhow::Error {
-    QuaiError::new(Kind::Network, message)
+    QuaiError::wrap(Kind::Network, message)
 }
 
 pub fn permission(message: impl Into<String>) -> anyhow::Error {
-    QuaiError::new(Kind::Permission, message)
+    QuaiError::wrap(Kind::Permission, message)
 }
 
 /// Category of any error, `Internal` unless it carries a [`QuaiError`].

@@ -10,9 +10,7 @@ use quai_types::ForgeKind;
 pub fn known_forge(host: &str) -> Option<ForgeKind> {
     match host.to_ascii_lowercase().as_str() {
         "github.com" | "www.github.com" => Some(ForgeKind::Github),
-        "gitlab.com" | "www.gitlab.com" | "gitlab.gnome.org" | "gitlab.freedesktop.org" => {
-            Some(ForgeKind::Gitlab)
-        }
+        "gitlab.com" | "www.gitlab.com" | "gitlab.gnome.org" | "gitlab.freedesktop.org" => Some(ForgeKind::Gitlab),
         "codeberg.org" | "www.codeberg.org" => Some(ForgeKind::Forgejo),
         _ => None,
     }
@@ -40,11 +38,7 @@ pub fn parse(input: &str, forge_override: Option<ForgeKind>) -> Result<ForgeRef>
         let host = host.strip_prefix("www.").unwrap_or(&host).to_string();
         let forge = match forge_override.or_else(|| known_forge(&host)) {
             Some(f) => f,
-            None => {
-                return Err(usage(format!(
-                    "unknown forge at {host}: pass --forge github, gitlab or forgejo"
-                )))
-            }
+            None => return Err(usage(format!("unknown forge at {host}: pass --forge github, gitlab or forgejo"))),
         };
         let project = project_from_path(forge, path)?;
         return Ok(ForgeRef { forge, host, project, api_url: None });

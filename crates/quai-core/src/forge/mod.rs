@@ -102,23 +102,20 @@ pub async fn list_releases(
 
 pub fn sort_newest_first(releases: &mut [Release]) {
     // Stable sort keeps the forge's own order for releases without a date.
-    releases.sort_by(|a, b| b.published_at.cmp(&a.published_at));
+    releases.sort_by_key(|r| std::cmp::Reverse(r.published_at));
 }
 
 /// Turn an HTTP status into a helpful error.
 pub(crate) fn status_error(fref: &ForgeRef, resp: &reqwest::Response) -> anyhow::Error {
     let status = resp.status();
-    let remaining = resp
-        .headers()
-        .get("x-ratelimit-remaining")
-        .and_then(|v| v.to_str().ok())
-        .and_then(|v| v.parse::<u64>().ok());
+    let remaining =
+        resp.headers().get("x-ratelimit-remaining").and_then(|v| v.to_str().ok()).and_then(|v| v.parse::<u64>().ok());
     match status.as_u16() {
         404 => not_found(format!(
             "{} not found (private project, typo, or no access with the configured token)",
             fref.display()
         )),
-        401 => QuaiError::new(Kind::Permission, format!("{} rejected the token (401)", fref.host)),
+        401 => QuaiError::wrap(Kind::Permission, format!("{} rejected the token (401)", fref.host)),
         403 | 429 if remaining == Some(0) => network(format!(
             "{} API rate limit reached; add a token with `quai token set --host {}`",
             fref.host, fref.host

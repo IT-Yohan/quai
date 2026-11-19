@@ -74,6 +74,8 @@ enum Cmd {
         #[arg(long)]
         install: bool,
     },
+    /// Install the packages of a tracked source (root).
+    Install { id: String },
     /// Stop tracking a source (root).
     Remove {
         id: String,
@@ -156,6 +158,7 @@ fn run(cli: Cli) -> anyhow::Result<Output> {
     match cli.cmd {
         Cmd::Preview { sel } => rt.block_on(sources::preview(&ctx, &sel)),
         Cmd::Add { sel, id, name, keep, install } => rt.block_on(sources::add(&ctx, &sel, id, name, keep, install)),
+        Cmd::Install { id } => sources::install(&ctx, &id),
         Cmd::Remove { id, uninstall } => sources::remove(&ctx, &id, uninstall),
         Cmd::List => status::list(&ctx),
         Cmd::Status { id } => rt.block_on(status::status(&ctx, id.as_deref())),

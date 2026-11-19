@@ -5,8 +5,7 @@
 
 use anyhow::{Context, Result};
 use pgp::composed::{
-    ArmorOptions, Deserializable, DetachedSignature, KeyType, SecretKeyParamsBuilder, SignedPublicKey,
-    SignedSecretKey,
+    ArmorOptions, Deserializable, DetachedSignature, KeyType, SecretKeyParamsBuilder, SignedPublicKey, SignedSecretKey,
 };
 use pgp::crypto::hash::HashAlgorithm;
 use pgp::types::{KeyDetails, Password};
@@ -26,11 +25,7 @@ impl Signer {
     /// New Ed25519 (v4, widely supported) signing key with the given user id.
     pub fn generate(user_id: &str) -> Result<GeneratedKey> {
         let mut params = SecretKeyParamsBuilder::default();
-        params
-            .key_type(KeyType::Ed25519Legacy)
-            .can_certify(true)
-            .can_sign(true)
-            .primary_user_id(user_id.to_string());
+        params.key_type(KeyType::Ed25519Legacy).can_certify(true).can_sign(true).primary_user_id(user_id.to_string());
         let params = params.build().context("building key parameters")?;
         let key = params.generate(rand::thread_rng()).context("generating signing key")?;
         let secret_armored = key.to_armored_string(ArmorOptions::default()).context("armoring secret key")?;

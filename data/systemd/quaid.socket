@@ -1,0 +1,12 @@
+[Unit]
+Description=quai local repository gateway (socket)
+Documentation=https://github.com/quai-rpm/quai
+
+[Socket]
+# A privileged port: unprivileged users cannot take it over. Change it with
+# `sudo quai config listen 127.0.0.1:<port>`, which writes a drop-in for this unit.
+ListenStream=127.0.0.1:741
+NoDelay=true
+
+[Install]
+WantedBy=sockets.target

@@ -1,0 +1,22 @@
+# quai global configuration.
+# Change values with `sudo quai config <key> <value>`, which also updates the
+# generated .repo files and the systemd socket when needed.
+
+[daemon]
+# Address quaid listens on, kept in sync with quaid.socket by `quai setup`.
+# A port below 1024 cannot be taken over by an unprivileged process.
+listen = "127.0.0.1:741"
+# quaid exits after this many idle seconds; systemd restarts it on demand.
+idle_timeout_secs = 120
+
+[defaults]
+# "stable" or "prerelease", for new sources.
+channel = "stable"
+# Versions kept available for `dnf downgrade`, for new sources.
+keep_versions = 3
+# Minimum minutes between two checks of the same forge.
+check_interval_mins = 10
+# metadata_expire written in the generated .repo files.
+metadata_expire = "6h"
+# Sign repomd.xml with the machine-local key and set repo_gpgcheck=1.
+sign_metadata = true

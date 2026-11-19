@@ -22,14 +22,6 @@ fn title_case(s: &str) -> String {
     }
 }
 
-/// Regex matching an asset name whatever its version: `app-1.2.3-el9.x86_64.rpm` → `^app-.*-el9\.x86_64\.rpm$`.
-pub fn suggest_pattern(asset: &str, version: &str) -> String {
-    let escaped = regex::escape(asset);
-    let v = regex::escape(version);
-    let body = if !version.is_empty() && escaped.contains(&v) { escaped.replacen(&v, ".*", 1) } else { escaped };
-    format!("^{body}$")
-}
-
 fn parse_channel(ctx: &Ctx, s: Option<&str>) -> Result<Channel> {
     match s {
         None => Ok(ctx.global.defaults.channel),
@@ -43,7 +35,8 @@ fn forge_ref(sel: &Selection) -> Result<ForgeRef> {
         None => None,
     };
     let mut fref = spec::parse(&sel.spec, forge)?;
-    fref.api_url = sel.api_url.clone();
+    // QUAI_API_URL points every forge at a test server (development only).
+    fref.api_url = sel.api_url.clone().or_else(|| std::env::var("QUAI_API_URL").ok());
     Ok(fref)
 }
 
@@ -62,27 +55,27 @@ pub async fn compute_preview(ctx: &Ctx, sel: &Selection) -> Result<(Preview, For
 
     let mut warnings = core.warnings.clone();
     for v in &core.variants {
-        if let Some(first) = v.assets.first() {
-            let version = core.packages.iter().find(|p| &p.asset.name == first).map(|p| p.info.version.clone());
-            warnings.push(Warning {
-                code: "multiple_variants".into(),
-                severity: Severity::Warning,
-                message: format!(
-                    "{} files provide {} for {}; pick one, e.g. --asset-pattern '{}'",
-                    v.assets.len(),
-                    v.name,
-                    v.arch,
-                    suggest_pattern(first, &version.unwrap_or_default())
-                ),
-            });
-        }
+        let options: Vec<String> = v.patterns.iter().map(|p| format!("'{p}'")).collect();
+        warnings.push(Warning {
+            code: "multiple_variants".into(),
+            severity: Severity::Warning,
+            message: format!(
+                "{} files provide {} for {}; pick one with --asset-pattern: {}",
+                v.assets.len(),
+                v.name,
+                v.arch,
+                options.join(" or ")
+            ),
+        });
     }
     for (name, repo) in &other {
         if let Some(r) = repo {
             warnings.push(Warning {
                 code: "name_in_other_repo".into(),
                 severity: Severity::Warning,
-                message: format!("repository '{r}' already ships a package named {name}; dnf will pick the newest version"),
+                message: format!(
+                    "repository '{r}' already ships a package named {name}; dnf will pick the newest version"
+                ),
             });
         }
     }
@@ -164,7 +157,9 @@ pub fn run(ctx: &Ctx, cmd: &mut Command) -> Result<()> {
 
 /// Have dnf fetch the new repository once: validates the chain and imports the key.
 pub fn dnf_makecache(ctx: &Ctx, ids: &[String], refresh: bool) -> Result<Option<String>> {
-    let Some(mut cmd) = system::dnf() else { return Ok(None) };
+    let Some(mut cmd) = system::dnf() else {
+        return Ok(None);
+    };
     if system::is_atomic() {
         let mut cmd = Command::new("rpm-ostree");
         cmd.arg("refresh-md");
@@ -188,6 +183,21 @@ pub fn dnf_makecache(ctx: &Ctx, ids: &[String], refresh: bool) -> Result<Option<
     system::run_captured(&mut cmd).with_context(|| "dnf could not load the quai repository".to_string())?;
     let _ = ctx;
     Ok(Some(format!("dnf loaded {}", ids.iter().map(|i| repofile::repo_id(i)).collect::<Vec<_>>().join(", "))))
+}
+
+/// Two sources serving the same package name would race each other in dnf.
+fn check_package_overlap(ctx: &Ctx, id: &str, names: &[String]) -> Result<()> {
+    let (sources, _) = config::load_sources(&ctx.paths);
+    for other in sources.iter().filter(|s| s.id != id) {
+        if let Some(n) = names.iter().find(|n| other.packages.contains(n)) {
+            return Err(conflict(format!(
+                "package {n} already comes from source '{}' ({}); remove that source first",
+                other.id,
+                other.forge_ref().display()
+            )));
+        }
+    }
+    Ok(())
 }
 
 fn rollback(ctx: &Ctx, id: &str) {
@@ -228,6 +238,7 @@ pub async fn add(
     config::ensure_new_id(&ctx.paths, &id)?;
     let names: Vec<String> =
         preview.packages.iter().map(|p| p.name.clone()).collect::<BTreeSet<_>>().into_iter().collect();
+    check_package_overlap(ctx, &id, &names)?;
     let src = SourceConfig {
         id: id.clone(),
         name: name.unwrap_or_else(|| preview.suggested_name.clone()),
@@ -271,7 +282,7 @@ pub async fn add(
         }
         Err(e) => details.push(format!("quaid not reachable yet: {e:#}")),
     }
-    match dnf_makecache(ctx, &[id.clone()], false) {
+    match dnf_makecache(ctx, std::slice::from_ref(&id), false) {
         Ok(Some(d)) => details.push(d),
         Ok(None) => details.push("dnf not found: skipped the metadata check".into()),
         Err(e) => {
@@ -294,6 +305,22 @@ pub async fn add(
     Ok(Output::Action(ActionResult {
         ok: true,
         message: format!("Now tracking {} as '{id}'", fref.display()),
+        source: Some(src.to_view()),
+        details,
+        reboot_required: reboot,
+    }))
+}
+
+pub fn install(ctx: &Ctx, id: &str) -> Result<Output> {
+    ctx.require_root("quai install")?;
+    let src = config::load_source(&ctx.paths, id)?;
+    if !src.enabled {
+        return Err(usage(format!("'{id}' is disabled: run `quai enable {id}` first")));
+    }
+    let (details, reboot) = install_packages(ctx, &src.packages)?;
+    Ok(Output::Action(ActionResult {
+        ok: true,
+        message: format!("Installed the packages of '{id}'"),
         source: Some(src.to_view()),
         details,
         reboot_required: reboot,
@@ -383,6 +410,7 @@ pub async fn set(ctx: &Ctx, id: &str, key: &str, value: &str) -> Result<Output> 
         "keep-versions" => src.keep_versions = value.parse().map_err(|_| usage("keep-versions is a number"))?,
         "allow-package" => {
             config::validate_package_name(value)?;
+            check_package_overlap(ctx, id, &[value.to_string()])?;
             if !src.packages.iter().any(|p| p == value) {
                 src.packages.push(value.to_string());
                 src.packages.sort();
@@ -459,6 +487,10 @@ pub async fn import(ctx: &Ctx, path: &Path, install: bool, replace: bool) -> Res
             details.push(format!("'{}' already exists, skipped (use --replace)", src.id));
             continue;
         }
+        if let Err(e) = check_package_overlap(ctx, &src.id, &src.packages) {
+            details.push(format!("'{}' skipped: {e:#}", src.id));
+            continue;
+        }
         config::save_source(&ctx.paths, src)?;
         imported.push(src.clone());
     }
@@ -492,18 +524,4 @@ pub async fn import(ctx: &Ctx, path: &Path, install: bool, replace: bool) -> Res
         details,
         reboot_required: reboot,
     }))
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn pattern_suggestion_drops_the_version() {
-        let p = suggest_pattern("app-1.2.3-el9.x86_64.rpm", "1.2.3");
-        let re = regex::Regex::new(&p).unwrap();
-        assert!(re.is_match("app-1.2.3-el9.x86_64.rpm"));
-        assert!(re.is_match("app-1.3.0-el9.x86_64.rpm"));
-        assert!(!re.is_match("app-1.3.0-fc40.x86_64.rpm"));
-    }
 }

@@ -17,7 +17,7 @@ use crate::rpm::{self, Layout, PackageInfo};
 use crate::sign::Signer;
 use anyhow::{Context, Result};
 use chrono::{DateTime, Duration, Utc};
-use quai_types::{ChecksumSource, Channel, Excluded, Severity, VariantGroup, Warning};
+use quai_types::{Channel, ChecksumSource, Excluded, Severity, VariantGroup, Warning};
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -150,7 +150,13 @@ fn warn(code: &str, severity: Severity, message: impl Into<String>) -> Warning {
 }
 
 impl Engine {
-    pub fn new(paths: Paths, global: GlobalConfig, tokens: Tokens, signer: Option<Signer>, cache_writable: bool) -> Result<Engine> {
+    pub fn new(
+        paths: Paths,
+        global: GlobalConfig,
+        tokens: Tokens,
+        signer: Option<Signer>,
+        cache_writable: bool,
+    ) -> Result<Engine> {
         Ok(Engine { paths, global, tokens, signer, http: crate::http::client()?, cache_writable })
     }
 
@@ -176,12 +182,14 @@ impl Engine {
     }
 
     /// Release listing, using the on-disk cache and its ETag when `cache_id` is given.
-    pub async fn fetch_releases(&self, fref: &ForgeRef, cache_id: Option<&str>) -> Result<(Vec<Release>, Option<RateLimit>)> {
+    pub async fn fetch_releases(
+        &self,
+        fref: &ForgeRef,
+        cache_id: Option<&str>,
+    ) -> Result<(Vec<Release>, Option<RateLimit>)> {
         let cache_path = cache_id.map(|id| self.paths.forge_cache(id));
-        let cached: Option<ForgeCache> = cache_path
-            .as_ref()
-            .and_then(|p| fs::read(p).ok())
-            .and_then(|b| serde_json::from_slice(&b).ok());
+        let cached: Option<ForgeCache> =
+            cache_path.as_ref().and_then(|p| fs::read(p).ok()).and_then(|b| serde_json::from_slice(&b).ok());
         let etag = cached.as_ref().and_then(|c| c.etag.as_deref());
         let token = self.token_for(fref);
         match forge::list_releases(&self.http, fref, token, etag).await? {
@@ -191,7 +199,12 @@ impl Engine {
             }
             Fetch::Fresh { releases, etag, rate_limit } => {
                 if let Some(p) = cache_path {
-                    let c = ForgeCache { etag, fetched_at: Some(Utc::now()), releases: releases.clone(), rate_limit: rate_limit.clone() };
+                    let c = ForgeCache {
+                        etag,
+                        fetched_at: Some(Utc::now()),
+                        releases: releases.clone(),
+                        rate_limit: rate_limit.clone(),
+                    };
                     if let Ok(bytes) = serde_json::to_vec(&c) {
                         self.write_cache(&p, &bytes);
                     }
@@ -227,7 +240,8 @@ impl Engine {
             .with_context(|| format!("reading the RPM header of {}", asset.name))?;
         let info = rpm::parse_package(&fetched.bytes, &fetched.layout)
             .with_context(|| format!("parsing the RPM header of {}", asset.name))?;
-        let meta = HeaderMeta { url: asset.url.clone(), layout: fetched.layout, total_size: fetched.total_size, sha256: None };
+        let meta =
+            HeaderMeta { url: asset.url.clone(), layout: fetched.layout, total_size: fetched.total_size, sha256: None };
         self.write_cache(&bin, &fetched.bytes);
         if let Ok(m) = serde_json::to_vec(&meta) {
             self.write_cache(&meta_path, &m);
@@ -282,18 +296,30 @@ impl Engine {
             packages.push(PreviewPackage { info, asset: (*asset).clone(), checksum, size });
         }
         if packages.is_empty() {
-            return Err(not_found(format!("no readable binary RPM in {} release {}", fref.display(), latest.release.tag)));
+            return Err(not_found(format!(
+                "no readable binary RPM in {} release {}",
+                fref.display(),
+                latest.release.tag
+            )));
         }
 
         // Same package name and architecture from several files: the user must choose.
-        let mut groups: BTreeMap<(String, String), Vec<String>> = BTreeMap::new();
+        let mut groups: BTreeMap<(String, String), Vec<(String, String)>> = BTreeMap::new();
         for p in &packages {
-            groups.entry((p.info.name.clone(), p.info.arch.clone())).or_default().push(p.asset.name.clone());
+            groups
+                .entry((p.info.name.clone(), p.info.arch.clone()))
+                .or_default()
+                .push((p.asset.name.clone(), suggest_pattern(&p.asset.name, &p.info.version)));
         }
         let variants: Vec<VariantGroup> = groups
             .into_iter()
             .filter(|(_, assets)| assets.len() > 1)
-            .map(|((name, arch), assets)| VariantGroup { name, arch, assets })
+            .map(|((name, arch), assets)| VariantGroup {
+                name,
+                arch,
+                patterns: assets.iter().map(|(_, p)| p.clone()).collect(),
+                assets: assets.into_iter().map(|(a, _)| a).collect(),
+            })
             .collect();
 
         let names: HashSet<&str> = packages.iter().map(|p| p.info.name.as_str()).collect();
@@ -522,7 +548,8 @@ impl Engine {
         snap.excluded = excluded;
         snap.last_error = if errors.is_empty() { None } else { Some(errors.join("; ")) };
         if cands.is_empty() {
-            snap.last_error = Some(format!("{}", explain_no_rpm(&fref, &releases, src.channel, src.asset_pattern.is_some())));
+            snap.last_error =
+                Some(format!("{}", explain_no_rpm(&fref, &releases, src.channel, src.asset_pattern.is_some())));
         }
 
         let sign = self.global.defaults.sign_metadata;
@@ -597,6 +624,15 @@ impl Engine {
     }
 }
 
+/// Regex matching an asset name whatever its version:
+/// `app-1.2.3-el9.x86_64.rpm` → `^app-.*-el9\.x86_64\.rpm$`.
+pub fn suggest_pattern(asset: &str, version: &str) -> String {
+    let escaped = regex::escape(asset);
+    let v = regex::escape(version);
+    let body = if !version.is_empty() && escaped.contains(&v) { escaped.replacen(&v, ".*", 1) } else { escaped };
+    format!("^{body}$")
+}
+
 /// Explain why no release qualified, in the user's terms.
 fn explain_no_rpm(fref: &ForgeRef, releases: &[Release], channel: Channel, has_pattern: bool) -> anyhow::Error {
     if releases.is_empty() {
@@ -629,4 +665,57 @@ fn explain_no_rpm(fref: &ForgeRef, releases: &[Release], channel: Channel, has_p
         return not_found(format!("no RPM asset of {} matches the asset pattern", fref.display()));
     }
     not_found(format!("no usable RPM release found for {}", fref.display()))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn pattern_suggestion_drops_the_version() {
+        let p = suggest_pattern("app-1.2.3-el9.x86_64.rpm", "1.2.3");
+        let re = regex::Regex::new(&p).unwrap();
+        assert!(re.is_match("app-1.2.3-el9.x86_64.rpm"));
+        assert!(re.is_match("app-1.3.0-el9.x86_64.rpm"));
+        assert!(!re.is_match("app-1.3.0-fc40.x86_64.rpm"));
+    }
+
+    fn release(tag: &str, pre: bool, assets: &[&str]) -> Release {
+        Release {
+            tag: tag.into(),
+            name: None,
+            prerelease: pre,
+            draft: false,
+            published_at: None,
+            assets: assets
+                .iter()
+                .map(|a| Asset {
+                    id: a.to_string(),
+                    name: a.to_string(),
+                    size: None,
+                    url: format!("http://x/{a}"),
+                    sha256: None,
+                    updated_at: None,
+                })
+                .collect(),
+        }
+    }
+
+    #[test]
+    fn selection_respects_channel_pattern_and_keep() {
+        let rels = vec![
+            release("v3-rc", true, &["a-3.x86_64.rpm"]),
+            release("v2", false, &["a-2.x86_64.rpm", "a-2.src.rpm", "a-2.AppImage"]),
+            release("v1.5", false, &["a-1.5.AppImage"]),
+            release("v1", false, &["a-1.x86_64.rpm"]),
+        ];
+        let stable = Selection { channel: Channel::Stable, pattern: None, keep: 3 };
+        let tags: Vec<&str> = select(&rels, &stable).iter().map(|c| c.release.tag.as_str()).collect();
+        assert_eq!(tags, ["v2", "v1"]);
+        assert_eq!(select(&rels, &stable)[0].assets.len(), 1, "src.rpm and AppImage are ignored");
+        let pre = Selection { channel: Channel::Prerelease, pattern: None, keep: 1 };
+        assert_eq!(select(&rels, &pre)[0].release.tag, "v3-rc");
+        let pat = Selection { channel: Channel::Stable, pattern: Some(Regex::new("^a-1").unwrap()), keep: 3 };
+        assert_eq!(select(&rels, &pat).len(), 1);
+    }
 }

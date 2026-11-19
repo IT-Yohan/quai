@@ -23,7 +23,13 @@ trap cleanup EXIT
 
 export QUAI_CONFIG_DIR="$root/etc/quai" QUAI_REPOS_DIR="$root/repos.d" QUAI_CACHE_DIR="$root/cache"
 export QUAI_SYSTEMD_DIR="$root/systemd" QUAI_RPM_ROOT="$root/sysroot"
-export QUAI_DNF_ARGS="--installroot=$root/sysroot --setopt=reposdir=$root/repos.d --releasever=43 --noplugins --setopt=install_weak_deps=0 --setopt=cachedir=$root/dnfcache"
+if dnf --version 2>/dev/null | grep -qi dnf5; then
+  # dnf5 reads config and repos from the installroot unless told otherwise.
+  dnf_flavour="--use-host-config --no-plugins"
+else
+  dnf_flavour="--noplugins"
+fi
+export QUAI_DNF_ARGS="--installroot=$root/sysroot --setopt=reposdir=$root/repos.d --releasever=43 $dnf_flavour --setopt=install_weak_deps=0 --setopt=cachedir=$root/dnfcache"
 mkdir -p "$root"/{assets,repos.d,sysroot,rpmbuild/SPECS}
 
 pass=0

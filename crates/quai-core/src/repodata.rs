@@ -179,20 +179,11 @@ pub fn primary_xml(packages: &[RepoPackage]) -> String {
 pub fn filelists_xml(packages: &[RepoPackage]) -> String {
     let mut out = String::new();
     out.push_str("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-    let _ = writeln!(
-        out,
-        r#"<filelists xmlns="http://linux.duke.edu/metadata/filelists" packages="{}">"#,
-        packages.len()
-    );
+    let _ =
+        writeln!(out, r#"<filelists xmlns="http://linux.duke.edu/metadata/filelists" packages="{}">"#, packages.len());
     for p in packages {
         let i = &p.info;
-        let _ = writeln!(
-            out,
-            r#"<package pkgid="{}" name="{}" arch="{}">"#,
-            p.sha256,
-            esc(&i.name),
-            esc(&i.arch)
-        );
+        let _ = writeln!(out, r#"<package pkgid="{}" name="{}" arch="{}">"#, p.sha256, esc(&i.name), esc(&i.arch));
         let _ = writeln!(out, "  <version {}/>", version_attrs(i.epoch, &i.version, &i.release));
         for f in &i.files {
             file_line(&mut out, "  ", &f.path, f.kind);
@@ -206,20 +197,10 @@ pub fn filelists_xml(packages: &[RepoPackage]) -> String {
 pub fn other_xml(packages: &[RepoPackage]) -> String {
     let mut out = String::new();
     out.push_str("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-    let _ = writeln!(
-        out,
-        r#"<otherdata xmlns="http://linux.duke.edu/metadata/other" packages="{}">"#,
-        packages.len()
-    );
+    let _ = writeln!(out, r#"<otherdata xmlns="http://linux.duke.edu/metadata/other" packages="{}">"#, packages.len());
     for p in packages {
         let i = &p.info;
-        let _ = writeln!(
-            out,
-            r#"<package pkgid="{}" name="{}" arch="{}">"#,
-            p.sha256,
-            esc(&i.name),
-            esc(&i.arch)
-        );
+        let _ = writeln!(out, r#"<package pkgid="{}" name="{}" arch="{}">"#, p.sha256, esc(&i.name), esc(&i.arch));
         let _ = writeln!(out, "  <version {}/>", version_attrs(i.epoch, &i.version, &i.release));
         // Header order is newest first; keep the newest entries, written oldest first.
         let mut entries: Vec<_> = i.changelogs.iter().take(CHANGELOG_LIMIT).collect();
@@ -251,11 +232,8 @@ fn sha256_hex(data: &[u8]) -> String {
 
 /// Build all metadata for `packages`. `revision` doubles as the timestamp.
 pub fn build(packages: &[RepoPackage], revision: i64) -> Repodata {
-    let parts = [
-        ("primary", primary_xml(packages)),
-        ("filelists", filelists_xml(packages)),
-        ("other", other_xml(packages)),
-    ];
+    let parts =
+        [("primary", primary_xml(packages)), ("filelists", filelists_xml(packages)), ("other", other_xml(packages))];
     let mut files = Vec::new();
     let mut repomd = String::new();
     repomd.push_str("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");

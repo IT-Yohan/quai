@@ -49,6 +49,5 @@ pub fn chown_root_group(path: &Path, group: &str) -> Result<()> {
     let Some(gid) = group_id(group) else {
         return Ok(());
     };
-    std::os::unix::fs::chown(path, Some(0), Some(gid))
-        .with_context(|| format!("chown root:{group} {}", path.display()))
+    std::os::unix::fs::chown(path, Some(0), Some(gid)).with_context(|| format!("chown root:{group} {}", path.display()))
 }

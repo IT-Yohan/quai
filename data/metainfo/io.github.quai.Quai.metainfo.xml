@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.quai.Quai</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>Apache-2.0</project_license>
+  <name>Quai</name>
+  <summary>Keep RPMs from forge releases up to date with dnf</summary>
+  <description>
+    <p>
+      Many projects publish their Fedora packages only as .rpm files attached to
+      GitHub, GitLab or Codeberg releases. Installed by hand, those packages never
+      receive updates.
+    </p>
+    <p>
+      Quai turns each project into a small signed dnf repository served on your own
+      machine. dnf, GNOME Software and rpm-ostree then install, update and roll back
+      these packages like any other Fedora package.
+    </p>
+    <ul>
+      <li>Add a project by typing owner/repo or pasting its URL</li>
+      <li>See what it ships before adding it, with clear warnings</li>
+      <li>Updates arrive through dnf and GNOME Software</li>
+      <li>Metadata signed with a key local to your machine</li>
+      <li>Works on Fedora Workstation and Fedora Atomic desktops</li>
+    </ul>
+  </description>
+  <launchable type="desktop-id">io.github.quai.Quai.desktop</launchable>
+  <url type="homepage">https://github.com/quai-rpm/quai</url>
+  <url type="bugtracker">https://github.com/quai-rpm/quai/issues</url>
+  <developer id="io.github.quai">
+    <name>The quai contributors</name>
+  </developer>
+  <content_rating type="oars-1.1"/>
+  <requires>
+    <display_length compare="ge">360</display_length>
+  </requires>
+  <screenshots>
+    <screenshot type="default">
+      <caption>Tracked sources and their update state</caption>
+      <image>https://raw.githubusercontent.com/quai-rpm/quai/main/docs/screenshots/sources.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Adding a project after previewing its packages</caption>
+      <image>https://raw.githubusercontent.com/quai-rpm/quai/main/docs/screenshots/add-source.png</image>
+    </screenshot>
+  </screenshots>
+  <releases>
+    <release version="0.1.0" date="2026-11-19">
+      <description>
+        <p>First release.</p>
+      </description>
+    </release>
+  </releases>
+</component>

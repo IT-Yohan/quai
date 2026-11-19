@@ -108,7 +108,9 @@ pub async fn doctor(ctx: &Ctx) -> Result<Output> {
 
     let global_ok = config::load_global(p);
     checks.push(match &global_ok {
-        Ok(_) if p.global_config().exists() => check("config", "Configuration", true, p.global_config().display().to_string(), None),
+        Ok(_) if p.global_config().exists() => {
+            check("config", "Configuration", true, p.global_config().display().to_string(), None)
+        }
         Ok(_) => check("config", "Configuration", false, "quai has not been set up yet", Some("sudo quai setup")),
         Err(e) => check("config", "Configuration", false, format!("{e:#}"), Some("fix /etc/quai/quai.toml")),
     });
@@ -139,13 +141,18 @@ pub async fn doctor(ctx: &Ctx) -> Result<Output> {
     }
 
     if system::has_systemd() {
-        let enabled = system::systemctl(&["is-enabled", "quaid.socket"]).map(|s| s.trim() == "enabled").unwrap_or(false);
+        let enabled =
+            system::systemctl(&["is-enabled", "quaid.socket"]).map(|s| s.trim() == "enabled").unwrap_or(false);
         let active = system::systemctl(&["is-active", "quaid.socket"]).is_ok();
         checks.push(check(
             "socket",
             "quaid.socket",
             enabled && active,
-            format!("{}, {}", if enabled { "enabled" } else { "not enabled" }, if active { "listening" } else { "not listening" }),
+            format!(
+                "{}, {}",
+                if enabled { "enabled" } else { "not enabled" },
+                if active { "listening" } else { "not listening" }
+            ),
             Some("sudo systemctl enable --now quaid.socket"),
         ));
     }
@@ -155,7 +162,11 @@ pub async fn doctor(ctx: &Ctx) -> Result<Output> {
         "daemon",
         "quaid answers",
         healthy,
-        if healthy { format!("http://{}", ctx.global.daemon.listen) } else { format!("nothing answers on {}", ctx.global.daemon.listen) },
+        if healthy {
+            format!("http://{}", ctx.global.daemon.listen)
+        } else {
+            format!("nothing answers on {}", ctx.global.daemon.listen)
+        },
         Some("sudo quai setup; journalctl -u quaid.service"),
     ));
 
@@ -204,7 +215,11 @@ pub async fn doctor(ctx: &Ctx) -> Result<Output> {
                     (Some(e), _) => (false, e.clone()),
                     (None, false) => (
                         false,
-                        sn.excluded.iter().map(|x| format!("{} not served: {}", x.name, x.reason)).collect::<Vec<_>>().join("; "),
+                        sn.excluded
+                            .iter()
+                            .map(|x| format!("{} not served: {}", x.name, x.reason))
+                            .collect::<Vec<_>>()
+                            .join("; "),
                     ),
                     (None, true) => (
                         true,
@@ -217,12 +232,20 @@ pub async fn doctor(ctx: &Ctx) -> Result<Output> {
                 }
             }
         };
-        let fix = format!("quai refresh {}", s.id);
-        checks.push(check(&format!("source-{}", s.id), &format!("Source {}", s.id), ok, detail, Some(&fix)));
+        // Exclusions already name the command that lifts them; errors usually clear on a new check.
+        let has_error = snap.as_ref().map(|sn| sn.last_error.is_some()).unwrap_or(true);
+        let fix = has_error.then(|| format!("quai refresh {}", s.id));
+        checks.push(check(&format!("source-{}", s.id), &format!("Source {}", s.id), ok, detail, fix.as_deref()));
     }
     if let Some(host) = low_rate {
         let fix = format!("sudo quai token set --host {host}");
-        checks.push(check("rate-limit", "API rate limit", false, format!("{host} API budget nearly used up"), Some(&fix)));
+        checks.push(check(
+            "rate-limit",
+            "API rate limit",
+            false,
+            format!("{host} API budget nearly used up"),
+            Some(&fix),
+        ));
     }
 
     let ok = checks.iter().all(|c| c.ok);

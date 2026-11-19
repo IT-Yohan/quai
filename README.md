@@ -1,0 +1,159 @@
+<p align="center"><img src="data/icons/hicolor/scalable/apps/io.github.quai.Quai.svg" width="96" alt=""></p>
+
+# Quai
+
+**Keep RPMs published as GitHub, GitLab or Forgejo releases up to date — through dnf.**
+
+Many tools (Orca, Cursor-like editors, terminals, AI agents…) ship their Fedora build only as a
+`.rpm` attached to a release. Installed by hand, dnf records it as `@commandline` and it never
+updates again. Quai turns each such project into a small **signed dnf repository served on your
+own machine**, so dnf, GNOME Software, dnf-automatic and rpm-ostree install, update and roll it
+back like any other Fedora package.
+
+```console
+$ quai preview stablyai/orca      # what would be added, no root needed
+$ sudo quai add stablyai/orca     # track it: dnf now sees updates of orca-ide
+$ sudo dnf upgrade                # …or GNOME Software, or dnf-automatic
+```
+
+![Sources, a source's page, adding a project, diagnostics](docs/screenshots/overview.png)
+
+## How it works
+
+```
+ quai-gtk ──pkexec──▶ quai (CLI, root) ──writes──▶ /etc/quai/sources.d/<id>.toml
+                                                   /etc/yum.repos.d/quai-<id>.repo
+                                                              │ read by
+ dnf5 · rpm-ostree · GNOME Software ──HTTP 127.0.0.1:741──▶ quaid ──API + Range──▶ forge
+                         ▲                                     │
+                         └──── 302 to the forge's CDN ◀────────┘  (SHA-256 verified by dnf)
+```
+
+* **quaid** is socket-activated by systemd: nothing runs until dnf asks for `repomd.xml`, and it
+  exits after two idle minutes. It lists the project's releases (with ETags, so an unchanged
+  project costs no API budget), reads **only the header** of each RPM with HTTP range requests,
+  generates `primary`/`filelists`/`other` metadata identical in substance to `createrepo_c`'s, and
+  signs `repomd.xml` with a key generated on your machine.
+* **Packages are never stored.** dnf downloads them from the forge's CDN (quaid answers with a
+  302) and checks the SHA-256 written in the signed metadata. GitHub publishes asset digests; for
+  GitLab and Forgejo quaid downloads each version once to compute it.
+* The **CLI** is the only thing that writes system configuration. The GTK app runs it through
+  polkit and shows its JSON output.
+
+## Install
+
+Quai targets Fedora 41+ (dnf5) and Fedora Atomic desktops.
+
+From source (Rust ≥ 1.80, `gtk4-devel`, `libadwaita-devel`):
+
+```console
+$ make
+$ sudo make install
+$ sudo systemd-sysusers && sudo systemctl daemon-reload
+$ sudo quai setup          # signing key, /etc/quai, enables quaid.socket
+```
+
+As an RPM: `make dist` produces the source and vendored-crates tarballs for
+[`packaging/quai.spec`](packaging/quai.spec), ready for COPR.
+
+## Use it
+
+| Command | Root | What it does |
+| --- | --- | --- |
+| `quai preview <spec>` | no | Shows what `add` would do: packages, versions, warnings |
+| `quai add <spec> [--install]` | yes | Starts tracking a project; `--install` installs it now |
+| `quai install <id>` | yes | Installs the packages of a tracked source |
+| `quai status [id]` / `quai list` | no | Installed versus available versions, errors, excluded packages |
+| `quai refresh [id]` | no | Asks quaid to check the forge now (at most every 30 s) |
+| `quai upgrade [id]` | yes | Targeted `dnf upgrade` (`rpm-ostree upgrade` on Atomic) |
+| `quai enable` / `disable <id>` | yes | Suspends a source without removing it |
+| `quai set <id> <key> <value>` | yes | `name`, `channel`, `asset-pattern`, `keep-versions`, `allow-package`, `allow-obsoletes`, `package-gpgkey`… |
+| `quai remove <id> [--uninstall]` | yes | Stops tracking, optionally uninstalls |
+| `quai export` / `quai import <file>` | import | All sources in one TOML file, for your dotfiles |
+| `quai token set --host github.com` | yes | Token read from stdin: 5,000 GitHub API requests/hour instead of 60 |
+| `quai config [key value]` | set | `listen`, `check-interval-mins`, `keep-versions`, `metadata-expire`, `sign-metadata` |
+| `quai doctor` | no | Checks everything and says how to fix it |
+
+A `<spec>` is `owner/repo` (GitHub), a project URL, or `codeberg:owner/repo`,
+`gitlab:group/project`, `forgejo:git.example.org/owner/repo`. Every command accepts `--json`.
+
+When a release ships several RPMs for the same package and architecture (an `el9` and an `fc43`
+build, say), `add` asks you to choose with `--asset-pattern`; `preview` prints a ready-made
+pattern for each file, and the GTK app offers them in a drop-down.
+
+The graphical app (**Quai** in your app grid) does the same: add a project, see what it ships
+first, toggle channel and versions kept, update, remove.
+
+## Security model
+
+You trust the upstream maintainer exactly as much as when you install their `.rpm` by hand: its
+scriptlets run as root. Quai guarantees the rest.
+
+| Threat | Mitigation |
+| --- | --- |
+| A local process impersonates quaid | Privileged port held by systemd, and `repomd.xml` signed with an Ed25519 key readable only by root and the `quai` group (`repo_gpgcheck=1`) |
+| A file is swapped on the CDN after publication | SHA-256 in the signed metadata, verified by dnf |
+| A source suddenly ships `glibc` | `includepkgs` limited to the names seen when the source was added; anything new is excluded and reported until `quai set <id> allow-package <name>` |
+| A package declares `Obsoletes: firefox` | Excluded unless the obsoleted package belongs to the source or is explicitly allowed |
+| Two sources fight over one package name | Refused when adding |
+| Forge token leak | `0640 root:quai`, sent only to the API host it was saved for |
+| A non-admin user adds a source | Writes need root (sudo, or polkit `auth_admin_keep`) |
+
+If upstream signs its RPMs, `quai set <id> package-gpgkey https://…` turns on `gpgcheck=1`.
+
+## Files
+
+| Path | Content |
+| --- | --- |
+| `/etc/quai/quai.toml` | Global settings |
+| `/etc/quai/sources.d/<id>.toml` | One tracked project; edit by hand then `quai sync` |
+| `/etc/quai/repo-key.asc`, `/etc/quai/private/` | Signing key pair, tokens |
+| `/etc/yum.repos.d/quai-<id>.repo` | Generated; marked `# Managed by quai` |
+| `/var/cache/quai/` | RPM headers, forge answers, generated metadata (safe to delete) |
+
+Behind a corporate proxy, give quaid the variable with `sudo systemctl edit quaid.service`:
+`[Service]` / `Environment=HTTPS_PROXY=http://proxy:3128`.
+
+## Development
+
+```console
+$ cargo test --workspace          # unit tests + RPM reader checked against rpm and createrepo_c
+$ make fixtures                   # rebuild tests/fixtures/rpms with rpmbuild
+$ sudo make e2e                   # mock forge → quaid → real dnf, in a throw-away installroot
+$ make lint                       # rustfmt + clippy -D warnings
+```
+
+The end-to-end test builds RPMs, serves them from a GitHub look-alike
+([`tests/e2e/mock_forge.py`](tests/e2e/mock_forge.py)) and drives the real CLI, daemon and dnf
+through add, install via redirect, new release, upgrade, downgrade, signature tampering, the
+allow-list and `Obsoletes` guards, disable/enable, export/import and doctor.
+
+Environment variables for development and tests:
+
+| Variable | Effect |
+| --- | --- |
+| `QUAI_CONFIG_DIR`, `QUAI_REPOS_DIR`, `QUAI_CACHE_DIR`, `QUAI_SYSTEMD_DIR` | Relocate `/etc/quai`, `/etc/yum.repos.d`, `/var/cache/quai`, `/etc/systemd/system` |
+| `QUAI_DNF_ARGS` | Extra arguments for every dnf call (e.g. `--installroot=…`) |
+| `QUAI_RPM_ROOT` | `rpm --root` for installed-version queries |
+| `QUAI_API_URL` | Point every forge at a test server |
+| `QUAI_SKIP_ROOT_CHECK` | Skip the root check when paths are writable |
+| `QUAID_FORCE_COOLDOWN_SECS` | Minimum delay between forced refreshes (default 30) |
+| `QUAI_BIN`, `QUAI_GTK_NO_PKEXEC` | Which `quai` the GTK app runs, and without pkexec |
+| `QUAI_LOG`, `QUAID_LOG` | Log filter (`debug`, `info`…) |
+
+Layout: `crates/quai-core` (engine: forges, RPM header reader, repodata, signing),
+`crates/quaid` (HTTP gateway), `crates/quai-cli` (`quai`), `crates/quai-gtk` (GNOME app),
+`crates/quai-types` (JSON contract between the CLI and the app), `data/` (systemd, polkit,
+desktop, AppStream, icons), `packaging/` (RPM spec).
+
+## Roadmap
+
+* AppStream metadata generated from the package's `.desktop` file, for a real app page in GNOME
+  Software; translations (gettext).
+* Private repositories (quaid relays the download with the token); verification of GitHub
+  artifact attestations when upstream publishes them.
+* A public COPR.
+
+## License
+
+Apache-2.0. See [LICENSE](LICENSE).

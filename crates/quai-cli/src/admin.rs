@@ -50,7 +50,8 @@ pub fn ensure_setup(ctx: &Ctx, systemd: bool) -> Result<Vec<String>> {
         let listen = &ctx.global.daemon.listen;
         let mut reload = false;
         if listen != DEFAULT_LISTEN {
-            let body = format!("# Written by `quai setup` from quai.toml\n[Socket]\nListenStream=\nListenStream={listen}\n");
+            let body =
+                format!("# Written by `quai setup` from quai.toml\n[Socket]\nListenStream=\nListenStream={listen}\n");
             if std::fs::read_to_string(&dropin).ok().as_deref() != Some(body.as_str()) {
                 write_atomic(&dropin, body.as_bytes(), 0o644)?;
                 reload = true;
@@ -64,7 +65,8 @@ pub fn ensure_setup(ctx: &Ctx, systemd: bool) -> Result<Vec<String>> {
             system::systemctl(&["restart", "quaid.socket"]).ok();
             details.push(format!("quaid.socket now listens on {listen}"));
         }
-        let enabled = system::systemctl(&["is-enabled", "quaid.socket"]).map(|s| s.trim() == "enabled").unwrap_or(false);
+        let enabled =
+            system::systemctl(&["is-enabled", "quaid.socket"]).map(|s| s.trim() == "enabled").unwrap_or(false);
         if !enabled {
             system::systemctl(&["enable", "--now", "quaid.socket"]).context("enabling quaid.socket")?;
             details.push("enabled quaid.socket".into());
@@ -308,6 +310,7 @@ pub async fn upgrade(ctx: &Ctx, id: Option<&str>) -> Result<Output> {
             details.push(format!("{name}: {old} → {new}"));
         }
     }
-    let message = if changed == 0 { "Already up to date".to_string() } else { format!("Upgraded {changed} package(s)") };
+    let message =
+        if changed == 0 { "Already up to date".to_string() } else { format!("Upgraded {changed} package(s)") };
     Ok(ok(message, details))
 }

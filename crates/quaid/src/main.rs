@@ -229,18 +229,18 @@ fn error(status: StatusCode, msg: impl Into<String>) -> Response {
     (status, [(header::CONTENT_TYPE, "text/plain; charset=utf-8")], body).into_response()
 }
 
-fn enabled_source(st: &AppState, id: &str) -> Result<SourceConfig, Response> {
+fn enabled_source(st: &AppState, id: &str) -> Result<SourceConfig, Box<Response>> {
     match config::load_source(&st.engine.paths, id) {
         Ok(s) if s.enabled => Ok(s),
-        Ok(_) => Err(error(StatusCode::NOT_FOUND, format!("source '{id}' is disabled"))),
-        Err(e) => Err(error(StatusCode::NOT_FOUND, format!("{e:#}"))),
+        Ok(_) => Err(Box::new(error(StatusCode::NOT_FOUND, format!("source '{id}' is disabled")))),
+        Err(e) => Err(Box::new(error(StatusCode::NOT_FOUND, format!("{e:#}")))),
     }
 }
 
 async fn repodata(State(st): State<Arc<AppState>>, Path((id, file)): Path<(String, String)>) -> Response {
     let src = match enabled_source(&st, &id) {
         Ok(s) => s,
-        Err(r) => return r,
+        Err(r) => return *r,
     };
     let path = match st.engine.repodata_path(&id, &file) {
         Ok(p) => p,
@@ -278,7 +278,7 @@ async fn repodata(State(st): State<Arc<AppState>>, Path((id, file)): Path<(Strin
 /// Packages are never stored: redirect dnf to the forge, it verifies the SHA-256 itself.
 async fn package(State(st): State<Arc<AppState>>, Path((id, key, file)): Path<(String, String, String)>) -> Response {
     if let Err(r) = enabled_source(&st, &id) {
-        return r;
+        return *r;
     }
     let url = Engine::load_snapshot(&st.engine.paths, &id)
         .and_then(|snap| snap.packages.into_iter().find(|p| p.asset_key == key && p.file_name == file).map(|p| p.url))

@@ -80,11 +80,7 @@ fn human_size(bytes: u64) -> String {
 
 pub fn print_preview(p: &Preview) {
     println!("{} ({})", p.suggested_name, p.web_url);
-    println!(
-        "  release   {}{}",
-        p.release.tag,
-        if p.release.prerelease { " (pre-release)" } else { "" }
-    );
+    println!("  release   {}{}", p.release.tag, if p.release.prerelease { " (pre-release)" } else { "" });
     println!("  source id {}", p.suggested_id);
     if let Some(pat) = &p.asset_pattern {
         println!("  assets    matching /{pat}/");

@@ -15,17 +15,11 @@ use std::sync::OnceLock;
 pub const DEFAULT_LISTEN: &str = "127.0.0.1:741";
 pub const SYSTEM_GROUP: &str = "quai";
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Default)]
 #[serde(default, deny_unknown_fields)]
 pub struct GlobalConfig {
     pub daemon: DaemonConfig,
     pub defaults: Defaults,
-}
-
-impl Default for GlobalConfig {
-    fn default() -> Self {
-        GlobalConfig { daemon: DaemonConfig::default(), defaults: Defaults::default() }
-    }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
@@ -169,7 +163,7 @@ impl SourceConfig {
 pub fn compile_pattern(pattern: Option<&str>) -> Result<Option<Regex>> {
     match pattern {
         None => Ok(None),
-        Some(p) if p.is_empty() => Ok(None),
+        Some("") => Ok(None),
         Some(p) => Regex::new(p).map(Some).map_err(|e| usage(format!("invalid asset pattern: {e}"))),
     }
 }
@@ -181,9 +175,7 @@ pub fn validate_id(id: &str) -> Result<()> {
     if re.is_match(id) && !id.contains("..") {
         Ok(())
     } else {
-        Err(usage(format!(
-            "invalid source id '{id}': use lowercase letters, digits, '.', '_' or '-' (max 63)"
-        )))
+        Err(usage(format!("invalid source id '{id}': use lowercase letters, digits, '.', '_' or '-' (max 63)")))
     }
 }
 
@@ -227,9 +219,7 @@ pub fn load_global(paths: &Paths) -> Result<GlobalConfig> {
 
 pub fn save_global(paths: &Paths, cfg: &GlobalConfig) -> Result<()> {
     let body = toml::to_string_pretty(cfg)?;
-    let text = format!(
-        "# quai global configuration. See `man quai` or https://github.com/quai-rpm/quai\n\n{body}"
-    );
+    let text = format!("# quai global configuration. See `man quai` or https://github.com/quai-rpm/quai\n\n{body}");
     write_atomic(&paths.global_config(), text.as_bytes(), 0o644)
 }
 
@@ -245,11 +235,7 @@ pub fn load_source(paths: &Paths, id: &str) -> Result<SourceConfig> {
     };
     let src: SourceConfig = toml::from_str(&text).with_context(|| format!("parsing {}", path.display()))?;
     if src.id != id {
-        return Err(usage(format!(
-            "{} declares id '{}' but its file name says '{id}'",
-            path.display(),
-            src.id
-        )));
+        return Err(usage(format!("{} declares id '{}' but its file name says '{id}'", path.display(), src.id)));
     }
     Ok(src)
 }
@@ -327,9 +313,9 @@ pub fn unique_id(paths: &Paths, project: &str) -> String {
 /// Refuse to track the same project twice.
 pub fn find_by_project(paths: &Paths, forge: ForgeKind, host: &str, project: &str) -> Option<SourceConfig> {
     let (sources, _) = load_sources(paths);
-    sources.into_iter().find(|s| {
-        s.forge == forge && s.host.eq_ignore_ascii_case(host) && s.project.eq_ignore_ascii_case(project)
-    })
+    sources
+        .into_iter()
+        .find(|s| s.forge == forge && s.host.eq_ignore_ascii_case(host) && s.project.eq_ignore_ascii_case(project))
 }
 
 pub fn ensure_new_id(paths: &Paths, id: &str) -> Result<()> {
@@ -427,6 +413,13 @@ mod tests {
         let back: SourceConfig = toml::from_str(&text).unwrap();
         assert_eq!(src, back);
         assert!(back.validate().is_ok());
+    }
+
+    #[test]
+    fn packaged_config_matches_the_defaults() {
+        let text = include_str!("../../../data/quai.toml");
+        let cfg: GlobalConfig = toml::from_str(text).unwrap();
+        assert_eq!(cfg, GlobalConfig::default());
     }
 
     #[test]

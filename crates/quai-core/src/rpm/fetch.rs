@@ -51,11 +51,8 @@ async fn get_range(http: &reqwest::Client, url: &str, start: usize, end: usize) 
         }
         StatusCode::OK => {
             // Range ignored: read from the start and stop once we have enough.
-            let total = resp
-                .headers()
-                .get(CONTENT_LENGTH)
-                .and_then(|v| v.to_str().ok())
-                .and_then(|v| v.parse::<u64>().ok());
+            let total =
+                resp.headers().get(CONTENT_LENGTH).and_then(|v| v.to_str().ok()).and_then(|v| v.parse::<u64>().ok());
             let mut out = Vec::with_capacity(end + 1);
             let mut stream = resp.bytes_stream();
             while let Some(chunk) = stream.next().await {

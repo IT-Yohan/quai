@@ -34,7 +34,8 @@ impl Ctx {
     /// Tokens from the protected file when readable, plus the usual environment variables.
     pub fn tokens(&self) -> Tokens {
         let mut t = config::load_tokens(&self.paths);
-        for (var, host) in [("GITHUB_TOKEN", "github.com"), ("GH_TOKEN", "github.com"), ("GITLAB_TOKEN", "gitlab.com")] {
+        for (var, host) in [("GITHUB_TOKEN", "github.com"), ("GH_TOKEN", "github.com"), ("GITLAB_TOKEN", "gitlab.com")]
+        {
             if let Ok(v) = std::env::var(var) {
                 if !v.trim().is_empty() {
                     t.tokens.entry(host.to_string()).or_insert_with(|| v.trim().to_string());
@@ -59,7 +60,9 @@ impl Ctx {
     }
 
     pub async fn daemon_healthy(&self) -> bool {
-        let Ok(c) = Self::local_client(Duration::from_secs(3)) else { return false };
+        let Ok(c) = Self::local_client(Duration::from_secs(3)) else {
+            return false;
+        };
         match c.get(self.daemon_url("/-/health")).send().await {
             Ok(r) => r.status().is_success(),
             Err(_) => false,

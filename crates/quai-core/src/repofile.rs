@@ -29,7 +29,11 @@ pub fn render(paths: &Paths, global: &GlobalConfig, src: &SourceConfig) -> Strin
     }
     let mut out = String::new();
     out.push_str(MARKER);
-    out.push_str(&format!(" from {}. Do not edit: use `quai set {} ...`.\n", paths.source_file(&src.id).display(), src.id));
+    out.push_str(&format!(
+        " from {}. Do not edit: use `quai set {} ...`.\n",
+        paths.source_file(&src.id).display(),
+        src.id
+    ));
     out.push_str(&format!("[{}]\n", repo_id(&src.id)));
     out.push_str(&format!("name={} (quai: {})\n", single_line(&src.name), src.forge_ref().display()));
     out.push_str(&format!("baseurl={}\n", baseurl(global, &src.id)));

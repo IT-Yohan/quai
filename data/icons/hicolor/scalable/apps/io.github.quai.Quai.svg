@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#99c1f1"/>
+      <stop offset="1" stop-color="#3584e4"/>
+    </linearGradient>
+    <clipPath id="tile">
+      <rect x="8" y="10" width="112" height="108" rx="22"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#tile)">
+    <rect x="8" y="10" width="112" height="108" fill="url(#sky)"/>
+    <!-- water -->
+    <path d="M0 98 q12 -7 24 0 t24 0 t24 0 t24 0 t24 0 t24 0 V128 H0z" fill="#1a5fb4"/>
+    <path d="M0 106 q12 -7 24 0 t24 0 t24 0 t24 0 t24 0 t24 0 V128 H0z" fill="#1c4f9a"/>
+    <!-- quay -->
+    <rect x="30" y="90" width="7" height="22" fill="#63452c"/>
+    <rect x="91" y="90" width="7" height="22" fill="#63452c"/>
+    <rect x="18" y="80" width="92" height="11" rx="2" fill="#986a44"/>
+    <rect x="18" y="88" width="92" height="3" fill="#865e3c"/>
+  </g>
+  <!-- package -->
+  <path d="M64 40 L86 51 L86 75 L64 86 L42 75 L42 51 Z" fill="#f8e45c"/>
+  <path d="M42 51 L64 62 L64 86 L42 75 Z" fill="#e5a50a"/>
+  <path d="M64 62 L86 51 L86 75 L64 86 Z" fill="#f6d32d"/>
+  <path d="M53 45.5 L75 56.5 L75 63" fill="none" stroke="#c88800" stroke-width="3" stroke-linejoin="round"/>
+  <!-- arrow -->
+  <path d="M64 16 V32 M56 25 L64 33 L72 25" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
