@@ -215,7 +215,9 @@ impl AddDialog {
             b.remove(&c);
         }
 
-        let mut title = p.release.name.clone().filter(|n| n != &p.release.tag).unwrap_or_default();
+        // The release name, unless it only repeats the tag ("1.2.0" for v1.2.0).
+        let bare = |s: &str| s.trim().trim_start_matches(['v', 'V']).to_string();
+        let mut title = p.release.name.clone().filter(|n| bare(n) != bare(&p.release.tag)).unwrap_or_default();
         if !title.is_empty() {
             title = format!(" — {title}");
         }
