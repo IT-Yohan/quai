@@ -4,6 +4,7 @@ description = "JSON contract shared by the quai CLI and its graphical frontend"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
+repository.workspace = true
 rust-version.workspace = true
 
 [dependencies]

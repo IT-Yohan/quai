@@ -124,7 +124,7 @@ for spec in core:quai-cli,quaid gtk:quai-gtk kde:quai-kde; do
     pkgs=$(echo "$spec" | cut -d: -f2 | sed 's/^/-p /; s/,/ -p /g')
     mkdir -p "$dir"
     %{__cargo} tree $pkgs --offline --edges normal,build --no-dedupe --prefix none --format '{p}' \
-        | sed '/([*/]/d' | sort -u > "$dir/cargo-vendor.txt"
+        | sed -e '/ (\//d' -e 's/ (proc-macro)//' -e 's/ (\*)//' | sort -u > "$dir/cargo-vendor.txt"
     %{__cargo} tree $pkgs --offline --edges no-build,no-dev,no-proc-macro --no-dedupe --prefix none \
         --format '{l}: {p}' | sed -e '/([*/]/d' -e 's: / :/:g' -e 's:/: OR :g' | sort -u > "$dir/LICENSE.dependencies"
     test -s "$dir/cargo-vendor.txt"

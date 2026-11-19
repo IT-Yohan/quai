@@ -1,60 +1,121 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright the quai contributors -->
 <component type="desktop-application">
   <id>io.github.it_yohan.Quai</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>Apache-2.0</project_license>
+
   <name translate="no">Quai</name>
-  <summary>Keep RPMs from forge releases up to date with dnf</summary>
-  <description>
-    <p>
-      Many projects publish their Fedora packages only as .rpm files attached to
-      GitHub, GitLab or Codeberg releases. Installed by hand, those packages never
-      receive updates.
-    </p>
-    <p>
-      Quai turns each project into a small signed dnf repository served on your own
-      machine. dnf, GNOME Software, Discover and rpm-ostree then install, update and
-      roll back these packages like any other Fedora package.
-    </p>
-    <p>
-      Its window is native on both main Fedora desktops: GTK and libadwaita on GNOME,
-      Kirigami on KDE Plasma.
-    </p>
-    <ul>
-      <li>Add a project by typing owner/repo or pasting its URL</li>
-      <li>See what it ships before adding it, with clear warnings</li>
-      <li>Updates arrive through dnf, GNOME Software and Discover</li>
-      <li>Metadata signed with a key local to your machine</li>
-      <li>Works on Fedora Workstation and Fedora Atomic desktops</li>
-    </ul>
-  </description>
-  <launchable type="desktop-id">io.github.it_yohan.Quai.desktop</launchable>
-  <url type="homepage">https://github.com/IT-Yohan/quai</url>
-  <url type="bugtracker">https://github.com/IT-Yohan/quai/issues</url>
+  <summary>Keep GitHub release RPMs up to date</summary>
   <developer id="io.github.it_yohan">
     <name translate="no">The quai contributors</name>
   </developer>
-  <provides>
-    <binary>quai</binary>
-  </provides>
+
+  <description>
+    <p>
+      Many applications publish their Fedora packages only as .rpm files attached to
+      releases on GitHub, GitLab or Codeberg. Installed by hand, those packages never
+      receive updates.
+    </p>
+    <p>
+      Quai follows these projects for you. Each one becomes a small signed repository
+      served on your own computer, so new releases arrive like any other update, in
+      Software, Discover or dnf, and can be rolled back the same way.
+    </p>
+    <ul>
+      <li>Add a project by typing owner/repo or pasting its address</li>
+      <li>See which packages it ships, and anything worth knowing, before adding it</li>
+      <li>Get the build made for your Fedora release when a project ships several</li>
+      <li>Packages that would replace system ones are held back until you allow them</li>
+      <li>Metadata signed with a key that never leaves your computer</li>
+      <li>Works on Fedora Workstation, KDE Plasma and the Atomic desktops</li>
+    </ul>
+    <p>
+      Quai looks at home on both main Fedora desktops: GTK and libadwaita on GNOME,
+      Kirigami on KDE Plasma. Everything is also available from the quai command.
+    </p>
+  </description>
+
+  <launchable type="desktop-id">io.github.it_yohan.Quai.desktop</launchable>
+  <translation type="gettext">quai</translation>
+
+  <url type="homepage">https://github.com/IT-Yohan/quai</url>
+  <url type="bugtracker">https://github.com/IT-Yohan/quai/issues</url>
+  <url type="vcs-browser">https://github.com/IT-Yohan/quai</url>
+  <url type="help">https://github.com/IT-Yohan/quai#use-it</url>
+  <url type="translate">https://github.com/IT-Yohan/quai#languages</url>
+
+  <branding>
+    <color type="primary" scheme_preference="light">#f9f06b</color>
+    <color type="primary" scheme_preference="dark">#1a3a5c</color>
+  </branding>
+
   <content_rating type="oars-1.1"/>
+
   <requires>
     <display_length compare="ge">360</display_length>
   </requires>
+  <supports>
+    <control>keyboard</control>
+    <control>pointing</control>
+    <control>touch</control>
+  </supports>
+
+  <provides>
+    <binary>quai</binary>
+  </provides>
+
+  <keywords>
+    <keyword translate="no">rpm</keyword>
+    <keyword translate="no">dnf</keyword>
+    <keyword translate="no">GitHub</keyword>
+    <keyword translate="no">GitLab</keyword>
+    <keyword translate="no">Codeberg</keyword>
+    <keyword>release</keyword>
+    <keyword>update</keyword>
+    <keyword>repository</keyword>
+    <keyword>package</keyword>
+  </keywords>
+
   <screenshots>
-    <screenshot type="default">
-      <caption>Tracked sources and their update state</caption>
-      <image>https://raw.githubusercontent.com/IT-Yohan/quai/main/docs/screenshots/sources.png</image>
+    <screenshot type="default" environment="gnome">
+      <caption>Followed projects, and what is waiting to be updated</caption>
+      <image type="source" width="1800" height="1240">https://raw.githubusercontent.com/IT-Yohan/quai/v@VERSION@/data/screenshots/gnome-sources.png</image>
     </screenshot>
-    <screenshot>
-      <caption>Adding a project after previewing its packages</caption>
-      <image>https://raw.githubusercontent.com/IT-Yohan/quai/main/docs/screenshots/add-source.png</image>
+    <screenshot environment="gnome">
+      <caption>A project's packages and settings</caption>
+      <image type="source" width="1800" height="1240">https://raw.githubusercontent.com/IT-Yohan/quai/v@VERSION@/data/screenshots/gnome-source.png</image>
+    </screenshot>
+    <screenshot environment="gnome">
+      <caption>Adding a project after seeing what it ships</caption>
+      <image type="source" width="1800" height="1240">https://raw.githubusercontent.com/IT-Yohan/quai/v@VERSION@/data/screenshots/gnome-add.png</image>
+    </screenshot>
+    <screenshot environment="plasma">
+      <caption>The same window on KDE Plasma</caption>
+      <image type="source" width="1800" height="1240">https://raw.githubusercontent.com/IT-Yohan/quai/v@VERSION@/data/screenshots/plasma-sources.png</image>
+    </screenshot>
+    <screenshot environment="plasma">
+      <caption>A project's page on KDE Plasma</caption>
+      <image type="source" width="1800" height="1240">https://raw.githubusercontent.com/IT-Yohan/quai/v@VERSION@/data/screenshots/plasma-source.png</image>
+    </screenshot>
+    <screenshot environment="gnome:dark">
+      <caption>In the dark style</caption>
+      <image type="source" width="1800" height="1240">https://raw.githubusercontent.com/IT-Yohan/quai/v@VERSION@/data/screenshots/gnome-sources-dark.png</image>
     </screenshot>
   </screenshots>
+
   <releases>
     <release version="0.1.0" date="2026-11-19">
+      <url type="details">https://github.com/IT-Yohan/quai/releases/tag/v0.1.0</url>
       <description>
-        <p>First release.</p>
+        <p>First release of Quai.</p>
+        <ul>
+          <li>Follow GitHub, GitLab and Forgejo or Codeberg projects that publish RPM packages in their releases</li>
+          <li>Updates through dnf, GNOME Software, Discover and rpm-ostree, from signed metadata served on your computer</li>
+          <li>The build made for your Fedora release is chosen automatically, and follows system upgrades</li>
+          <li>Native windows for GNOME and KDE Plasma, and the quai command with man pages and completions</li>
+          <li>Available in English and French</li>
+        </ul>
       </description>
     </release>
   </releases>

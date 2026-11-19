@@ -60,7 +60,10 @@ translations:
 	done
 	mkdir -p $(GEN)
 	msgfmt --desktop -d po --template data/desktop/$(APPID).desktop.in -o $(GEN)/$(APPID).desktop
-	msgfmt --xml -d po --template data/metainfo/$(APPID).metainfo.xml.in -o $(GEN)/$(APPID).metainfo.xml
+	msgfmt --xml -d po --template data/metainfo/$(APPID).metainfo.xml.in -o $(GEN)/$(APPID).metainfo.xml.tmp
+	@# Screenshots are pinned to the release tag, so a release keeps its own.
+	sed 's/@VERSION@/$(VERSION)/g' $(GEN)/$(APPID).metainfo.xml.tmp > $(GEN)/$(APPID).metainfo.xml
+	rm -f $(GEN)/$(APPID).metainfo.xml.tmp
 	msgfmt --xml -d po --template data/polkit/$(POLICY).in -o $(GEN)/$(POLICY)
 
 # Man pages and shell completions, from quai's command line definition
@@ -103,16 +106,22 @@ pot:
 
 update-po: pot
 	@for lang in $(LINGUAS); do \
-		msgmerge --quiet --update --backup=none --previous --add-location=file po/$$lang.po po/quai.pot || exit 1; \
+		msgmerge --quiet --update --backup=none --previous --add-location=file po/$$lang.po po/quai.pot && \
+		msgattrib --no-obsolete --output-file=po/$$lang.po po/$$lang.po || exit 1; \
 		printf '%s: ' $$lang; msgfmt --statistics -o /dev/null po/$$lang.po; \
 	done
 
 check-po:
 	cp po/quai.pot $(GEN)/quai.pot.committed 2>/dev/null || { mkdir -p $(GEN) && cp po/quai.pot $(GEN)/quai.pot.committed; }
 	$(MAKE) -s pot
-	@diff -u $(GEN)/quai.pot.committed po/quai.pot >/dev/null || { \
-		cp $(GEN)/quai.pot.committed po/quai.pot; \
-		echo "po/quai.pot is out of date: run 'make pot' (and 'make update-po') and commit the result"; exit 1; }
+	@# Same messages, whatever the gettext version's layout: no locations, no wrapping, sorted.
+	@cp po/quai.pot $(GEN)/quai.pot.fresh; \
+	for f in committed fresh; do \
+		msgcat --no-location --no-wrap --sort-output $(GEN)/quai.pot.$$f | sed -e '/^"POT-Creation-Date:/d' > $(GEN)/quai.pot.$$f.norm; \
+	done; \
+	cp $(GEN)/quai.pot.committed po/quai.pot; \
+	diff -u $(GEN)/quai.pot.committed.norm $(GEN)/quai.pot.fresh.norm || { \
+		echo "po/quai.pot is out of date: run 'make update-po' and commit the result"; exit 1; }
 	@for lang in $(LINGUAS); do \
 		msgfmt --check --check-format -o /dev/null po/$$lang.po || exit 1; \
 		printf '%s: ' $$lang; msgfmt --statistics -o /dev/null po/$$lang.po; \

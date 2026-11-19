@@ -1,0 +1,43 @@
+# Screenshots for the AppStream metadata and the README, rendered from the
+# real windows on Fedora with each desktop's fonts, icons and style. The images
+# are an artifact: commit them to data/screenshots/ (see docs/RELEASING.md).
+name: Screenshots
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "tests/screenshots/**"
+      - ".github/workflows/screenshots.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  screenshots:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    container:
+      image: registry.fedoraproject.org/fedora:latest
+      options: --privileged
+    steps:
+      - name: Install build dependencies, both desktops' look, and the capture tools
+        run: |
+          dnf -y install --skip-unavailable cargo rust gcc gcc-c++ lld git-core make \
+            gtk4-devel libadwaita-devel qt6-qtbase-devel qt6-qtdeclarative-devel gettext appstream \
+            rpm-build python3 curl dbus-daemon dbus-tools xorg-x11-server-Xvfb xdotool ImageMagick oxipng \
+            adwaita-sans-fonts adwaita-mono-fonts adwaita-icon-theme \
+            kf6-kirigami kf6-qqc2-desktop-style plasma-integration plasma-breeze plasma-breeze-common \
+            breeze-icon-theme google-noto-sans-fonts
+      - uses: actions/checkout@v6
+      - name: Build
+        run: |
+          cargo build --release --workspace
+          make translations
+      - name: Render
+        run: tests/screenshots/run.sh screenshots target/release
+      - uses: actions/upload-artifact@v7
+        with:
+          name: screenshots
+          path: screenshots/
+          if-no-files-found: error

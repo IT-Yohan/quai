@@ -1,0 +1,181 @@
+# Pushing a tag vX.Y.Z publishes Quai X.Y.Z:
+#   1. checks that the tag, Cargo.toml, the spec and the AppStream file agree;
+#   2. builds the source RPM and, with mock, the RPMs for every supported
+#      Fedora release on x86_64 and aarch64, and tests the installed packages;
+#   3. publishes a GitHub release with those RPMs, the source RPM, the vendored
+#      crates (the spec's Source1) and SHA256SUMS;
+#   4. builds the same source RPM in COPR (when the COPR_CONFIG secret is set)
+#      and adds the COPR instructions to the release.
+# "Run workflow" on an existing tag redoes the missing steps (copr_only for 4).
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing tag, e.g. v0.1.0"
+        required: true
+      copr_only:
+        description: "Only build in COPR (the GitHub release exists)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+env:
+  TAG: ${{ inputs.tag || github.ref_name }}
+
+jobs:
+  check:
+    name: Version and release notes
+    runs-on: ubuntu-24.04
+    outputs:
+      tag: ${{ env.TAG }}
+      fedora: ${{ steps.r.outputs.fedora }}
+      newest: ${{ steps.r.outputs.newest }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ env.TAG }}
+      - name: Tag, Cargo.toml, spec and AppStream agree
+        run: python3 packaging/release-notes.py "$TAG" > notes.md && cat notes.md
+      - name: Supported Fedora releases
+        id: r
+        run: python3 .github/fedora-releases.py
+      - uses: actions/upload-artifact@v7
+        with:
+          name: notes
+          path: notes.md
+
+  packages:
+    name: Packages
+    needs: check
+    if: ${{ !inputs.copr_only }}
+    uses: ./.github/workflows/packages.yml
+    with:
+      mode: release
+      ref: ${{ needs.check.outputs.tag }}
+      fedora: ${{ needs.check.outputs.fedora }}
+      newest: ${{ needs.check.outputs.newest }}
+
+  github:
+    name: GitHub release
+    needs: [check, packages]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ env.TAG }}
+      - uses: actions/download-artifact@v8
+        with:
+          path: artifacts
+      - name: Collect the release files
+        run: |
+          mkdir assets
+          version="${TAG#v}"
+          # Binary RPMs: noarch ones once (from x86_64), no debug packages.
+          for dir in artifacts/rpms-fedora-*-x86_64 artifacts/rpms-fedora-*-aarch64; do
+            for f in "$dir"/*.rpm; do
+              case "$f" in
+                *.src.rpm|*-debuginfo-*|*-debugsource-*) continue ;;
+                *aarch64/*.noarch.rpm) continue ;;
+              esac
+              cp "$f" assets/
+            done
+          done
+          cp "artifacts/srpm/quai-$version-1.src.rpm" "artifacts/srpm/quai-$version-vendor.tar.xz" assets/
+          (cd assets && sha256sum * > SHA256SUMS)
+          ls -l assets
+          {
+            cat artifacts/notes/notes.md
+            echo
+            echo "## Install"
+            echo
+            echo "Download the files for your Fedora release (\`.fcNN\`) and architecture, then:"
+            echo
+            echo '```'
+            echo "sudo dnf install ./quai-$version-1.fcNN.ARCH.rpm ./quai-gui-$version-1.fcNN.noarch.rpm \\"
+            echo "    ./quai-gtk-$version-1.fcNN.ARCH.rpm   # or quai-kde on KDE Plasma"
+            echo '```'
+            echo
+            echo "Quai can also keep itself up to date from these releases: \`quai add IT-Yohan/quai\`;"
+            echo "it serves the build made for your Fedora release."
+          } > body.md
+      - name: Publish
+        run: |
+          version="${TAG#v}"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" assets/* --clobber
+          else
+            gh release create "$TAG" assets/* --verify-tag --title "Quai $version" --notes-file body.md
+          fi
+
+  copr:
+    name: COPR
+    needs: [check, github]
+    # After the GitHub release, or alone on request; skipped without the secret.
+    if: ${{ always() && needs.check.result == 'success' && (needs.github.result == 'success' || inputs.copr_only) }}
+    runs-on: ubuntu-24.04
+    container: registry.fedoraproject.org/fedora:${{ needs.check.outputs.newest }}
+    timeout-minutes: 300
+    permissions:
+      contents: write
+    env:
+      COPR_CONFIG: ${{ secrets.COPR_CONFIG }}
+      GH_TOKEN: ${{ github.token }}
+      FEDORA_RELEASES: ${{ needs.check.outputs.fedora }}
+      COPR_PROJECT: ${{ vars.COPR_PROJECT }}
+    steps:
+      - name: No COPR token
+        if: ${{ env.COPR_CONFIG == '' }}
+        run: |
+          echo "::warning::The COPR_CONFIG secret is not set: no COPR build. See docs/RELEASING.md."
+      - name: Install tools
+        if: ${{ env.COPR_CONFIG != '' }}
+        run: dnf -y install copr-cli gh git-core python3 curl
+      - uses: actions/checkout@v6
+        if: ${{ env.COPR_CONFIG != '' }}
+        with:
+          ref: ${{ env.TAG }}
+      - name: Build in COPR
+        id: copr
+        if: ${{ env.COPR_CONFIG != '' }}
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          mkdir -p ~/.config && printf '%s\n' "$COPR_CONFIG" > ~/.config/copr && chmod 600 ~/.config/copr
+          if ! copr-cli whoami >/dev/null 2>&1; then
+            echo "::error::COPR rejected the token in COPR_CONFIG (they expire after 180 days): get a new one at https://copr.fedorainfracloud.org/api/"
+            exit 1
+          fi
+          # The source RPM published with the release: what COPR builds is what GitHub has.
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern "quai-${TAG#v}-1.src.rpm" --dir srpm
+          packaging/copr/submit.sh srpm/*.src.rpm
+      - name: Add the COPR instructions to the release
+        if: ${{ steps.copr.outputs.succeeded == 'true' }}
+        run: |
+          owner="${{ steps.copr.outputs.owner }}"; project="${{ steps.copr.outputs.project }}"
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json body --jq .body > body.md
+          if ! grep -q "dnf copr enable" body.md; then
+            python3 - "$owner/$project" <<'PY'
+          import sys
+          full = sys.argv[1]
+          body = open("body.md", encoding="utf-8").read()
+          copr = (f"The simplest way, with updates through dnf, GNOME Software and Discover, is the "
+                  f"[COPR repository](https://copr.fedorainfracloud.org/coprs/{full}/):\n\n"
+                  f"```\nsudo dnf copr enable {full}\nsudo dnf install quai\n```\n\nOr download")
+          body = body.replace("Download the files", copr + " the files", 1)
+          open("body.md", "w", encoding="utf-8").write(body)
+          PY
+            gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --notes-file body.md
+          fi
