@@ -37,6 +37,7 @@ jobs:
       - name: Render
         run: tests/screenshots/run.sh screenshots target/release
       - uses: actions/upload-artifact@v7
+        if: always()
         with:
           name: screenshots
           path: screenshots/

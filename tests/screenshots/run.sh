@@ -23,7 +23,7 @@ FORGE_PORT=18900
 QUAID_PORT=18941
 API="http://127.0.0.1:$FORGE_PORT"
 SCALE="${SCALE:-2}"
-mkdir -p "$out"
+mkdir -p "$out/logs"
 
 root="$(mktemp -d /tmp/quai-shots.XXXXXX)"
 pids=()
@@ -162,6 +162,7 @@ gtk_shot() { # name scheme [env...] -- keys...
   done
   sleep 2
   import -window "$wid" "$out/$name.png"
+  cp "$root/gtk-$name.log" "$out/logs/" 2>/dev/null || true
   # dbus-run-session does not pass signals on: close the window itself.
   xdotool windowkill "$wid" 2>/dev/null || true
   pkill -f "^$bin/quai-gtk" 2>/dev/null || true
@@ -190,7 +191,12 @@ kde_shots() { # suffix colors
     QT_LOGGING_RULES="qml.debug=true;js.debug=true" \
     timeout 120 dbus-run-session -- "$bin/quai-kde" > "$root/kde$1.log" 2>&1 || true
   grep -E "^qml: shot" "$root/kde$1.log" | sed 's/^qml: /   /' || true
-  grep -q "^qml: SHOTS DONE" "$root/kde$1.log" || { echo "   Kirigami captures failed:"; tail -40 "$root/kde$1.log"; exit 1; }
+  cp "$root/kde$1.log" "$out/logs/kde$1.log"
+  grep -q "^qml: SHOTS DONE" "$root/kde$1.log" || {
+    echo "   Kirigami captures failed:"
+    grep -v -e portal -e dbus-daemon -e '^$' "$root/kde$1.log" | tail -40
+    exit 1
+  }
 }
 kde_shots "" ""
 dark=/usr/share/color-schemes/BreezeDark.colors
@@ -198,4 +204,5 @@ if [[ -f "$dark" ]]; then kde_shots -dark "$dark"; else echo "   no $dark: no da
 
 say "optimising"
 if command -v oxipng >/dev/null; then oxipng -q -o 3 --strip safe "$out"/*.png; fi
+cp "$root/quaid.log" "$out/logs/"
 ls -l "$out"
