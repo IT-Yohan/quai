@@ -97,6 +97,7 @@ PY
 publish old
 python3 "$here/../e2e/mock_forge.py" --port $FORGE_PORT --dir "$root/assets" --releases "$root/releases.json" &
 pids+=($!)
+for _ in $(seq 50); do curl -fsS "$API/repos/pulsar-edit/pulsar/releases" >/dev/null 2>&1 && break; sleep 0.1; done
 
 say "quai and quaid"
 "$QUAI" config listen 127.0.0.1:$QUAID_PORT --json >/dev/null

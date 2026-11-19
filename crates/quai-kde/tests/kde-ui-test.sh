@@ -30,7 +30,7 @@ case "${KIRIGAMI:-stub}" in
 esac
 
 QT_QPA_PLATFORM=offscreen QUAI_KDE_MAIN="$here/ui-test.qml" timeout 120 "$bin" >"$log" 2>&1 || true
-grep -E "^qml: (ok|UI TEST)" "$log" | sed 's/^qml: /    /'
+grep -E "^qml: (ok|UI TEST)" "$log" | sed 's/^qml: /    /' || true
 errors='TypeError|ReferenceError|is not defined|Cannot assign|Unable to assign|Binding loop|non-existent|is not a type|unavailable|Cannot read property|module .* is not installed'
 if grep -qE "$errors" "$log"; then
   echo "QML runtime errors:"
