@@ -7,13 +7,14 @@
 Many tools (Orca, Cursor-like editors, terminals, AI agents…) ship their Fedora build only as a
 `.rpm` attached to a release. Installed by hand, dnf records it as `@commandline` and it never
 updates again. Quai turns each such project into a small **signed dnf repository served on your
-own machine**, so dnf, GNOME Software, dnf-automatic and rpm-ostree install, update and roll it
-back like any other Fedora package.
+own machine**, so dnf, GNOME Software, Discover, dnf-automatic and rpm-ostree install, update and
+roll it back like any other Fedora package. Its window is native on both Fedora desktops:
+libadwaita on GNOME, Kirigami on KDE Plasma.
 
 ```console
 $ quai preview stablyai/orca      # what would be added, no root needed
 $ sudo quai add stablyai/orca     # track it: dnf now sees updates of orca-ide
-$ sudo dnf upgrade                # …or GNOME Software, or dnf-automatic
+$ sudo dnf upgrade                # …or GNOME Software, Discover, or dnf-automatic
 ```
 
 ![Sources, a source's page, adding a project, diagnostics](docs/screenshots/overview.png)
@@ -21,10 +22,11 @@ $ sudo dnf upgrade                # …or GNOME Software, or dnf-automatic
 ## How it works
 
 ```
- quai-gtk ──pkexec──▶ quai (CLI, root) ──writes──▶ /etc/quai/sources.d/<id>.toml
+ quai-gtk ┐
+ quai-kde ┴─pkexec──▶ quai (CLI, root) ──writes──▶ /etc/quai/sources.d/<id>.toml
                                                    /etc/yum.repos.d/quai-<id>.repo
                                                               │ read by
- dnf5 · rpm-ostree · GNOME Software ──HTTP 127.0.0.1:741──▶ quaid ──API + Range──▶ forge
+ dnf5 · rpm-ostree · Software · Discover ──HTTP 127.0.0.1:741──▶ quaid ──API + Range──▶ forge
                          ▲                                     │
                          └──── 302 to the forge's CDN ◀────────┘  (SHA-256 verified by dnf)
 ```
@@ -37,17 +39,34 @@ $ sudo dnf upgrade                # …or GNOME Software, or dnf-automatic
 * **Packages are never stored.** dnf downloads them from the forge's CDN (quaid answers with a
   302) and checks the SHA-256 written in the signed metadata. GitHub publishes asset digests; for
   GitLab and Forgejo quaid downloads each version once to compute it.
-* The **CLI** is the only thing that writes system configuration. The GTK app runs it through
-  polkit and shows its JSON output.
+* The **CLI** is the only thing that writes system configuration. Both graphical frontends run it
+  through polkit and show its JSON output, so they share every rule and message.
+
+## One app, two native windows
+
+No toolkit is native on both GNOME and Plasma, so Quai has two thin frontends over the same CLI:
+`quai-gtk` (GTK 4 / libadwaita) and `quai-kde` (Kirigami, QML on Qt 6 through
+[cxx-qt](https://github.com/KDAB/cxx-qt)). The user still sees a single app:
+
+* **One launcher.** The `quai-gui` package owns the only `.desktop` file and AppStream component;
+  it runs `quai gui`, which opens `quai-kde` when `$XDG_CURRENT_DESKTOP` contains `KDE` and
+  `quai-gtk` otherwise, falling back to whichever is installed (`quai gui --frontend gtk|kde` or
+  `QUAI_GUI=` pins one). Both windows use the app id `io.github.quai.Quai`, so the panel shows
+  the same icon.
+* **The right one is installed.** `quai` recommends `quai-gui` on a desktop, and `quai-gui`
+  recommends `quai-kde` if `plasma-workspace` is installed, `quai-gtk` otherwise (both with two
+  desktops). [`tests/packaging/weak-deps.sh`](tests/packaging/weak-deps.sh) checks these cases
+  with dnf.
 
 ## Install
 
 Quai targets Fedora 41+ (dnf5) and Fedora Atomic desktops.
 
-From source (Rust ≥ 1.80, `gtk4-devel`, `libadwaita-devel`):
+From source (Rust ≥ 1.82, `gtk4-devel`, `libadwaita-devel`, `qt6-qtbase-devel`,
+`qt6-qtdeclarative-devel`, `gcc-c++`; `kf6-kirigami` and `kf6-qqc2-desktop-style` at run time):
 
 ```console
-$ make
+$ make                     # or: make FRONTENDS=gtk (no Qt), make FRONTENDS= (headless)
 $ sudo make install
 $ sudo systemd-sysusers && sudo systemctl daemon-reload
 $ sudo quai setup          # signing key, /etc/quai, enables quaid.socket
@@ -79,7 +98,7 @@ A `<spec>` is `owner/repo` (GitHub), a project URL, or `codeberg:owner/repo`,
 
 When a release ships several RPMs for the same package and architecture (an `el9` and an `fc43`
 build, say), `add` asks you to choose with `--asset-pattern`; `preview` prints a ready-made
-pattern for each file, and the GTK app offers them in a drop-down.
+pattern for each file, and both apps offer them in a drop-down.
 
 The graphical app (**Quai** in your app grid) does the same: add a project, see what it ships
 first, toggle channel and versions kept, update, remove.
@@ -120,13 +139,20 @@ Behind a corporate proxy, give quaid the variable with `sudo systemctl edit quai
 $ cargo test --workspace          # unit tests + RPM reader checked against rpm and createrepo_c
 $ make fixtures                   # rebuild tests/fixtures/rpms with rpmbuild
 $ sudo make e2e                   # mock forge → quaid → real dnf, in a throw-away installroot
+$ sudo QUAI_E2E_KDE=stub make e2e # …then drive the Kirigami window (stub, or `system` Kirigami)
+$ sudo tests/packaging/weak-deps.sh   # which frontend dnf installs on each desktop
 $ make lint                       # rustfmt + clippy -D warnings
 ```
 
 The end-to-end test builds RPMs, serves them from a GitHub look-alike
 ([`tests/e2e/mock_forge.py`](tests/e2e/mock_forge.py)) and drives the real CLI, daemon and dnf
 through add, install via redirect, new release, upgrade, downgrade, signature tampering, the
-allow-list and `Obsoletes` guards, disable/enable, export/import and doctor.
+allow-list and `Obsoletes` guards, disable/enable, export/import and doctor. With
+`QUAI_E2E_KDE`, it then runs the real `quai-kde` pages offscreen
+([`crates/quai-kde/tests/ui-test.qml`](crates/quai-kde/tests/ui-test.qml)): source list, detail
+page, preview with variant selection, preferences, diagnostics, about and refresh, failing on any
+QML error. `stub` uses a minimal Kirigami look-alike for machines without KDE Frameworks; CI uses
+the real one on Fedora.
 
 Environment variables for development and tests:
 
@@ -138,12 +164,14 @@ Environment variables for development and tests:
 | `QUAI_API_URL` | Point every forge at a test server |
 | `QUAI_SKIP_ROOT_CHECK` | Skip the root check when paths are writable |
 | `QUAID_FORCE_COOLDOWN_SECS` | Minimum delay between forced refreshes (default 30) |
-| `QUAI_BIN`, `QUAI_GTK_NO_PKEXEC` | Which `quai` the GTK app runs, and without pkexec |
+| `QUAI_BIN`, `QUAI_GUI_NO_PKEXEC` | Which `quai` the frontends run, and without pkexec |
+| `QUAI_GUI` | Frontend opened by `quai gui` (`gtk` or `kde`) |
+| `QUAI_KDE_MAIN` | QML file loaded by `quai-kde` instead of the built-in one (tests) |
 | `QUAI_LOG`, `QUAID_LOG` | Log filter (`debug`, `info`…) |
 
 Layout: `crates/quai-core` (engine: forges, RPM header reader, repodata, signing),
 `crates/quaid` (HTTP gateway), `crates/quai-cli` (`quai`), `crates/quai-gtk` (GNOME app),
-`crates/quai-types` (JSON contract between the CLI and the app), `data/` (systemd, polkit,
+`crates/quai-kde` (Plasma app), `crates/quai-types` (JSON contract between the CLI and the apps), `data/` (systemd, polkit,
 desktop, AppStream, icons), `packaging/` (RPM spec).
 
 ## Roadmap

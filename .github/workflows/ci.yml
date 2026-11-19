@@ -19,8 +19,9 @@ jobs:
     steps:
       - name: Install build dependencies
         run: |
-          dnf -y install cargo rust clippy rustfmt gcc git make \
-            gtk4-devel libadwaita-devel rpm-build createrepo_c python3 \
+          dnf -y install cargo rust clippy rustfmt gcc gcc-c++ git make \
+            gtk4-devel libadwaita-devel qt6-qtbase-devel qt6-qtdeclarative-devel \
+            kf6-kirigami kf6-qqc2-desktop-style rpm-build createrepo_c python3 \
             desktop-file-utils libappstream-glib
       - uses: actions/checkout@v4
       - name: Format
@@ -29,10 +30,12 @@ jobs:
         run: cargo clippy --workspace --all-targets -- -D warnings
       - name: Unit and integration tests
         run: cargo test --workspace
-      - name: End-to-end test with dnf5
+      - name: End-to-end test with dnf5, including the Kirigami frontend
         run: |
           cargo build --workspace
-          tests/e2e/run.sh target/debug
+          QUAI_E2E_KDE=system tests/e2e/run.sh target/debug
+      - name: Frontend chosen by the desktop at install time
+        run: tests/packaging/weak-deps.sh
       - name: Validate desktop integration files
         run: |
           desktop-file-validate data/desktop/io.github.quai.Quai.desktop

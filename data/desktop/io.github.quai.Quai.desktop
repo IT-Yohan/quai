@@ -2,10 +2,12 @@
 Name=Quai
 GenericName=RPM Release Tracker
 Comment=Keep RPM packages from GitHub, GitLab or Codeberg releases up to date with dnf
-Exec=quai-gtk
+# `quai gui` opens the Kirigami interface on KDE Plasma and the GTK/libadwaita
+# one elsewhere, so there is a single launcher whichever frontends are installed.
+Exec=quai gui
 Icon=io.github.quai.Quai
 Terminal=false
 Type=Application
-Categories=GTK;GNOME;System;PackageManager;
+Categories=System;PackageManager;
 Keywords=rpm;dnf;github;gitlab;codeberg;releases;updates;repository;
 StartupNotify=true

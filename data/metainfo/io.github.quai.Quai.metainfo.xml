@@ -13,13 +13,17 @@
     </p>
     <p>
       Quai turns each project into a small signed dnf repository served on your own
-      machine. dnf, GNOME Software and rpm-ostree then install, update and roll back
-      these packages like any other Fedora package.
+      machine. dnf, GNOME Software, Discover and rpm-ostree then install, update and
+      roll back these packages like any other Fedora package.
+    </p>
+    <p>
+      Its window is native on both main Fedora desktops: GTK and libadwaita on GNOME,
+      Kirigami on KDE Plasma.
     </p>
     <ul>
       <li>Add a project by typing owner/repo or pasting its URL</li>
       <li>See what it ships before adding it, with clear warnings</li>
-      <li>Updates arrive through dnf and GNOME Software</li>
+      <li>Updates arrive through dnf, GNOME Software and Discover</li>
       <li>Metadata signed with a key local to your machine</li>
       <li>Works on Fedora Workstation and Fedora Atomic desktops</li>
     </ul>
@@ -30,6 +34,9 @@
   <developer id="io.github.quai">
     <name>The quai contributors</name>
   </developer>
+  <provides>
+    <binary>quai</binary>
+  </provides>
   <content_rating type="oars-1.1"/>
   <requires>
     <display_length compare="ge">360</display_length>

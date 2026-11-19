@@ -209,5 +209,24 @@ sys.exit(1 if bad else 0)
 PY
 ok "doctor is green apart from the expected exclusion of app 1.2"
 
+if [[ -n "${QUAI_E2E_KDE:-}" ]]; then
+  echo "== KDE frontend (${QUAI_E2E_KDE} Kirigami)"
+  # Earlier steps republished the forge; bring back the two-variant projects.
+  python3 - "$root/releases.json" <<'PY'
+import json, sys
+d = json.load(open(sys.argv[1]))
+release = {"tag_name": "v2.0", "name": "2.0", "draft": False, "prerelease": False,
+           "published_at": "2026-11-10T10:00:00Z",
+           "assets": ["multi-2.0-1.el9.x86_64.rpm", "multi-2.0-1.fc43.x86_64.rpm"]}
+d["test/variants"] = d["test/newtool"] = [release]
+json.dump(d, open(sys.argv[1], "w"))
+PY
+  "$QUAI" add test/variants --api-url "$API" --asset-pattern 'fc43' --yes --json > "$root/kde-add.json" \
+    || die "cannot add variants: $(cat "$root/kde-add.json")"
+  QUAI_BIN="$QUAI" QUAI_API_URL="$API" KIRIGAMI="$QUAI_E2E_KDE" \
+    "$here/../../crates/quai-kde/tests/kde-ui-test.sh" "$bin/quai-kde" || die "KDE frontend test failed"
+  ok "the Kirigami frontend lists, opens, previews, configures and refreshes sources"
+fi
+
 echo
 echo "All $pass checks passed."

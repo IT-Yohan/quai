@@ -266,9 +266,110 @@ pub struct RefreshReply {
     pub errors: Vec<(String, String)>,
 }
 
+/// Helpers shared by the graphical frontends (GTK and KDE), which both drive
+/// `quai --json` as a subprocess. Standard library only.
+pub mod frontend {
+    use super::ErrorReport;
+
+    /// The `quai` binary: `$QUAI_BIN`, else the first one in `$PATH`, else `/usr/bin/quai`.
+    pub fn quai_binary() -> String {
+        if let Ok(p) = std::env::var("QUAI_BIN") {
+            return p;
+        }
+        let path = std::env::var_os("PATH").unwrap_or_else(|| "/usr/bin:/bin".into());
+        std::env::split_paths(&path)
+            .map(|d| d.join("quai"))
+            .find(|p| p.is_file())
+            .map(|p| p.to_string_lossy().into_owned())
+            .unwrap_or_else(|| "/usr/bin/quai".to_string())
+    }
+
+    /// Command line for `quai <args> --json`, wrapped in `pkexec` for privileged
+    /// commands (unless already root or `QUAI_GUI_NO_PKEXEC` is set).
+    /// Returns the argv and whether pkexec is used.
+    pub fn command_line(args: &[String], privileged: bool, is_root: bool) -> (Vec<String>, bool) {
+        let no_pkexec =
+            std::env::var_os("QUAI_GUI_NO_PKEXEC").is_some() || std::env::var_os("QUAI_GTK_NO_PKEXEC").is_some();
+        let use_pkexec = privileged && !is_root && !no_pkexec;
+        let mut argv = Vec::with_capacity(args.len() + 4);
+        if use_pkexec {
+            argv.push("pkexec".to_string());
+        }
+        argv.push(quai_binary());
+        argv.extend(args.iter().cloned());
+        argv.push("--json".to_string());
+        if privileged {
+            argv.push("--yes".to_string());
+        }
+        (argv, use_pkexec)
+    }
+
+    /// Turn the output of `quai --json` into the JSON document or an error message.
+    ///
+    /// Commands such as `doctor` exit non-zero while still printing their document,
+    /// so the document wins over the exit code unless it is an [`ErrorReport`].
+    pub fn interpret(stdout: &str, stderr: &str, exit_code: i32, used_pkexec: bool) -> Result<String, String> {
+        if used_pkexec && (exit_code == 126 || exit_code == 127) && stdout.trim().is_empty() {
+            return Err("Authentication was cancelled or refused.".to_string());
+        }
+        if let Ok(report) = serde_json::from_str::<ErrorReport>(stdout) {
+            return Err(report.error);
+        }
+        if serde_json::from_str::<serde_json::Value>(stdout).is_ok() {
+            return Ok(stdout.to_string());
+        }
+        let msg = stderr.trim();
+        Err(if msg.is_empty() { format!("quai failed (exit code {exit_code})") } else { msg.to_string() })
+    }
+
+    /// The graphical frontends, in the order `quai gui` tries them.
+    ///
+    /// `requested` (`gtk` or `kde`, from `--frontend` or `$QUAI_GUI`) pins one.
+    /// Otherwise the Kirigami frontend comes first on KDE Plasma and the
+    /// libadwaita one everywhere else; the other is the fallback when only one
+    /// is installed. `current_desktop` is `$XDG_CURRENT_DESKTOP`.
+    pub fn gui_candidates(current_desktop: &str, requested: Option<&str>) -> Result<Vec<&'static str>, String> {
+        match requested.map(str::trim).filter(|r| !r.is_empty()) {
+            Some("gtk") => return Ok(vec!["quai-gtk"]),
+            Some("kde") => return Ok(vec!["quai-kde"]),
+            Some(other) => return Err(format!("unknown frontend '{other}' (expected gtk or kde)")),
+            None => {}
+        }
+        let plasma = current_desktop.split(':').any(|d| d.eq_ignore_ascii_case("KDE"));
+        Ok(if plasma { vec!["quai-kde", "quai-gtk"] } else { vec!["quai-gtk", "quai-kde"] })
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn frontend_interpretation() {
+        use frontend::interpret;
+        assert_eq!(interpret("{\"a\":1}", "", 0, false), Ok("{\"a\":1}".into()));
+        assert_eq!(interpret("{\"ok\":false}", "", 1, false), Ok("{\"ok\":false}".into()));
+        assert_eq!(interpret("{\"error\":\"boom\",\"kind\":\"usage\"}", "", 2, false), Err("boom".into()));
+        assert!(interpret("", "", 126, true).unwrap_err().contains("cancelled"));
+        assert_eq!(interpret("", "oops\n", 1, false), Err("oops".into()));
+        let (argv, pk) = frontend::command_line(&["add".into()], true, false);
+        assert!(pk && argv[0] == "pkexec" && argv.ends_with(&["--json".to_string(), "--yes".to_string()]));
+        let (argv, pk) = frontend::command_line(&["status".into()], false, false);
+        assert!(!pk && argv.last().unwrap() == "--json");
+    }
+
+    #[test]
+    fn gui_follows_the_desktop() {
+        use frontend::gui_candidates;
+        assert_eq!(gui_candidates("KDE", None).unwrap(), ["quai-kde", "quai-gtk"]);
+        assert_eq!(gui_candidates("ubuntu:GNOME", None).unwrap(), ["quai-gtk", "quai-kde"]);
+        assert_eq!(gui_candidates("XFCE", None).unwrap(), ["quai-gtk", "quai-kde"]);
+        assert_eq!(gui_candidates("", None).unwrap(), ["quai-gtk", "quai-kde"]);
+        assert_eq!(gui_candidates("KDE", Some("gtk")).unwrap(), ["quai-gtk"]);
+        assert_eq!(gui_candidates("GNOME", Some(" kde ")).unwrap(), ["quai-kde"]);
+        assert_eq!(gui_candidates("GNOME", Some("")).unwrap(), ["quai-gtk", "quai-kde"]);
+        assert!(gui_candidates("GNOME", Some("qt")).is_err());
+    }
 
     #[test]
     fn enums_round_trip_as_lowercase() {
