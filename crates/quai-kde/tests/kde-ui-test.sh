@@ -29,7 +29,9 @@ case "${KIRIGAMI:-stub}" in
   *) echo "KIRIGAMI must be stub or system" >&2; exit 2 ;;
 esac
 
-# Fedora's Qt turns debug messages off (qtlogging.ini); console.log is one of them.
+# Fedora's Qt sends its messages to journald when stderr is not a terminal, and
+# turns debug messages off (qtlogging.ini); console.log is one of them.
+export QT_FORCE_STDERR_LOGGING=1 QT_LOGGING_TO_CONSOLE=1
 export QT_LOGGING_RULES="${QT_LOGGING_RULES:+$QT_LOGGING_RULES;}qml.debug=true;js.debug=true"
 status=0
 QT_QPA_PLATFORM=offscreen QUAI_KDE_MAIN="$here/ui-test.qml" timeout 120 "$bin" >"$log" 2>&1 || status=$?
