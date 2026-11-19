@@ -5,10 +5,12 @@
 //! * [`rpm`] reads RPM headers over HTTP range requests.
 //! * [`repodata`] writes `repomd.xml`, `primary`, `filelists` and `other`.
 //! * [`sign`] signs `repomd.xml` with the machine-local OpenPGP key.
+//! * [`dist`] picks the build made for this Fedora release.
 //! * [`engine`] ties it together and caches results on disk.
 //! * [`config`], [`repofile`] and [`paths`] manage the files under `/etc`.
 
 pub mod config;
+pub mod dist;
 pub mod engine;
 pub mod error;
 pub mod evr;

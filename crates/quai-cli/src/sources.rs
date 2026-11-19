@@ -459,7 +459,7 @@ pub async fn set(ctx: &Ctx, id: &str, key: &str, value: &str) -> Result<Output> 
         }
         "disallow-obsoletes" => src.allow_obsoletes.retain(|p| p != value),
         "package-gpgkey" => {
-            if !value.is_empty() && !(value.starts_with("https://") || value.starts_with("file:///")) {
+            if !value.is_empty() && !value.starts_with("https://") && !value.starts_with("file:///") {
                 return Err(usage(tr("package-gpgkey must be an https:// or file:/// URL")));
             }
             src.package_gpgkey = (!value.is_empty()).then(|| value.to_string());

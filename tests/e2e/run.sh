@@ -31,6 +31,8 @@ if [[ -f "$QUAI_LOCALEDIR/fr/LC_MESSAGES/quai.mo" ]] && locale -a 2>/dev/null | 
 fi
 export QUAI_CONFIG_DIR="$root/etc/quai" QUAI_REPOS_DIR="$root/repos.d" QUAI_CACHE_DIR="$root/cache"
 export QUAI_SYSTEMD_DIR="$root/systemd" QUAI_RPM_ROOT="$root/sysroot"
+# The release quai serves builds for, whatever the host runs (matches --releasever below).
+export QUAI_DIST=fc43
 if dnf --version 2>/dev/null | grep -qi dnf5; then
   # dnf5 reads config and repos from the installroot unless told otherwise.
   dnf_flavour="--use-host-config --no-plugins"
@@ -73,7 +75,12 @@ mkspec app 1.1 1 ""
 mkspec app-extras 1.1 1 ""
 mkspec app 1.2 1 "Obsoletes: bash"
 mkspec multi 2.0 1.el9 ""
+mkspec multi 2.0 1.fc42 ""
 mkspec multi 2.0 1.fc43 ""
+mkspec multi 2.0 1.fc44 ""
+# Two flavours that no dist tag tells apart: the user has to choose.
+mkspec multi 2.0 1.fedora ""
+mkspec multi 2.0 1.suse ""
 find "$root/rpmbuild/RPMS" -name '*.rpm' -exec cp {} "$root/assets/" \;
 ls "$root/assets" | sed 's/^/   /'
 
@@ -85,7 +92,14 @@ publish '{"test/app": [
    "assets": ["app-1.0-1.x86_64.rpm"]}],
  "test/variants": [
   {"tag_name": "v2.0", "name": "2.0", "draft": false, "prerelease": false, "published_at": "2026-11-01T10:00:00Z",
-   "assets": ["multi-2.0-1.el9.x86_64.rpm", "multi-2.0-1.fc43.x86_64.rpm"]}],
+   "assets": ["multi-2.0-1.el9.x86_64.rpm", "multi-2.0-1.fc42.x86_64.rpm", "multi-2.0-1.fc43.x86_64.rpm",
+              "multi-2.0-1.fc44.x86_64.rpm"]}],
+ "test/older": [
+  {"tag_name": "v2.0", "name": "2.0", "draft": false, "prerelease": false, "published_at": "2026-11-01T10:00:00Z",
+   "assets": ["multi-2.0-1.fc42.x86_64.rpm", "multi-2.0-1.fc44.x86_64.rpm"]}],
+ "test/flavours": [
+  {"tag_name": "v2.0", "name": "2.0", "draft": false, "prerelease": false, "published_at": "2026-11-01T10:00:00Z",
+   "assets": ["multi-2.0-1.fedora.x86_64.rpm", "multi-2.0-1.suse.x86_64.rpm"]}],
  "test/appimage-only": [
   {"tag_name": "v1", "draft": false, "prerelease": false, "published_at": "2026-11-01T10:00:00Z", "assets": []}]}'
 
@@ -116,10 +130,20 @@ echo "== preview"
 ok "preview finds app 1.0-1 with the forge's SHA-256"
 
 "$QUAI" preview test/variants --api-url "$API" --json > "$root/variants.json"
-[[ "$(jq_ "len(d['variants'][0]['assets'])" < "$root/variants.json")" == 2 ]] || die "variants not detected"
-ok "preview detects two variants of the same package"
+[[ "$(jq_ "(len(d['variants']), [p['evr'] for p in d['packages']])" < "$root/variants.json")" == "(0, ['2.0-1.fc43'])" ]] \
+  || die "the Fedora 43 build should be chosen: $(cat "$root/variants.json")"
+ok "a release with el9, fc42, fc43 and fc44 builds: preview serves the fc43 one, no question asked"
 
-if "$QUAI" add test/variants --api-url "$API" --yes --json > "$root/variants-add.json"; then die "add without a pattern should fail"; fi
+"$QUAI" preview test/older --api-url "$API" --json > "$root/older.json"
+[[ "$(jq_ "([p['evr'] for p in d['packages']], [w['code'] for w in d['warnings'] if w['code'].startswith('dist')])" < "$root/older.json")" \
+  == "(['2.0-1.fc42'], ['dist_older'])" ]] || die "the fc42 build should be the fallback: $(cat "$root/older.json")"
+ok "without an fc43 build, the fc42 one is served (not fc44), and the preview says so"
+
+"$QUAI" preview test/flavours --api-url "$API" --json > "$root/flavours.json"
+[[ "$(jq_ "len(d['variants'][0]['assets'])" < "$root/flavours.json")" == 2 ]] || die "variants not detected"
+ok "preview detects two flavours of the same package that no dist tag separates"
+
+if "$QUAI" add test/flavours --api-url "$API" --yes --json > "$root/variants-add.json"; then die "add without a pattern should fail"; fi
 grep -q "asset-pattern" "$root/variants-add.json" || die "no pattern suggestion"
 ok "add refuses ambiguous variants and suggests --asset-pattern"
 
@@ -238,13 +262,14 @@ if [[ -n "${QUAI_E2E_KDE:-}" ]]; then
   python3 - "$root/releases.json" <<'PY'
 import json, sys
 d = json.load(open(sys.argv[1]))
-release = {"tag_name": "v2.0", "name": "2.0", "draft": False, "prerelease": False,
-           "published_at": "2026-11-10T10:00:00Z",
-           "assets": ["multi-2.0-1.el9.x86_64.rpm", "multi-2.0-1.fc43.x86_64.rpm"]}
-d["test/variants"] = d["test/newtool"] = [release]
+def release(assets):
+    return [{"tag_name": "v2.0", "name": "2.0", "draft": False, "prerelease": False,
+             "published_at": "2026-11-10T10:00:00Z", "assets": assets}]
+d["test/variants"] = release(["multi-2.0-1.el9.x86_64.rpm", "multi-2.0-1.fc43.x86_64.rpm"])
+d["test/newtool"] = release(["multi-2.0-1.fedora.x86_64.rpm", "multi-2.0-1.suse.x86_64.rpm"])
 json.dump(d, open(sys.argv[1], "w"))
 PY
-  "$QUAI" add test/variants --api-url "$API" --asset-pattern 'fc43' --yes --json > "$root/kde-add.json" \
+  "$QUAI" add test/variants --api-url "$API" --yes --json > "$root/kde-add.json" \
     || die "cannot add variants: $(cat "$root/kde-add.json")"
   QUAI_BIN="$QUAI" QUAI_API_URL="$API" KIRIGAMI="$QUAI_E2E_KDE" \
     "$here/../../crates/quai-kde/tests/kde-ui-test.sh" "$bin/quai-kde" || die "KDE frontend test failed"

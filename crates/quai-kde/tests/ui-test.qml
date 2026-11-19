@@ -92,7 +92,7 @@ QtObject {
             const page = ps.layers.currentItem;
             expect(page.errorText === "", "preview succeeded");
             expect(page.preview !== null && page.preview.variants.length === 1, "variants detected");
-            expect(page.pattern.indexOf("fc43") >= 0, "Fedora variant preselected (" + page.pattern + ")");
+            expect(page.pattern.indexOf("fedora") >= 0, "Fedora flavour preselected (" + page.pattern + ")");
             expect(page.shownPackages.length === 1, "only the chosen variant is listed");
             ps.layers.pop();
             win.globalDrawer.actions[3].trigger();

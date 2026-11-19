@@ -882,6 +882,33 @@ msgstr "suppression de {path}"
 msgid "a source named '{id}' already exists"
 msgstr "une source nommée « {id} » existe déjà"
 
+#: crates/quai-core/src/dist.rs
+#, python-brace-format
+msgid "Fedora {version}"
+msgstr "Fedora {version}"
+
+#: crates/quai-core/src/dist.rs
+#, python-brace-format
+msgid "Enterprise Linux {version}"
+msgstr "Enterprise Linux {version}"
+
+#: crates/quai-core/src/engine.rs
+#, python-brace-format
+msgid ""
+"{package}: no build for {system} yet; quai serves the one for {built} until "
+"there is"
+msgstr ""
+"{package} : pas encore de build pour {system} ; quai sert celui pour {built} "
+"en attendant"
+
+#: crates/quai-core/src/engine.rs
+#, python-brace-format
+msgid ""
+"{package} is only built for {built} and later; it may not install on {system}"
+msgstr ""
+"{package} n’est construit que pour {built} et suivantes ; il risque de ne pas "
+"s’installer sur {system}"
+
 #: crates/quai-core/src/engine.rs
 #, python-brace-format
 msgid "reading the RPM header of {file}"

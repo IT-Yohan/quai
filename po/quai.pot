@@ -854,6 +854,29 @@ msgstr ""
 msgid "a source named '{id}' already exists"
 msgstr ""
 
+#: crates/quai-core/src/dist.rs
+#, python-brace-format
+msgid "Fedora {version}"
+msgstr ""
+
+#: crates/quai-core/src/dist.rs
+#, python-brace-format
+msgid "Enterprise Linux {version}"
+msgstr ""
+
+#: crates/quai-core/src/engine.rs
+#, python-brace-format
+msgid ""
+"{package}: no build for {system} yet; quai serves the one for {built} until "
+"there is"
+msgstr ""
+
+#: crates/quai-core/src/engine.rs
+#, python-brace-format
+msgid ""
+"{package} is only built for {built} and later; it may not install on {system}"
+msgstr ""
+
 #: crates/quai-core/src/engine.rs
 #, python-brace-format
 msgid "reading the RPM header of {file}"

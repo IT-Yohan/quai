@@ -8,6 +8,7 @@
 //! * `repos/<id>/state.json`: the [`Snapshot`] describing what is served.
 
 use crate::config::{GlobalConfig, SourceConfig, Tokens};
+use crate::dist::{self, Dist, Fit};
 use crate::error::{not_found, usage};
 use crate::forge::{self, is_binary_rpm, Asset, Fetch, ForgeRef, RateLimit, Release};
 use crate::fsutil::write_atomic;
@@ -144,10 +145,65 @@ pub struct Engine {
     http: reqwest::Client,
     /// quaid owns the cache; the CLI only reads it.
     cache_writable: bool,
+    /// The running distribution, to serve the build made for it.
+    system: Option<Dist>,
 }
 
 fn warn(code: &str, severity: Severity, message: impl Into<String>) -> Warning {
     Warning { code: code.to_string(), severity, message: message.into() }
+}
+
+/// Indices of `infos` to serve: per package name and architecture, the build
+/// made for `system` when the release ships one per distribution release (see
+/// [`dist::pick`]). Also returns how each package's build was chosen.
+fn fit_to_system(infos: &[&PackageInfo], system: Option<Dist>) -> (Vec<usize>, Vec<(String, Fit)>) {
+    let mut groups: BTreeMap<(&str, &str), Vec<usize>> = BTreeMap::new();
+    for (i, info) in infos.iter().enumerate() {
+        groups.entry((info.name.as_str(), info.arch.as_str())).or_default().push(i);
+    }
+    let mut keep = Vec::new();
+    let mut fits = Vec::new();
+    for ((name, _), members) in groups {
+        let dists: Vec<Option<Dist>> = members.iter().map(|&i| Dist::from_release(&infos[i].release)).collect();
+        let (chosen, fit) = dist::pick(&dists, system);
+        keep.extend(chosen.into_iter().map(|j| members[j]));
+        if let Some(fit) = fit {
+            if !fits.iter().any(|(n, f): &(String, Fit)| n == name && *f == fit) {
+                fits.push((name.to_string(), fit));
+            }
+        }
+    }
+    keep.sort_unstable();
+    (keep, fits)
+}
+
+/// What the user should know about a build chosen for another release.
+fn fit_warnings(fits: &[(String, Fit)], system: Option<Dist>) -> Vec<Warning> {
+    let Some(system) = system else { return Vec::new() };
+    let mut out: Vec<Warning> = Vec::new();
+    for (name, fit) in fits {
+        let w = match fit {
+            Fit::Exact | Fit::Untagged => continue,
+            Fit::Older(built) => warn(
+                "dist_older",
+                Severity::Info,
+                trf(
+                    "{package}: no build for {system} yet; quai serves the one for {built} until there is",
+                    &[("package", name), ("system", &system.display()), ("built", &built.display())],
+                ),
+            ),
+            Fit::Newer(built) => warn(
+                "dist_newer",
+                Severity::Warning,
+                trf(
+                    "{package} is only built for {built} and later; it may not install on {system}",
+                    &[("package", name), ("system", &system.display()), ("built", &built.display())],
+                ),
+            ),
+        };
+        out.push(w);
+    }
+    out
 }
 
 impl Engine {
@@ -158,7 +214,8 @@ impl Engine {
         signer: Option<Signer>,
         cache_writable: bool,
     ) -> Result<Engine> {
-        Ok(Engine { paths, global, tokens, signer, http: crate::http::client()?, cache_writable })
+        let system = dist::system_dist();
+        Ok(Engine { paths, global, tokens, signer, http: crate::http::client()?, cache_writable, system })
     }
 
     pub fn http(&self) -> &reqwest::Client {
@@ -303,6 +360,14 @@ impl Engine {
             )));
         }
 
+        // One build per Fedora release: keep the one for this system.
+        let infos: Vec<&PackageInfo> = packages.iter().map(|p| &p.info).collect();
+        let (keep, fits) = fit_to_system(&infos, self.system);
+        warnings.extend(fit_warnings(&fits, self.system));
+        let keep: HashSet<usize> = keep.into_iter().collect();
+        let packages: Vec<PreviewPackage> =
+            packages.into_iter().enumerate().filter(|(i, _)| keep.contains(i)).map(|(_, p)| p).collect();
+
         // Same package name and architecture from several files: the user must choose.
         let mut groups: BTreeMap<(String, String), Vec<(String, String)>> = BTreeMap::new();
         for p in &packages {
@@ -397,6 +462,8 @@ impl Engine {
             "project": src.project,
             "host": src.host,
             "sign": self.global.defaults.sign_metadata && self.signer.is_some(),
+            // A system upgrade switches to the builds for the new release.
+            "dist": self.system.map(|d| d.tag()),
         });
         hex::encode(&Sha256::digest(material.to_string().as_bytes())[..16])
     }
@@ -455,17 +522,20 @@ impl Engine {
         let mut errors = Vec::new();
 
         for cand in &cands {
+            let mut headers = Vec::new();
             for asset in &cand.assets {
-                let (info, mut meta) = match self.header(asset).await {
-                    Ok(v) => v,
-                    Err(e) => {
-                        errors.push(format!("{}: {e:#}", asset.name));
-                        continue;
-                    }
-                };
-                if info.is_source {
-                    continue;
+                match self.header(asset).await {
+                    Ok((info, _)) if info.is_source => {}
+                    Ok((info, meta)) => headers.push((*asset, info, meta)),
+                    Err(e) => errors.push(format!("{}: {e:#}", asset.name)),
                 }
+            }
+            let infos: Vec<&PackageInfo> = headers.iter().map(|(_, info, _)| info).collect();
+            let (keep, _) = fit_to_system(&infos, self.system);
+            let keep: HashSet<usize> = keep.into_iter().collect();
+            for (asset, info, mut meta) in
+                headers.into_iter().enumerate().filter(|(i, _)| keep.contains(i)).map(|(_, h)| h)
+            {
                 if !allowed.contains(info.name.as_str()) {
                     let cause = ExclusionCause::NotListed;
                     excluded.push(Excluded {
