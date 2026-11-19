@@ -3,6 +3,7 @@ import QtQuick
 import QtQuick.Controls as QQC2
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
+import io.github.quai.kde
 
 Kirigami.ScrollablePage {
     id: page
@@ -31,7 +32,7 @@ Kirigami.ScrollablePage {
         return preview.packages.filter(p => variant.assets.indexOf(p.asset_name) < 0 || p.asset_name === chosen);
     }
 
-    title: "Add a Source"
+    title: I18n.tr("Add a Source")
 
     function selectionArgs() {
         const args = [project.text.trim()];
@@ -96,7 +97,7 @@ Kirigami.ScrollablePage {
                 errorText = data.message;
                 return;
             }
-            app.showPassiveNotification(data.message + (data.reboot_required ? " — restart to finish installing" : ""));
+            app.showPassiveNotification(data.message + (data.reboot_required ? " — " + I18n.tr("restart to finish installing") : ""));
             app.reload();
             app.pageStack.layers.pop();
         });
@@ -105,7 +106,7 @@ Kirigami.ScrollablePage {
     footer: QQC2.ToolBar {
         contentItem: RowLayout {
             QQC2.Button {
-                text: "Back"
+                text: I18n.tr("Back")
                 icon.name: "go-previous"
                 visible: page.preview !== null
                 enabled: !page.working
@@ -124,7 +125,7 @@ Kirigami.ScrollablePage {
                 implicitWidth: implicitHeight
             }
             QQC2.Button {
-                text: page.preview === null ? "Analyze" : "Add"
+                text: page.preview === null ? I18n.tr("Analyze") : I18n.trc("button", "Add")
                 icon.name: page.preview === null ? "search" : "list-add"
                 enabled: !page.working && project.text.trim() !== ""
                 highlighted: true
@@ -151,15 +152,15 @@ Kirigami.ScrollablePage {
             QQC2.TextField {
                 id: project
                 objectName: "projectField"
-                Kirigami.FormData.label: "Project:"
-                placeholderText: "owner/repo or project URL"
+                Kirigami.FormData.label: I18n.tr("Project:")
+                placeholderText: I18n.tr("owner/repo or project URL")
                 focus: true
                 onAccepted: if (text.trim() !== "" && !page.working) page.analyze()
             }
 
             QQC2.Label {
                 Layout.maximumWidth: Kirigami.Units.gridUnit * 24
-                text: "A GitHub, GitLab or Codeberg project that attaches .rpm files to its releases, e.g. stablyai/orca."
+                text: I18n.tr("A GitHub, GitLab or Codeberg project that attaches .rpm files to its releases, e.g. stablyai/orca.")
                 wrapMode: Text.WordWrap
                 font: Kirigami.Theme.smallFont
                 opacity: 0.7
@@ -167,14 +168,14 @@ Kirigami.ScrollablePage {
 
             QQC2.ComboBox {
                 id: forgeBox
-                Kirigami.FormData.label: "Forge:"
-                model: ["Detect automatically", "GitHub", "GitLab", "Forgejo / Gitea"]
+                Kirigami.FormData.label: I18n.tr("Forge:")
+                model: [I18n.tr("Detect automatically"), "GitHub", "GitLab", "Forgejo / Gitea"]
             }
 
             QQC2.ComboBox {
                 id: channelBox
-                Kirigami.FormData.label: "Channel:"
-                model: ["Stable releases", "Pre-releases too"]
+                Kirigami.FormData.label: I18n.tr("Channel:")
+                model: [I18n.tr("Stable releases"), I18n.tr("Pre-releases too")]
             }
         }
 
@@ -185,11 +186,11 @@ Kirigami.ScrollablePage {
 
             Kirigami.Separator {
                 Kirigami.FormData.isSection: true
-                Kirigami.FormData.label: page.preview ? "Release " + page.preview.release.tag : ""
+                Kirigami.FormData.label: page.preview ? I18n.trf("Release {tag}", {"tag": page.preview.release.tag}) : ""
             }
 
             QQC2.Label {
-                Kirigami.FormData.label: "Project:"
+                Kirigami.FormData.label: I18n.tr("Project:")
                 text: page.preview ? page.preview.host + "/" + page.preview.project : ""
             }
 
@@ -207,7 +208,7 @@ Kirigami.ScrollablePage {
                             line += " · " + p.summary;
                         }
                         if (p.installed) {
-                            line += "\nInstalled " + p.installed + ", will be kept up to date";
+                            line += "\n" + I18n.trf("Installed {version}, will be kept up to date", {"version": p.installed});
                         }
                         return line;
                     }
@@ -216,7 +217,7 @@ Kirigami.ScrollablePage {
 
             QQC2.ComboBox {
                 id: variantBox
-                Kirigami.FormData.label: "Variant:"
+                Kirigami.FormData.label: I18n.tr("Variant:")
                 visible: page.variant !== null
                 model: page.variant ? page.variant.assets : []
                 currentIndex: page.variant ? Math.max(0, page.variant.patterns.indexOf(page.pattern)) : 0
@@ -229,29 +230,29 @@ Kirigami.ScrollablePage {
                 wrapMode: Text.WordWrap
                 font: Kirigami.Theme.smallFont
                 opacity: 0.7
-                text: page.variant ? "Several files provide " + page.variant.name + " for " + page.variant.arch
-                                     + ". quai follows the one you pick in every future release." : ""
+                text: page.variant ? I18n.trf("Several files provide {package} for {arch}. quai follows the one you pick in every future release.",
+                                              {"package": page.variant.name, "arch": page.variant.arch}) : ""
             }
 
             Kirigami.Separator {
                 Kirigami.FormData.isSection: true
-                Kirigami.FormData.label: "Options"
+                Kirigami.FormData.label: I18n.tr("Options")
             }
 
             QQC2.TextField {
                 id: nameField
-                Kirigami.FormData.label: "Display name:"
+                Kirigami.FormData.label: I18n.tr("Display name:")
             }
 
             QQC2.TextField {
                 id: idField
-                Kirigami.FormData.label: "Source id:"
+                Kirigami.FormData.label: I18n.tr("Source id:")
             }
 
             QQC2.CheckBox {
                 id: installBox
-                Kirigami.FormData.label: "Install:"
-                text: enabled ? "Install now" : "Already installed"
+                Kirigami.FormData.label: I18n.tr("Install:")
+                text: enabled ? I18n.tr("Install now") : I18n.tr("Already installed")
                 enabled: page.preview !== null
                          && !page.preview.packages.filter(p => p.arch === page.preview.host_arch || p.arch === "noarch").every(p => p.installed)
             }

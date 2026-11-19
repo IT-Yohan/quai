@@ -9,6 +9,7 @@ use pgp::composed::{
 };
 use pgp::crypto::hash::HashAlgorithm;
 use pgp::types::{KeyDetails, Password};
+use quai_i18n::{tr, trf};
 use std::path::Path;
 
 pub struct Signer {
@@ -26,21 +27,24 @@ impl Signer {
     pub fn generate(user_id: &str) -> Result<GeneratedKey> {
         let mut params = SecretKeyParamsBuilder::default();
         params.key_type(KeyType::Ed25519Legacy).can_certify(true).can_sign(true).primary_user_id(user_id.to_string());
-        let params = params.build().context("building key parameters")?;
-        let key = params.generate(rand::thread_rng()).context("generating signing key")?;
-        let secret_armored = key.to_armored_string(ArmorOptions::default()).context("armoring secret key")?;
+        let params = params.build().with_context(|| tr("building key parameters"))?;
+        let key = params.generate(rand::thread_rng()).with_context(|| tr("generating signing key"))?;
+        let secret_armored =
+            key.to_armored_string(ArmorOptions::default()).with_context(|| tr("armoring secret key"))?;
         let public = SignedPublicKey::from(key.clone());
-        let public_armored = public.to_armored_string(ArmorOptions::default()).context("armoring public key")?;
+        let public_armored =
+            public.to_armored_string(ArmorOptions::default()).with_context(|| tr("armoring public key"))?;
         Ok(GeneratedKey { signer: Signer { key }, secret_armored, public_armored })
     }
 
     pub fn from_armored(text: &str) -> Result<Signer> {
-        let (key, _) = SignedSecretKey::from_string(text).context("reading secret key")?;
+        let (key, _) = SignedSecretKey::from_string(text).with_context(|| tr("reading secret key"))?;
         Ok(Signer { key })
     }
 
     pub fn load(path: &Path) -> Result<Signer> {
-        let text = std::fs::read_to_string(path).with_context(|| format!("reading {}", path.display()))?;
+        let text =
+            std::fs::read_to_string(path).with_context(|| trf("reading {path}", &[("path", &path.display())]))?;
         Self::from_armored(&text)
     }
 
@@ -57,27 +61,27 @@ impl Signer {
             HashAlgorithm::Sha256,
             data,
         )
-        .context("signing repomd.xml")?;
-        sig.to_armored_string(ArmorOptions::default()).context("armoring signature")
+        .with_context(|| tr("signing repomd.xml"))?;
+        sig.to_armored_string(ArmorOptions::default()).with_context(|| tr("armoring signature"))
     }
 
     pub fn public_armored(&self) -> Result<String> {
         let public = SignedPublicKey::from(self.key.clone());
-        public.to_armored_string(ArmorOptions::default()).context("armoring public key")
+        public.to_armored_string(ArmorOptions::default()).with_context(|| tr("armoring public key"))
     }
 }
 
 /// Verify an armored detached signature with an armored public key.
 pub fn verify_detached(public_armored: &str, data: &[u8], signature_armored: &str) -> Result<()> {
-    let (public, _) = SignedPublicKey::from_string(public_armored).context("reading public key")?;
-    let (sig, _) = DetachedSignature::from_string(signature_armored).context("reading signature")?;
-    sig.verify(&public.primary_key, data).context("signature does not match")?;
+    let (public, _) = SignedPublicKey::from_string(public_armored).with_context(|| tr("reading public key"))?;
+    let (sig, _) = DetachedSignature::from_string(signature_armored).with_context(|| tr("reading signature"))?;
+    sig.verify(&public.primary_key, data).with_context(|| tr("signature does not match"))?;
     Ok(())
 }
 
 /// Fingerprint of an armored public key, for display.
 pub fn public_fingerprint(public_armored: &str) -> Result<String> {
-    let (public, _) = SignedPublicKey::from_string(public_armored).context("reading public key")?;
+    let (public, _) = SignedPublicKey::from_string(public_armored).with_context(|| tr("reading public key"))?;
     Ok(format!("{}", public.fingerprint()).to_ascii_uppercase())
 }
 

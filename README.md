@@ -63,17 +63,37 @@ No toolkit is native on both GNOME and Plasma, so Quai has two thin frontends ov
 Quai targets Fedora 41+ (dnf5) and Fedora Atomic desktops.
 
 From source (Rust ≥ 1.82, `gtk4-devel`, `libadwaita-devel`, `qt6-qtbase-devel`,
-`qt6-qtdeclarative-devel`, `gcc-c++`; `kf6-kirigami` and `kf6-qqc2-desktop-style` at run time):
+`qt6-qtdeclarative-devel`, `gcc-c++`, `gettext`, `appstream`; `kf6-kirigami` and
+`kf6-qqc2-desktop-style` at run time):
 
 ```console
 $ make                     # or: make FRONTENDS=gtk (no Qt), make FRONTENDS= (headless)
-$ sudo make install
+$ sudo make install        # programs, translations, man pages, bash/zsh/fish completions
 $ sudo systemd-sysusers && sudo systemctl daemon-reload
 $ sudo quai setup          # signing key, /etc/quai, enables quaid.socket
 ```
 
 As an RPM: `make dist` produces the source and vendored-crates tarballs for
-[`packaging/quai.spec`](packaging/quai.spec), ready for COPR.
+[`packaging/quai.spec`](packaging/quai.spec), ready for COPR. Each binary subpackage's
+`License:` covers the crates linked into it;
+[`packaging/licenses.py`](packaging/licenses.py) recomputes them after a dependency change.
+
+## Languages
+
+Quai speaks the user's language everywhere: `quai` messages and `--help`, both windows, the
+menu entry, the AppStream page and the password prompt. English and French ship today.
+
+Everything goes through one gettext catalogue, `po/quai.pot`, so a new language is one file
+and no code: copy `po/quai.pot` to `po/<lang>.po` (or let Weblate create it), translate, add
+`<lang>` to `po/LINGUAS`. Plural forms, right-to-left layout (Qt and GTK take it from the
+language) and reordered placeholders are handled; `make check-po` rejects a translation that
+drops a `{placeholder}`.
+
+For developers: wrap user-facing text in the functions of
+[`quai-i18n`](crates/quai-i18n/src/lib.rs) (`tr`, `trf`, `trn`, `trc`; the same names from QML
+through the `I18n` singleton), then `make update-po`. CI fails when `po/quai.pot` is stale.
+Messages quaid records while checking (a source's last error) follow the system language
+(`/etc/locale.conf`); everything else follows the user's.
 
 ## Use it
 
@@ -142,16 +162,18 @@ $ sudo make e2e                   # mock forge → quaid → real dnf, in a thro
 $ sudo QUAI_E2E_KDE=stub make e2e # …then drive the Kirigami window (stub, or `system` Kirigami)
 $ sudo tests/packaging/weak-deps.sh   # which frontend dnf installs on each desktop
 $ make lint                       # rustfmt + clippy -D warnings
+$ make check-po                   # translation template up to date, catalogues valid
 ```
 
 The end-to-end test builds RPMs, serves them from a GitHub look-alike
 ([`tests/e2e/mock_forge.py`](tests/e2e/mock_forge.py)) and drives the real CLI, daemon and dnf
 through add, install via redirect, new release, upgrade, downgrade, signature tampering, the
-allow-list and `Obsoletes` guards, disable/enable, export/import and doctor. With
+allow-list and `Obsoletes` guards, disable/enable, export/import and doctor, then checks that
+the CLI answers in French when a French locale is installed. With
 `QUAI_E2E_KDE`, it then runs the real `quai-kde` pages offscreen
 ([`crates/quai-kde/tests/ui-test.qml`](crates/quai-kde/tests/ui-test.qml)): source list, detail
 page, preview with variant selection, preferences, diagnostics, about and refresh, failing on any
-QML error. `stub` uses a minimal Kirigami look-alike for machines without KDE Frameworks; CI uses
+QML error, in English and again in French. `stub` uses a minimal Kirigami look-alike for machines without KDE Frameworks; CI uses
 the real one on Fedora.
 
 Environment variables for development and tests:
@@ -167,17 +189,20 @@ Environment variables for development and tests:
 | `QUAI_BIN`, `QUAI_GUI_NO_PKEXEC` | Which `quai` the frontends run, and without pkexec |
 | `QUAI_GUI` | Frontend opened by `quai gui` (`gtk` or `kde`) |
 | `QUAI_KDE_MAIN` | QML file loaded by `quai-kde` instead of the built-in one (tests) |
+| `QUAI_LOCALEDIR` | Where the compiled catalogues are (default `/usr/share/locale`; `make` puts them in `target/generated/locale`) |
 | `QUAI_LOG`, `QUAID_LOG` | Log filter (`debug`, `info`…) |
 
 Layout: `crates/quai-core` (engine: forges, RPM header reader, repodata, signing),
 `crates/quaid` (HTTP gateway), `crates/quai-cli` (`quai`), `crates/quai-gtk` (GNOME app),
-`crates/quai-kde` (Plasma app), `crates/quai-types` (JSON contract between the CLI and the apps), `data/` (systemd, polkit,
-desktop, AppStream, icons), `packaging/` (RPM spec).
+`crates/quai-kde` (Plasma app), `crates/quai-types` (JSON contract between the CLI and the apps),
+`crates/quai-i18n` (translations), `po/` (catalogues), `data/` (systemd, polkit, desktop,
+AppStream, icons; `.in` files are translated at build time), `packaging/` (RPM spec).
 
 ## Roadmap
 
 * AppStream metadata generated from the package's `.desktop` file, for a real app page in GNOME
-  Software; translations (gettext).
+  Software.
+* Translated man pages (they are generated in English today).
 * Private repositories (quaid relays the download with the token); verification of GitHub
   artifact attestations when upstream publishes them.
 * A public COPR.

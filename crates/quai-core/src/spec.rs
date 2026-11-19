@@ -4,6 +4,7 @@
 use crate::error::usage;
 use crate::forge::ForgeRef;
 use anyhow::Result;
+use quai_i18n::{tr, trf};
 use quai_types::ForgeKind;
 
 /// Hosts whose forge type is known without asking.
@@ -28,7 +29,7 @@ pub fn default_host(forge: ForgeKind) -> &'static str {
 pub fn parse(input: &str, forge_override: Option<ForgeKind>) -> Result<ForgeRef> {
     let s = input.trim();
     if s.is_empty() {
-        return Err(usage("empty source; expected owner/repo or a URL"));
+        return Err(usage(tr("empty source; expected owner/repo or a URL")));
     }
 
     // URL form.
@@ -38,7 +39,12 @@ pub fn parse(input: &str, forge_override: Option<ForgeKind>) -> Result<ForgeRef>
         let host = host.strip_prefix("www.").unwrap_or(&host).to_string();
         let forge = match forge_override.or_else(|| known_forge(&host)) {
             Some(f) => f,
-            None => return Err(usage(format!("unknown forge at {host}: pass --forge github, gitlab or forgejo"))),
+            None => {
+                return Err(usage(trf(
+                    "unknown forge at {host}: pass --forge github, gitlab or forgejo",
+                    &[("host", &host)],
+                )))
+            }
         };
         let project = project_from_path(forge, path)?;
         return Ok(ForgeRef { forge, host, project, api_url: None });
@@ -52,7 +58,12 @@ pub fn parse(input: &str, forge_override: Option<ForgeKind>) -> Result<ForgeRef>
             "gitlab" | "gl" => (ForgeKind::Gitlab, "gitlab.com"),
             "codeberg" | "cb" => (ForgeKind::Forgejo, "codeberg.org"),
             "forgejo" | "gitea" => (ForgeKind::Forgejo, ""),
-            _ => return Err(usage(format!("unknown prefix '{prefix}:' in '{s}'"))),
+            _ => {
+                return Err(usage(trf(
+                    "unknown prefix '{prefix}:' in '{input}'",
+                    &[("prefix", &prefix), ("input", &s)],
+                )))
+            }
         };
         let rest = rest.trim_matches('/');
         // An explicit host is recognised by a dot in the first segment.
@@ -61,7 +72,10 @@ pub fn parse(input: &str, forge_override: Option<ForgeKind>) -> Result<ForgeRef>
             _ => (default.to_string(), rest.to_string()),
         };
         if host.is_empty() {
-            return Err(usage(format!("{prefix}: needs a host, e.g. {prefix}:git.example.org/owner/repo")));
+            return Err(usage(trf(
+                "{prefix}: needs a host, e.g. {prefix}:git.example.org/owner/repo",
+                &[("prefix", &prefix)],
+            )));
         }
         let project = project_from_path(forge, &path)?;
         return Ok(ForgeRef { forge, host, project, api_url: None });
@@ -101,7 +115,7 @@ fn project_from_path(forge: ForgeKind, path: &str) -> Result<String> {
             s.chars().all(|c| c.is_ascii_alphanumeric() || matches!(c, '-' | '_' | '.')) && *s != "." && *s != ".."
         });
     if !ok {
-        return Err(usage(format!("cannot read a project from '{path}': expected owner/repo")));
+        return Err(usage(trf("cannot read a project from '{path}': expected owner/repo", &[("path", &path)])));
     }
     Ok(project_segments.join("/"))
 }

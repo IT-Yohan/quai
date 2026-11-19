@@ -3,6 +3,7 @@ import QtQuick
 import QtQuick.Controls as QQC2
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
+import io.github.quai.kde
 
 Kirigami.ScrollablePage {
     id: page
@@ -12,7 +13,7 @@ Kirigami.ScrollablePage {
     property var settings: null
     property string tokenHost: ""
 
-    title: "Configure Quai"
+    title: I18n.tr("Configure Quai")
 
     function load() {
         app.call(["config"], false, "", (ok, data) => {
@@ -31,12 +32,12 @@ Kirigami.ScrollablePage {
 
         Kirigami.Separator {
             Kirigami.FormData.isSection: true
-            Kirigami.FormData.label: "Checking for releases"
+            Kirigami.FormData.label: I18n.tr("Checking for releases")
         }
 
         QQC2.SpinBox {
             id: interval
-            Kirigami.FormData.label: "Minimum interval (minutes):"
+            Kirigami.FormData.label: I18n.tr("Minimum interval (minutes):")
             from: 1
             to: 1440
             stepSize: 5
@@ -45,14 +46,14 @@ Kirigami.ScrollablePage {
 
         QQC2.SpinBox {
             id: keep
-            Kirigami.FormData.label: "Versions kept for new sources:"
+            Kirigami.FormData.label: I18n.tr("Versions kept for new sources:")
             from: 1
             to: 20
             value: page.settings ? page.settings.keep_versions : 3
         }
 
         QQC2.Button {
-            text: "Apply"
+            text: I18n.tr("Apply")
             icon.name: "dialog-ok-apply"
             enabled: page.settings !== null
                      && (interval.value !== page.settings.check_interval_mins || keep.value !== page.settings.keep_versions)
@@ -69,7 +70,7 @@ Kirigami.ScrollablePage {
 
         Kirigami.Separator {
             Kirigami.FormData.isSection: true
-            Kirigami.FormData.label: "Access tokens"
+            Kirigami.FormData.label: I18n.tr("Access tokens")
         }
 
         QQC2.Label {
@@ -77,7 +78,7 @@ Kirigami.ScrollablePage {
             wrapMode: Text.WordWrap
             font: Kirigami.Theme.smallFont
             opacity: 0.7
-            text: "Without a token GitHub allows 60 requests per hour; a token raises that to 5,000 and needs no permissions for public projects. Tokens are readable by root and quaid only."
+            text: I18n.tr("Without a token GitHub allows 60 requests per hour. A token raises that to 5,000; for public projects it needs no permissions. Tokens are readable by root and quaid only.")
         }
 
         Repeater {
@@ -87,11 +88,11 @@ Kirigami.ScrollablePage {
                 Kirigami.FormData.label: modelData.host + ":"
 
                 QQC2.Label {
-                    text: modelData.configured ? "Token set" : "Optional"
+                    text: modelData.configured ? I18n.tr("Token set") : I18n.tr("Optional")
                     opacity: 0.7
                 }
                 QQC2.Button {
-                    text: "Set…"
+                    text: I18n.tr("Set…")
                     onClicked: {
                         page.tokenHost = modelData.host;
                         tokenField.text = "";
@@ -101,7 +102,7 @@ Kirigami.ScrollablePage {
                 QQC2.Button {
                     icon.name: "edit-delete"
                     display: QQC2.AbstractButton.IconOnly
-                    text: "Remove token"
+                    text: I18n.tr("Remove Token")
                     QQC2.ToolTip.text: text
                     QQC2.ToolTip.visible: hovered
                     onClicked: page.app.act(["token", "clear", "--host", modelData.host])
@@ -111,24 +112,24 @@ Kirigami.ScrollablePage {
 
         Kirigami.Separator {
             Kirigami.FormData.isSection: true
-            Kirigami.FormData.label: "Service"
+            Kirigami.FormData.label: I18n.tr("Service")
         }
 
         QQC2.Label {
-            Kirigami.FormData.label: "quaid address:"
+            Kirigami.FormData.label: I18n.tr("quaid address:")
             text: page.settings ? page.settings.listen : ""
         }
 
         QQC2.Label {
-            Kirigami.FormData.label: "Signed metadata:"
-            text: page.settings && page.settings.sign_metadata ? "On: dnf verifies every repomd.xml" : "Off"
+            Kirigami.FormData.label: I18n.tr("Signed metadata:")
+            text: page.settings && page.settings.sign_metadata ? I18n.tr("On: dnf verifies every repomd.xml") : I18n.tr("Off")
         }
     }
 
     Kirigami.PromptDialog {
         id: tokenDialog
 
-        title: "Token for " + page.tokenHost
+        title: I18n.trf("Token for {host}", {"host": page.tokenHost})
         standardButtons: Kirigami.Dialog.Ok | Kirigami.Dialog.Cancel
 
         // A content item replaces PromptDialog's subtitle, so the explanation lives here.
@@ -138,13 +139,13 @@ Kirigami.ScrollablePage {
             QQC2.Label {
                 Layout.fillWidth: true
                 wrapMode: Text.WordWrap
-                text: "Paste a personal access token. It is stored in /etc/quai/private/tokens.toml."
+                text: I18n.tr("Paste a personal access token. It is stored in /etc/quai/private/tokens.toml.")
             }
             QQC2.TextField {
                 id: tokenField
                 Layout.fillWidth: true
                 echoMode: TextInput.Password
-                placeholderText: "Token"
+                placeholderText: I18n.tr("Token")
             }
         }
 

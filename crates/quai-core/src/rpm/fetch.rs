@@ -4,6 +4,7 @@ use super::header::{probe, Layout, Probe};
 use crate::error::network;
 use anyhow::{bail, Context, Result};
 use futures_util::StreamExt;
+use quai_i18n::trf;
 use reqwest::header::{CONTENT_LENGTH, CONTENT_RANGE, RANGE};
 use reqwest::StatusCode;
 use sha2::{Digest, Sha256};
@@ -27,7 +28,7 @@ async fn get_range(http: &reqwest::Client, url: &str, start: usize, end: usize) 
         .header(RANGE, format!("bytes={start}-{end}"))
         .send()
         .await
-        .with_context(|| format!("downloading header of {url}"))?;
+        .with_context(|| trf("downloading the header of {url}", &[("url", &url)]))?;
     let status = resp.status();
     let want = end - start + 1;
     match status {
@@ -68,7 +69,7 @@ async fn get_range(http: &reqwest::Client, url: &str, start: usize, end: usize) 
             Ok((out[start..stop].to_vec(), total))
         }
         StatusCode::RANGE_NOT_SATISFIABLE => Ok((Vec::new(), None)),
-        _ => Err(network(format!("HTTP {status} while reading {url}"))),
+        _ => Err(network(trf("HTTP {status} while reading {url}", &[("status", &status), ("url", &url)]))),
     }
 }
 
@@ -107,9 +108,12 @@ pub async fn sha256_of_url(http: &reqwest::Client, url: &str) -> Result<(String,
         .timeout(std::time::Duration::from_secs(3600))
         .send()
         .await
-        .with_context(|| format!("downloading {url}"))?;
+        .with_context(|| trf("downloading {url}", &[("url", &url)]))?;
     if !resp.status().is_success() {
-        return Err(network(format!("HTTP {} while downloading {url}", resp.status())));
+        return Err(network(trf(
+            "HTTP {status} while downloading {url}",
+            &[("status", &resp.status()), ("url", &url)],
+        )));
     }
     let mut hasher = Sha256::new();
     let mut size = 0u64;

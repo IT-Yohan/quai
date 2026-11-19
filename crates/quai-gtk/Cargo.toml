@@ -8,6 +8,7 @@ rust-version.workspace = true
 
 [dependencies]
 quai-types = { path = "../quai-types" }
+quai-i18n = { path = "../quai-i18n" }
 adw = { package = "libadwaita", version = "0.9", features = ["v1_5"] }
 gtk = { package = "gtk4", version = "0.11", features = ["v4_14"] }
 libc = "0.2"

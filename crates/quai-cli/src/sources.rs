@@ -9,6 +9,7 @@ use quai_core::config::{self, ExportFile, SourceConfig};
 use quai_core::error::{conflict, not_found, usage};
 use quai_core::forge::ForgeRef;
 use quai_core::{repofile, spec, system};
+use quai_i18n::{tr, trf, trn, trnf};
 use quai_types::{ActionResult, Channel, ForgeKind, Preview, PreviewPackage, ReleaseInfo, Severity, Warning};
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
@@ -25,13 +26,13 @@ fn title_case(s: &str) -> String {
 fn parse_channel(ctx: &Ctx, s: Option<&str>) -> Result<Channel> {
     match s {
         None => Ok(ctx.global.defaults.channel),
-        Some(v) => Channel::parse(v).ok_or_else(|| usage(format!("unknown channel '{v}'"))),
+        Some(v) => Channel::parse(v).ok_or_else(|| usage(trf("unknown channel '{channel}'", &[("channel", &v)]))),
     }
 }
 
 fn forge_ref(sel: &Selection) -> Result<ForgeRef> {
     let forge = match &sel.forge {
-        Some(f) => Some(ForgeKind::parse(f).ok_or_else(|| usage(format!("unknown forge '{f}'")))?),
+        Some(f) => Some(ForgeKind::parse(f).ok_or_else(|| usage(trf("unknown forge '{forge}'", &[("forge", &f)])))?),
         None => None,
     };
     let mut fref = spec::parse(&sel.spec, forge)?;
@@ -56,15 +57,16 @@ pub async fn compute_preview(ctx: &Ctx, sel: &Selection) -> Result<(Preview, For
     let mut warnings = core.warnings.clone();
     for v in &core.variants {
         let options: Vec<String> = v.patterns.iter().map(|p| format!("'{p}'")).collect();
+        // Translators: joins the alternatives of a list, as in "'a' or 'b'".
+        let or = format!(" {} ", tr("or"));
         warnings.push(Warning {
             code: "multiple_variants".into(),
             severity: Severity::Warning,
-            message: format!(
-                "{} files provide {} for {}; pick one with --asset-pattern: {}",
-                v.assets.len(),
-                v.name,
-                v.arch,
-                options.join(" or ")
+            message: trnf(
+                "{n} file provides {package} for {arch}; pick one with --asset-pattern: {patterns}",
+                "{n} files provide {package} for {arch}; pick one with --asset-pattern: {patterns}",
+                v.assets.len() as u64,
+                &[("package", &v.name), ("arch", &v.arch), ("patterns", &options.join(&or))],
             ),
         });
     }
@@ -73,8 +75,9 @@ pub async fn compute_preview(ctx: &Ctx, sel: &Selection) -> Result<(Preview, For
             warnings.push(Warning {
                 code: "name_in_other_repo".into(),
                 severity: Severity::Warning,
-                message: format!(
-                    "repository '{r}' already ships a package named {name}; dnf will pick the newest version"
+                message: trf(
+                    "repository '{repo}' already ships a package named {package}; dnf will pick the newest version",
+                    &[("repo", &r), ("package", &name)],
                 ),
             });
         }
@@ -138,12 +141,15 @@ pub fn install_packages(ctx: &Ctx, names: &[String]) -> Result<(Vec<String>, boo
         let mut cmd = Command::new("rpm-ostree");
         cmd.arg("install").arg("--idempotent").args(&names);
         run(ctx, &mut cmd)?;
-        return Ok((vec![format!("rpm-ostree install {}: staged for the next boot", names.join(" "))], true));
+        return Ok((
+            vec![trf("rpm-ostree install {packages}: staged for the next boot", &[("packages", &names.join(" "))])],
+            true,
+        ));
     }
-    let mut cmd = system::dnf().ok_or_else(|| not_found("dnf is not installed"))?;
+    let mut cmd = system::dnf().ok_or_else(|| not_found(tr("dnf is not installed")))?;
     cmd.arg("-y").arg("install").args(&names);
     run(ctx, &mut cmd)?;
-    Ok((vec![format!("installed {}", names.join(", "))], false))
+    Ok((vec![trf("installed {packages}", &[("packages", &names.join(", "))])], false))
 }
 
 /// Run a system command: visible in a terminal, captured for --json.
@@ -167,7 +173,7 @@ pub fn dnf_makecache(ctx: &Ctx, ids: &[String], refresh: bool) -> Result<Option<
             cmd.arg("--force");
         }
         system::run_captured(&mut cmd)?;
-        return Ok(Some("rpm-ostree refreshed its metadata".into()));
+        return Ok(Some(tr("rpm-ostree refreshed its metadata")));
     }
     cmd.arg("-y").arg("makecache");
     if refresh {
@@ -180,9 +186,10 @@ pub fn dnf_makecache(ctx: &Ctx, ids: &[String], refresh: bool) -> Result<Option<
         // dnf; here we want its errors, signature failures included.
         cmd.arg(format!("--setopt={repo}.skip_if_unavailable=0"));
     }
-    system::run_captured(&mut cmd).with_context(|| "dnf could not load the quai repository".to_string())?;
+    system::run_captured(&mut cmd).with_context(|| tr("dnf could not load the quai repository"))?;
     let _ = ctx;
-    Ok(Some(format!("dnf loaded {}", ids.iter().map(|i| repofile::repo_id(i)).collect::<Vec<_>>().join(", "))))
+    let repos = ids.iter().map(|i| repofile::repo_id(i)).collect::<Vec<_>>().join(", ");
+    Ok(Some(trf("dnf loaded {repos}", &[("repos", &repos)])))
 }
 
 /// Two sources serving the same package name would race each other in dnf.
@@ -190,10 +197,9 @@ fn check_package_overlap(ctx: &Ctx, id: &str, names: &[String]) -> Result<()> {
     let (sources, _) = config::load_sources(&ctx.paths);
     for other in sources.iter().filter(|s| s.id != id) {
         if let Some(n) = names.iter().find(|n| other.packages.contains(n)) {
-            return Err(conflict(format!(
-                "package {n} already comes from source '{}' ({}); remove that source first",
-                other.id,
-                other.forge_ref().display()
+            return Err(conflict(trf(
+                "package {package} already comes from source '{id}' ({project}); remove that source first",
+                &[("package", n), ("id", &other.id), ("project", &other.forge_ref().display())],
             )));
         }
     }
@@ -219,18 +225,27 @@ pub async fn add(
     if !preview.variants.is_empty() && sel.asset_pattern.is_none() {
         let hints: Vec<String> =
             preview.warnings.iter().filter(|w| w.code == "multiple_variants").map(|w| w.message.clone()).collect();
-        return Err(usage(format!("this release ships several variants of the same package: {}", hints.join("; "))));
+        return Err(usage(trf(
+            "this release ships several variants of the same package: {details}",
+            &[("details", &hints.join("; "))],
+        )));
     }
     if let Some(existing) = config::find_by_project(&ctx.paths, fref.forge, &fref.host, &fref.project) {
-        return Err(conflict(format!("{} is already tracked as '{}'", fref.display(), existing.id)));
+        return Err(conflict(trf(
+            "{project} is already tracked as '{id}'",
+            &[("project", &fref.display()), ("id", &existing.id)],
+        )));
     }
     let host = system::host_arch();
     if !preview.packages.iter().any(|p| system::arch_compatible(&p.arch, &host)) {
         let arches: BTreeSet<&str> = preview.packages.iter().map(|p| p.arch.as_str()).collect();
-        return Err(not_found(format!(
-            "{} ships no package for {host} (found: {})",
-            fref.display(),
-            arches.into_iter().collect::<Vec<_>>().join(", ")
+        return Err(not_found(trf(
+            "{project} ships no package for {arch} (found: {found})",
+            &[
+                ("project", &fref.display()),
+                ("arch", &host),
+                ("found", &arches.into_iter().collect::<Vec<_>>().join(", ")),
+            ],
         )));
     }
 
@@ -261,30 +276,36 @@ pub async fn add(
         output::print_preview(&preview);
         eprintln!();
     }
-    ctx.confirm(&format!("Track {} as '{}' and let dnf update {}?", fref.display(), id, names.join(", ")))?;
+    ctx.confirm(&trf(
+        "Track {project} as '{id}' and let dnf update {packages}?",
+        &[("project", &fref.display()), ("id", &id), ("packages", &names.join(", "))],
+    ))?;
 
     let mut details = admin::ensure_setup(ctx, true)?;
     config::save_source(&ctx.paths, &src)?;
     repofile::write(&ctx.paths, &ctx.global, &src)?;
-    details.push(format!("wrote {} and {}", ctx.paths.source_file(&id).display(), ctx.paths.repo_file(&id).display()));
+    details.push(trf(
+        "wrote {source} and {repo}",
+        &[("source", &ctx.paths.source_file(&id).display()), ("repo", &ctx.paths.repo_file(&id).display())],
+    ));
 
     // Build the repository now so errors surface here, not at the next dnf run.
     match ctx.daemon_refresh(Some(&id)).await {
-        Ok(r) if r.errors.is_empty() => details.push("quaid built the repository".into()),
+        Ok(r) if r.errors.is_empty() => details.push(tr("quaid built the repository")),
         Ok(r) => {
             rollback(ctx, &id);
             let msg = r.errors.into_iter().map(|(_, e)| e).collect::<Vec<_>>().join("; ");
-            return Err(anyhow::anyhow!("quaid could not build the repository: {msg}"));
+            return Err(anyhow::anyhow!(trf("quaid could not build the repository: {error}", &[("error", &msg)])));
         }
         Err(e) if system::has_systemd() => {
             rollback(ctx, &id);
             return Err(e);
         }
-        Err(e) => details.push(format!("quaid not reachable yet: {e:#}")),
+        Err(e) => details.push(trf("quaid not reachable yet: {error}", &[("error", &format!("{e:#}"))])),
     }
     match dnf_makecache(ctx, std::slice::from_ref(&id), false) {
         Ok(Some(d)) => details.push(d),
-        Ok(None) => details.push("dnf not found: skipped the metadata check".into()),
+        Ok(None) => details.push(tr("dnf not found: skipped the metadata check")),
         Err(e) => {
             rollback(ctx, &id);
             return Err(e);
@@ -297,14 +318,14 @@ pub async fn add(
         details.extend(d);
         reboot = r;
     } else if preview.packages.iter().any(|p| p.installed.is_some()) {
-        details.push("already installed: future updates now come through dnf".into());
+        details.push(tr("already installed: future updates now come through dnf"));
     } else {
-        details.push(format!("install with: sudo dnf install {}", installable(&names).join(" ")));
+        details.push(trf("install with: sudo dnf install {packages}", &[("packages", &installable(&names).join(" "))]));
     }
 
     Ok(Output::Action(ActionResult {
         ok: true,
-        message: format!("Now tracking {} as '{id}'", fref.display()),
+        message: trf("Now tracking {project} as '{id}'", &[("project", &fref.display()), ("id", &id)]),
         source: Some(src.to_view()),
         details,
         reboot_required: reboot,
@@ -315,12 +336,12 @@ pub fn install(ctx: &Ctx, id: &str) -> Result<Output> {
     ctx.require_root("quai install")?;
     let src = config::load_source(&ctx.paths, id)?;
     if !src.enabled {
-        return Err(usage(format!("'{id}' is disabled: run `quai enable {id}` first")));
+        return Err(usage(trf("'{id}' is disabled: run `quai enable {id}` first", &[("id", &id)])));
     }
     let (details, reboot) = install_packages(ctx, &src.packages)?;
     Ok(Output::Action(ActionResult {
         ok: true,
-        message: format!("Installed the packages of '{id}'"),
+        message: trf("Installed the packages of '{id}'", &[("id", &id)]),
         source: Some(src.to_view()),
         details,
         reboot_required: reboot,
@@ -335,23 +356,28 @@ pub fn remove(ctx: &Ctx, id: &str, uninstall: bool) -> Result<Output> {
     if uninstall {
         let installed: Vec<String> = system::installed_versions(&src.packages).into_keys().collect();
         if !installed.is_empty() {
-            ctx.confirm(&format!("Uninstall {}?", installed.join(", ")))?;
+            ctx.confirm(&trf("Uninstall {packages}?", &[("packages", &installed.join(", "))]))?;
             if system::is_atomic() {
                 let mut cmd = Command::new("rpm-ostree");
                 cmd.arg("uninstall").args(&installed);
                 run(ctx, &mut cmd)?;
                 reboot = true;
             } else {
-                let mut cmd = system::dnf().ok_or_else(|| not_found("dnf is not installed"))?;
+                let mut cmd = system::dnf().ok_or_else(|| not_found(tr("dnf is not installed")))?;
                 cmd.arg("-y").arg("remove").args(&installed);
                 run(ctx, &mut cmd)?;
             }
-            details.push(format!("uninstalled {}", installed.join(", ")));
+            details.push(trf("uninstalled {packages}", &[("packages", &installed.join(", "))]));
         }
     } else {
         let installed: Vec<String> = system::installed_versions(&src.packages).into_keys().collect();
         if !installed.is_empty() {
-            details.push(format!("{} stays installed but will no longer be updated", installed.join(", ")));
+            details.push(trnf(
+                "{packages} stays installed but will no longer be updated",
+                "{packages} stay installed but will no longer be updated",
+                installed.len() as u64,
+                &[("packages", &installed.join(", "))],
+            ));
         }
     }
     config::remove_source(&ctx.paths, id)?;
@@ -360,7 +386,7 @@ pub fn remove(ctx: &Ctx, id: &str, uninstall: bool) -> Result<Output> {
     let _ = std::fs::remove_file(ctx.paths.forge_cache(id));
     Ok(Output::Action(ActionResult {
         ok: true,
-        message: format!("Stopped tracking '{id}'"),
+        message: trf("Stopped tracking '{id}'", &[("id", &id)]),
         source: Some(src.to_view()),
         details,
         reboot_required: reboot,
@@ -388,7 +414,8 @@ pub async fn set_enabled(ctx: &Ctx, id: &str, enabled: bool) -> Result<Output> {
     ctx.require_root(if enabled { "quai enable" } else { "quai disable" })?;
     let mut src = config::load_source(&ctx.paths, id)?;
     src.enabled = enabled;
-    save_and_refresh(ctx, &src, format!("'{id}' {}", if enabled { "enabled" } else { "disabled" })).await
+    let message = if enabled { trf("'{id}' enabled", &[("id", &id)]) } else { trf("'{id}' disabled", &[("id", &id)]) };
+    save_and_refresh(ctx, &src, message).await
 }
 
 pub async fn set(ctx: &Ctx, id: &str, key: &str, value: &str) -> Result<Output> {
@@ -398,16 +425,18 @@ pub async fn set(ctx: &Ctx, id: &str, key: &str, value: &str) -> Result<Output> 
     match key {
         "name" => {
             if value.is_empty() {
-                return Err(usage("name cannot be empty"));
+                return Err(usage(tr("name cannot be empty")));
             }
             src.name = value.to_string();
         }
-        "channel" => src.channel = Channel::parse(value).ok_or_else(|| usage("channel is stable or prerelease"))?,
+        "channel" => src.channel = Channel::parse(value).ok_or_else(|| usage(tr("channel is stable or prerelease")))?,
         "asset-pattern" => {
             config::compile_pattern(Some(value))?;
             src.asset_pattern = (!value.is_empty()).then(|| value.to_string());
         }
-        "keep-versions" => src.keep_versions = value.parse().map_err(|_| usage("keep-versions is a number"))?,
+        "keep-versions" => {
+            src.keep_versions = value.parse().map_err(|_| usage(tr("keep-versions must be a number")))?
+        }
         "allow-package" => {
             config::validate_package_name(value)?;
             check_package_overlap(ctx, id, &[value.to_string()])?;
@@ -419,7 +448,7 @@ pub async fn set(ctx: &Ctx, id: &str, key: &str, value: &str) -> Result<Output> 
         "disallow-package" => {
             src.packages.retain(|p| p != value);
             if src.packages.is_empty() {
-                return Err(usage("a source needs at least one package; use `quai remove` instead"));
+                return Err(usage(tr("a source needs at least one package; use `quai remove` instead")));
             }
         }
         "allow-obsoletes" => {
@@ -431,25 +460,26 @@ pub async fn set(ctx: &Ctx, id: &str, key: &str, value: &str) -> Result<Output> 
         "disallow-obsoletes" => src.allow_obsoletes.retain(|p| p != value),
         "package-gpgkey" => {
             if !value.is_empty() && !(value.starts_with("https://") || value.starts_with("file:///")) {
-                return Err(usage("package-gpgkey must be an https:// or file:/// URL"));
+                return Err(usage(tr("package-gpgkey must be an https:// or file:/// URL")));
             }
             src.package_gpgkey = (!value.is_empty()).then(|| value.to_string());
         }
         other => {
-            return Err(usage(format!(
-                "unknown key '{other}'; expected name, channel, asset-pattern, keep-versions, allow-package, \
-                 disallow-package, allow-obsoletes, disallow-obsoletes or package-gpgkey"
+            return Err(usage(trf(
+                "unknown key '{key}'; expected name, channel, asset-pattern, keep-versions, allow-package, \
+                 disallow-package, allow-obsoletes, disallow-obsoletes or package-gpgkey",
+                &[("key", &other)],
             )))
         }
     }
     src.validate()?;
-    save_and_refresh(ctx, &src, format!("'{id}': {key} updated")).await
+    save_and_refresh(ctx, &src, trf("'{id}': {key} updated", &[("id", &id), ("key", &key)])).await
 }
 
 pub fn export(ctx: &Ctx, output: Option<&Path>) -> Result<Output> {
     let (sources, bad) = config::load_sources(&ctx.paths);
     for (id, e) in &bad {
-        ctx.note(format!("skipping unreadable source '{id}': {e:#}"));
+        ctx.note(trf("skipping unreadable source '{id}': {error}", &[("id", &id), ("error", &format!("{e:#}"))]));
     }
     let file = ExportFile { sources };
     let text = format!(
@@ -459,10 +489,15 @@ pub fn export(ctx: &Ctx, output: Option<&Path>) -> Result<Output> {
     );
     match output {
         Some(path) => {
-            std::fs::write(path, &text).with_context(|| format!("writing {}", path.display()))?;
+            std::fs::write(path, &text).with_context(|| trf("writing {path}", &[("path", &path.display())]))?;
             Ok(Output::Action(ActionResult {
                 ok: true,
-                message: format!("Exported {} source(s) to {}", file.sources.len(), path.display()),
+                message: trnf(
+                    "Exported {n} source to {path}",
+                    "Exported {n} sources to {path}",
+                    file.sources.len() as u64,
+                    &[("path", &path.display())],
+                ),
                 source: None,
                 details: vec![],
                 reboot_required: false,
@@ -474,21 +509,22 @@ pub fn export(ctx: &Ctx, output: Option<&Path>) -> Result<Output> {
 
 pub async fn import(ctx: &Ctx, path: &Path, install: bool, replace: bool) -> Result<Output> {
     ctx.require_root("quai import")?;
-    let text = std::fs::read_to_string(path).with_context(|| format!("reading {}", path.display()))?;
-    let file: ExportFile = toml::from_str(&text).with_context(|| format!("parsing {}", path.display()))?;
+    let text = std::fs::read_to_string(path).with_context(|| trf("reading {path}", &[("path", &path.display())]))?;
+    let file: ExportFile =
+        toml::from_str(&text).with_context(|| trf("parsing {path}", &[("path", &path.display())]))?;
     if file.sources.is_empty() {
-        return Err(usage("the file lists no [[source]]"));
+        return Err(usage(tr("the file lists no [[source]]")));
     }
     let mut details = admin::ensure_setup(ctx, true)?;
     let mut imported = Vec::new();
     for src in &file.sources {
-        src.validate().with_context(|| format!("source '{}'", src.id))?;
+        src.validate().with_context(|| trf("source '{id}'", &[("id", &src.id)]))?;
         if ctx.paths.source_file(&src.id).exists() && !replace {
-            details.push(format!("'{}' already exists, skipped (use --replace)", src.id));
+            details.push(trf("'{id}' already exists, skipped (use --replace)", &[("id", &src.id)]));
             continue;
         }
         if let Err(e) = check_package_overlap(ctx, &src.id, &src.packages) {
-            details.push(format!("'{}' skipped: {e:#}", src.id));
+            details.push(trf("'{id}' skipped: {error}", &[("id", &src.id), ("error", &format!("{e:#}"))]));
             continue;
         }
         config::save_source(&ctx.paths, src)?;
@@ -519,7 +555,7 @@ pub async fn import(ctx: &Ctx, path: &Path, install: bool, replace: bool) -> Res
     }
     Ok(Output::Action(ActionResult {
         ok: true,
-        message: format!("Imported {} source(s)", imported.len()),
+        message: trn("Imported {n} source", "Imported {n} sources", imported.len() as u64),
         source: None,
         details,
         reboot_required: reboot,

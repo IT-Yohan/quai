@@ -12,6 +12,7 @@ path = "src/main.rs"
 
 [dependencies]
 quai-types = { path = "../quai-types" }
+quai-i18n = { path = "../quai-i18n" }
 cxx = "1"
 cxx-qt = "0.8"
 cxx-qt-lib = "0.8"

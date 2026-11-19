@@ -3,6 +3,7 @@ import QtQuick
 import QtQuick.Controls as QQC2
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
+import io.github.quai.kde
 
 Kirigami.ScrollablePage {
     id: page
@@ -26,24 +27,24 @@ Kirigami.ScrollablePage {
 
     actions: [
         Kirigami.Action {
-            text: "Update"
+            text: I18n.trc("verb", "Update")
             icon.name: "update-high"
             visible: page.updatable
             onTriggered: page.app.act(["upgrade", page.sourceId])
         },
         Kirigami.Action {
-            text: "Install"
+            text: I18n.tr("Install")
             icon.name: "download"
             visible: page.s !== null && !page.installed
             onTriggered: page.app.act(["install", page.sourceId])
         },
         Kirigami.Action {
-            text: "Check Now"
+            text: I18n.tr("Check Now")
             icon.name: "view-refresh"
             onTriggered: page.app.refresh(page.sourceId)
         },
         Kirigami.Action {
-            text: "Remove Source…"
+            text: I18n.tr("Remove Source…")
             icon.name: "edit-delete"
             displayHint: Kirigami.DisplayHint.AlwaysHide
             onTriggered: removeDialog.open()
@@ -57,7 +58,7 @@ Kirigami.ScrollablePage {
             Layout.fillWidth: true
             visible: page.s !== null && page.s.last_error !== null
             type: Kirigami.MessageType.Error
-            text: page.s && page.s.last_error ? "Last check failed: " + page.s.last_error : ""
+            text: page.s && page.s.last_error ? I18n.trf("Last check failed: {error}", {"error": page.s.last_error}) : ""
         }
 
         Repeater {
@@ -67,7 +68,8 @@ Kirigami.ScrollablePage {
                 Layout.fillWidth: true
                 visible: true
                 type: Kirigami.MessageType.Warning
-                text: modelData.name + " (" + modelData.file + ") is not served: " + modelData.reason
+                text: I18n.trf("{package} ({file}) is not served: {reason}",
+                               {"package": modelData.name, "file": modelData.file, "reason": modelData.reason})
             }
         }
 
@@ -75,21 +77,21 @@ Kirigami.ScrollablePage {
             Layout.fillWidth: true
 
             QQC2.Label {
-                Kirigami.FormData.label: "Project:"
+                Kirigami.FormData.label: I18n.tr("Project:")
                 text: page.s ? "<a href=\"" + page.s.source.web_url + "\">" + page.s.source.host + "/" + page.s.source.project + "</a>" : ""
                 textFormat: Text.StyledText
                 onLinkActivated: link => Qt.openUrlExternally(link)
             }
 
             QQC2.Label {
-                Kirigami.FormData.label: "State:"
+                Kirigami.FormData.label: I18n.tr("State:")
                 text: page.s ? page.app.stateLabel(page.s.state) : ""
                 color: page.s ? page.app.stateColor(page.s.state) : Kirigami.Theme.textColor
             }
 
             Kirigami.Separator {
                 Kirigami.FormData.isSection: true
-                Kirigami.FormData.label: "Packages"
+                Kirigami.FormData.label: I18n.tr("Packages")
             }
 
             Repeater {
@@ -100,37 +102,39 @@ Kirigami.ScrollablePage {
                     text: {
                         const p = modelData;
                         if (p.installed && p.update_available) {
-                            return "Installed " + p.installed + " · " + p.available + " available";
+                            return I18n.trf("Installed {installed} · {available} available",
+                                            {"installed": p.installed, "available": p.available});
                         }
                         if (p.installed) {
-                            return "Installed " + p.installed;
+                            return I18n.trf("Installed {version}", {"version": p.installed});
                         }
-                        return p.available ? "Not installed · " + p.available + " available" : "Not installed";
+                        return p.available ? I18n.trf("Not installed · {version} available", {"version": p.available})
+                                           : I18n.trc("package state", "Not installed");
                     }
                 }
             }
 
             Kirigami.Separator {
                 Kirigami.FormData.isSection: true
-                Kirigami.FormData.label: "Source"
+                Kirigami.FormData.label: I18n.tr("Source")
             }
 
             QQC2.Switch {
-                Kirigami.FormData.label: "Enabled:"
-                text: checked ? "dnf uses this source" : "dnf ignores this source"
+                Kirigami.FormData.label: I18n.tr("Enabled:")
+                text: checked ? I18n.tr("dnf uses this source") : I18n.tr("dnf ignores this source")
                 checked: page.s ? page.s.source.enabled : false
                 onToggled: page.app.act([checked ? "enable" : "disable", page.sourceId])
             }
 
             QQC2.ComboBox {
-                Kirigami.FormData.label: "Channel:"
-                model: ["Stable releases", "Pre-releases too"]
+                Kirigami.FormData.label: I18n.tr("Channel:")
+                model: [I18n.tr("Stable releases"), I18n.tr("Pre-releases too")]
                 currentIndex: page.s && page.s.source.channel === "prerelease" ? 1 : 0
                 onActivated: page.app.act(["set", page.sourceId, "channel", currentIndex === 1 ? "prerelease" : "stable"])
             }
 
             RowLayout {
-                Kirigami.FormData.label: "Versions kept:"
+                Kirigami.FormData.label: I18n.tr("Versions kept:")
 
                 QQC2.SpinBox {
                     id: keep
@@ -139,23 +143,23 @@ Kirigami.ScrollablePage {
                     value: page.s ? page.s.source.keep_versions : 3
                 }
                 QQC2.Button {
-                    text: "Apply"
+                    text: I18n.tr("Apply")
                     visible: page.s !== null && keep.value !== page.s.source.keep_versions
                     onClicked: page.app.act(["set", page.sourceId, "keep-versions", String(keep.value)])
                 }
             }
 
             RowLayout {
-                Kirigami.FormData.label: "Asset pattern:"
+                Kirigami.FormData.label: I18n.tr("Asset pattern:")
 
                 QQC2.TextField {
                     id: pattern
                     Layout.fillWidth: true
-                    placeholderText: "Regular expression, optional"
+                    placeholderText: I18n.tr("Regular expression, optional")
                     text: page.s && page.s.source.asset_pattern ? page.s.source.asset_pattern : ""
                 }
                 QQC2.Button {
-                    text: "Apply"
+                    text: I18n.tr("Apply")
                     visible: page.s !== null && pattern.text !== (page.s.source.asset_pattern || "")
                     onClicked: page.app.act(["set", page.sourceId, "asset-pattern", pattern.text])
                 }
@@ -163,34 +167,34 @@ Kirigami.ScrollablePage {
 
             Kirigami.Separator {
                 Kirigami.FormData.isSection: true
-                Kirigami.FormData.label: "Status"
+                Kirigami.FormData.label: I18n.tr("Status")
             }
 
             QQC2.Label {
-                Kirigami.FormData.label: "Latest release:"
+                Kirigami.FormData.label: I18n.tr("Latest release:")
                 text: page.s && page.s.latest_release ? page.s.latest_release : "—"
             }
 
             QQC2.Label {
-                Kirigami.FormData.label: "Last check:"
+                Kirigami.FormData.label: I18n.tr("Last check:")
                 text: page.s ? page.app.relativeTime(page.s.last_check) : ""
             }
 
             QQC2.Label {
-                Kirigami.FormData.label: "dnf repository:"
+                Kirigami.FormData.label: I18n.tr("dnf repository:")
                 text: "quai-" + page.sourceId
             }
 
             RowLayout {
-                Kirigami.FormData.label: "Repository file:"
+                Kirigami.FormData.label: I18n.tr("Repository file:")
                 visible: page.s !== null && !page.s.repo_file_in_sync
 
                 QQC2.Label {
-                    text: "out of date"
+                    text: I18n.tr("out of date")
                     color: Kirigami.Theme.negativeTextColor
                 }
                 QQC2.Button {
-                    text: "Regenerate"
+                    text: I18n.tr("Regenerate")
                     onClicked: page.app.act(["sync"])
                 }
             }
@@ -200,13 +204,13 @@ Kirigami.ScrollablePage {
     Kirigami.PromptDialog {
         id: removeDialog
 
-        title: page.s ? "Remove " + page.s.source.name + "?" : ""
-        subtitle: page.installed ? "Its packages stay installed but stop receiving updates, unless you uninstall them too."
-                                 : "dnf will stop seeing this source."
+        title: page.s ? I18n.trf("Remove {name}?", {"name": page.s.source.name}) : ""
+        subtitle: page.installed ? I18n.tr("Its packages stay installed but stop receiving updates, unless you uninstall them too.")
+                                 : I18n.tr("dnf will stop seeing this source.")
         standardButtons: Kirigami.Dialog.NoButton
         customFooterActions: [
             Kirigami.Action {
-                text: "Remove and Uninstall"
+                text: I18n.tr("Remove and Uninstall")
                 icon.name: "edit-delete"
                 visible: page.installed
                 onTriggered: {
@@ -215,7 +219,7 @@ Kirigami.ScrollablePage {
                 }
             },
             Kirigami.Action {
-                text: "Remove"
+                text: I18n.tr("Remove")
                 icon.name: "edit-delete-remove"
                 onTriggered: {
                     removeDialog.close();
@@ -223,7 +227,7 @@ Kirigami.ScrollablePage {
                 }
             },
             Kirigami.Action {
-                text: "Cancel"
+                text: I18n.tr("Cancel")
                 icon.name: "dialog-cancel"
                 onTriggered: removeDialog.close()
             }

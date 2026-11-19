@@ -17,7 +17,7 @@ deps() { # "main" or a section-header regex
     $0 ~ "^%package|^%description|^%prep" { on = ($0 ~ hdr) }
     on && /^(Requires|Recommends|Supplements):/ { print }
   ' "$spec" | sed -e 's/%{name}/quai/g' -e 's/%{?_isa}//g' -e 's/ = %{version}-%{release}//g' \
-    | grep -vE "^Requires: +(\(dnf5|systemd|polkit|kf6-)"
+    | grep -vE "^(Requires|Recommends): +(\(dnf5|systemd|polkit|kf6-|hicolor-icon-theme|qt6-)"
 }
 mk() { # name deps arch
   cat > "$root/rpmbuild/SPECS/$1.spec" <<SPEC

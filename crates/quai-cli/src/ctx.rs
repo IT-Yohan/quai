@@ -4,6 +4,7 @@ use quai_core::engine::Engine;
 use quai_core::error::{network, permission, usage};
 use quai_core::paths::Paths;
 use quai_core::system;
+use quai_i18n::{tr, trf};
 use quai_types::RefreshReply;
 use std::io::{BufRead, IsTerminal, Write};
 use std::time::Duration;
@@ -28,7 +29,7 @@ impl Ctx {
         if system::is_root() || std::env::var_os("QUAI_SKIP_ROOT_CHECK").is_some() {
             return Ok(());
         }
-        Err(permission(format!("{what} changes system configuration: run it with sudo")))
+        Err(permission(trf("{command} changes system configuration: run it with sudo", &[("command", &what)])))
     }
 
     /// Tokens from the protected file when readable, plus the usual environment variables.
@@ -77,15 +78,15 @@ impl Ctx {
             None => "/-/refresh".to_string(),
         };
         let resp = c.post(self.daemon_url(&path)).send().await.map_err(|e| {
-            network(format!(
-                "quaid is not reachable on {} ({e}); run `sudo quai setup` or `systemctl status quaid.socket`",
-                self.global.daemon.listen
+            network(trf(
+                "quaid is not reachable on {address} ({error}); run `sudo quai setup` or `systemctl status quaid.socket`",
+                &[("address", &self.global.daemon.listen), ("error", &e)],
             ))
         })?;
         if !resp.status().is_success() {
-            return Err(network(format!("quaid answered HTTP {}", resp.status())));
+            return Err(network(trf("quaid answered HTTP {status}", &[("status", &resp.status())])));
         }
-        resp.json().await.context("decoding quaid's answer")
+        resp.json().await.with_context(|| tr("decoding quaid's answer"))
     }
 
     pub fn interactive(&self) -> bool {
@@ -98,16 +99,17 @@ impl Ctx {
             return Ok(());
         }
         if !self.interactive() {
-            return Err(usage(format!("{question} Pass --yes to confirm non-interactively.")));
+            return Err(usage(trf("{question} Pass --yes to confirm non-interactively.", &[("question", &question)])));
         }
-        eprint!("{question} [y/N] ");
+        // Translators: the confirmation prompt; keep [y/N] in line with the answers below.
+        eprint!("{} ", trf("{question} [y/N]", &[("question", &question)]));
         std::io::stderr().flush().ok();
         let mut line = String::new();
         std::io::stdin().lock().read_line(&mut line)?;
-        if matches!(line.trim().to_ascii_lowercase().as_str(), "y" | "yes" | "o" | "oui") {
+        if is_yes(&line) {
             Ok(())
         } else {
-            Err(usage("cancelled"))
+            Err(usage(tr("cancelled")))
         }
     }
 
@@ -116,5 +118,23 @@ impl Ctx {
         if !self.json {
             eprintln!("{}", msg.as_ref());
         }
+    }
+}
+
+/// An answer that confirms: "y" and "yes" always, plus the translated short and
+/// long forms of the current language.
+fn is_yes(answer: &str) -> bool {
+    let answer = answer.trim().to_lowercase();
+    // Translators: the short and the long answer that confirm a [y/N] question,
+    // separated by "|". English ones are always accepted too.
+    let local = tr("y|yes");
+    !answer.is_empty() && ["y", "yes"].into_iter().chain(local.split('|')).any(|a| a.trim().to_lowercase() == answer)
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn english_answers_always_confirm() {
+        assert!(super::is_yes("y\n") && super::is_yes(" YES ") && !super::is_yes("") && !super::is_yes("no"));
     }
 }

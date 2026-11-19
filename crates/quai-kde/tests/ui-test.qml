@@ -1,6 +1,7 @@
 // Drives the real quai-kde pages against a running quai, with the Kirigami stub.
 // Run by tests/kde-ui-test.sh.
 import QtQuick
+import io.github.quai.kde
 
 QtObject {
     id: driver
@@ -45,6 +46,13 @@ QtObject {
         const ps = win ? win.pageStack : null;
         switch (step) {
         case 1: {
+            // In French, the interface must actually be translated (catalogue found,
+            // locale applied, plural forms and placeholders filled).
+            if (Qt.locale().name.startsWith("fr")) {
+                expect(I18n.tr("Add a Source") === "Ajouter une source", "French catalogue loaded");
+                expect(I18n.trn("{n} day ago", "{n} days ago", 3) === "il y a 3 jours", "French plural forms");
+                expect(I18n.trf("Remove {name}?", {"name": "Orca"}) === "Supprimer Orca\u202f?", "placeholders filled");
+            }
             const c = Qt.createComponent("qrc:/qt/qml/io/github/quai/kde/qml/Main.qml");
             if (c.status !== Component.Ready) {
                 console.log("UI TEST FAILED: " + c.errorString());
@@ -73,7 +81,7 @@ QtObject {
             break;
         case 5: {
             const page = ps.layers.currentItem;
-            expect(page !== null && page.title === "Add a Source", "add page opened as a layer");
+            expect(page !== null && page.title === I18n.tr("Add a Source"), "add page opened as a layer");
             const field = find(page, "projectField");
             expect(field !== null, "project field found");
             field.text = "test/newtool";
@@ -92,7 +100,7 @@ QtObject {
         }
         case 7: {
             const page = ps.layers.currentItem;
-            expect(page.title === "Configure Quai" && page.settings !== null, "preferences loaded");
+            expect(page.title === I18n.tr("Configure Quai") && page.settings !== null, "preferences loaded");
             expect(page.settings.tokens.length >= 3, "token hosts listed");
             ps.layers.pop();
             win.globalDrawer.actions[2].trigger();
@@ -100,7 +108,7 @@ QtObject {
         }
         case 8: {
             const page = ps.layers.currentItem;
-            expect(page.title === "Diagnostics" && page.report !== null && page.report.checks.length > 3, "diagnostics loaded");
+            expect(page.title === I18n.tr("Diagnostics") && page.report !== null && page.report.checks.length > 3, "diagnostics loaded");
             ps.layers.pop();
             win.globalDrawer.actions[4].trigger();
             break;

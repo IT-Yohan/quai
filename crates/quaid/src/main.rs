@@ -124,6 +124,8 @@ fn systemd_listener() -> Result<Option<std::net::TcpListener>> {
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    // Errors recorded for `quai status` follow the system language (locale.conf).
+    quai_i18n::init();
     let filter = tracing_subscriber::EnvFilter::try_from_env("QUAID_LOG")
         .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new("info"));
     let under_systemd = std::env::var_os("INVOCATION_ID").is_some();

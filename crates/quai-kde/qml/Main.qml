@@ -39,7 +39,7 @@ Kirigami.ApplicationWindow {
             try {
                 data = JSON.parse(payload);
             } catch (e) {
-                callback(false, "Unexpected answer from quai: " + e);
+                callback(false, I18n.trf("unexpected answer from quai: {error}", {"error": String(e)}));
                 return;
             }
             callback(true, data);
@@ -72,7 +72,7 @@ Kirigami.ApplicationWindow {
             if (!ok) {
                 showPassiveNotification(data, "long");
             } else if (data.ok) {
-                showPassiveNotification(data.message + (data.reboot_required ? " — restart to apply" : ""));
+                showPassiveNotification(data.message + (data.reboot_required ? " — " + I18n.tr("restart to apply") : ""));
             } else {
                 showPassiveNotification(data.message, "long");
             }
@@ -88,10 +88,11 @@ Kirigami.ApplicationWindow {
             } else if (data.errors.length > 0) {
                 showPassiveNotification(data.errors.map(e => e[0] + ": " + e[1]).join("\n"), "long");
             } else if (data.refreshed.length === 0) {
-                showPassiveNotification("Checked less than 30 seconds ago");
+                showPassiveNotification(I18n.tr("Checked less than 30 seconds ago"));
             } else {
-                showPassiveNotification(data.refreshed.length === 1 ? "Checked for new releases"
-                                                                    : "Checked " + data.refreshed.length + " sources");
+                showPassiveNotification(data.refreshed.length === 1
+                    ? I18n.tr("Checked for new releases")
+                    : I18n.trn("Checked {n} source", "Checked {n} sources", data.refreshed.length));
             }
             reload();
         });
@@ -111,12 +112,12 @@ Kirigami.ApplicationWindow {
 
     function stateLabel(state) {
         switch (state) {
-        case "up_to_date": return "Up to date";
-        case "update_available": return "Update available";
-        case "not_installed": return "Not installed";
-        case "never_checked": return "Not checked yet";
-        case "error": return "Error";
-        case "disabled": return "Disabled";
+        case "up_to_date": return I18n.trc("source state", "Up to date");
+        case "update_available": return I18n.trc("source state", "Update available");
+        case "not_installed": return I18n.trc("source state", "Not installed");
+        case "never_checked": return I18n.trc("source state", "Not checked yet");
+        case "error": return I18n.trc("source state", "Error");
+        case "disabled": return I18n.trc("source state", "Disabled");
         }
         return state;
     }
@@ -151,35 +152,34 @@ Kirigami.ApplicationWindow {
         } else if (p && p.installed) {
             parts.push(p.installed);
         } else if (p && p.available) {
-            parts.push(p.available + " available");
+            parts.push(I18n.trf("{version} available", {"version": p.available}));
         }
         return parts.join(" · ");
     }
 
     function relativeTime(iso) {
         if (!iso) {
-            return "never";
+            return I18n.tr("never");
         }
         const seconds = Math.max(0, (Date.now() - Date.parse(iso)) / 1000);
-        const plural = (n, unit) => n === 1 ? "1 " + unit + " ago" : n + " " + unit + "s ago";
         if (seconds < 60) {
-            return "just now";
+            return I18n.tr("just now");
         }
         if (seconds < 3600) {
-            return plural(Math.floor(seconds / 60), "minute");
+            return I18n.trn("{n} minute ago", "{n} minutes ago", Math.floor(seconds / 60));
         }
         if (seconds < 86400) {
-            return plural(Math.floor(seconds / 3600), "hour");
+            return I18n.trn("{n} hour ago", "{n} hours ago", Math.floor(seconds / 3600));
         }
-        return plural(Math.floor(seconds / 86400), "day");
+        return I18n.trn("{n} day ago", "{n} days ago", Math.floor(seconds / 86400));
     }
 
     function humanSize(bytes) {
         if (bytes === null || bytes === undefined) {
             return "";
         }
-        const mb = bytes / 1048576;
-        return mb >= 1 ? mb.toFixed(1) + " MB" : Math.round(bytes / 1024) + " kB";
+        // In the user's language and number format, like Dolphin.
+        return Qt.locale().formattedDataSize(bytes, 1);
     }
 
     function openSource(id) {
@@ -197,30 +197,30 @@ Kirigami.ApplicationWindow {
         isMenu: true
         actions: [
             Kirigami.Action {
-                text: "Add Source…"
+                text: I18n.tr("Add Source…")
                 icon.name: "list-add"
                 shortcut: StandardKey.New
                 onTriggered: root.openAdd()
             },
             Kirigami.Action {
-                text: "Check All Sources Now"
+                text: I18n.tr("Check All Sources Now")
                 icon.name: "view-refresh"
                 shortcut: StandardKey.Refresh
                 onTriggered: root.refresh("")
             },
             Kirigami.Action {
-                text: "Diagnostics"
+                text: I18n.tr("Diagnostics")
                 icon.name: "tools-report-bug"
                 onTriggered: root.pageStack.layers.push(diagnosticsPage)
             },
             Kirigami.Action {
-                text: "Configure Quai…"
+                text: I18n.tr("Configure Quai…")
                 icon.name: "configure"
                 shortcut: StandardKey.Preferences
                 onTriggered: root.pageStack.layers.push(preferencesPage)
             },
             Kirigami.Action {
-                text: "About Quai"
+                text: I18n.tr("About Quai")
                 icon.name: "help-about"
                 onTriggered: root.pageStack.layers.push(aboutPage)
             }
@@ -267,19 +267,32 @@ Kirigami.ApplicationWindow {
                 "displayName": "Quai",
                 "productName": "quai",
                 "componentName": "quai-kde",
-                "shortDescription": "Keeps RPM packages published as GitHub, GitLab or Forgejo releases up to date through dnf.",
+                "shortDescription": I18n.tr("Keeps RPM packages published as GitHub, GitLab or Forgejo releases up to date through dnf."),
                 "homepage": "https://github.com/quai-rpm/quai",
                 "bugAddress": "https://github.com/quai-rpm/quai/issues",
                 "version": Qt.application.version,
                 "otherText": "",
                 "authors": [{ "name": "The quai contributors", "task": "", "emailAddress": "", "webAddress": "https://github.com/quai-rpm/quai", "ocsUsername": "" }],
                 "credits": [],
-                "translators": [],
+                "translators": root.translators(),
                 "licenses": [{ "name": "Apache License 2.0", "text": "Licensed under the Apache License, Version 2.0.", "spdx": "Apache-2.0" }],
                 "copyrightStatement": "© The quai contributors",
                 "desktopFileName": "io.github.quai.Quai"
             }
         }
+    }
+
+    /** The translators of the current language, from the "translator-credits"
+        message: one "Name <email>" per line, as in GNOME applications. */
+    function translators() {
+        const credits = I18n.tr("translator-credits");
+        if (credits === "translator-credits") {
+            return [];
+        }
+        return credits.split("\n").filter(l => l.trim() !== "").map(line => {
+            const m = line.match(/^(.*?)\s*<([^>]*)>\s*$/);
+            return { "name": m ? m[1] : line.trim(), "task": "", "emailAddress": m ? m[2] : "", "webAddress": "", "ocsUsername": "" };
+        });
     }
 
     Component.onCompleted: reload()

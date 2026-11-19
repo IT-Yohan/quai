@@ -1,0 +1,10 @@
+[package]
+name = "quai-i18n"
+description = "Translations for every quai program, through the system's gettext"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+libc = "0.2"

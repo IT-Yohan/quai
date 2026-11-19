@@ -17,7 +17,8 @@ use crate::rpm::{self, Layout, PackageInfo};
 use crate::sign::Signer;
 use anyhow::{Context, Result};
 use chrono::{DateTime, Duration, Utc};
-use quai_types::{Channel, ChecksumSource, Excluded, Severity, VariantGroup, Warning};
+use quai_i18n::{tr, trf, trnf};
+use quai_types::{Channel, ChecksumSource, Excluded, ExclusionCause, Severity, VariantGroup, Warning};
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -237,9 +238,9 @@ impl Engine {
         }
         let fetched = rpm::fetch_header(&self.http, &asset.url)
             .await
-            .with_context(|| format!("reading the RPM header of {}", asset.name))?;
+            .with_context(|| trf("reading the RPM header of {file}", &[("file", &asset.name)]))?;
         let info = rpm::parse_package(&fetched.bytes, &fetched.layout)
-            .with_context(|| format!("parsing the RPM header of {}", asset.name))?;
+            .with_context(|| trf("parsing the RPM header of {file}", &[("file", &asset.name)]))?;
         let meta =
             HeaderMeta { url: asset.url.clone(), layout: fetched.layout, total_size: fetched.total_size, sha256: None };
         self.write_cache(&bin, &fetched.bytes);
@@ -296,10 +297,9 @@ impl Engine {
             packages.push(PreviewPackage { info, asset: (*asset).clone(), checksum, size });
         }
         if packages.is_empty() {
-            return Err(not_found(format!(
-                "no readable binary RPM in {} release {}",
-                fref.display(),
-                latest.release.tag
+            return Err(not_found(trf(
+                "no readable binary RPM in {project} release {tag}",
+                &[("project", &fref.display()), ("tag", &latest.release.tag)],
             )));
         }
 
@@ -329,9 +329,9 @@ impl Engine {
                     warnings.push(warn(
                         "obsoletes_foreign",
                         Severity::Danger,
-                        format!(
-                            "{} declares Obsoletes: {}; quai will not serve it unless you allow it explicitly",
-                            p.info.name, o.name
+                        trf(
+                            "{package} declares Obsoletes: {obsoleted}; quai will not serve it unless you allow it explicitly",
+                            &[("package", &p.info.name), ("obsoleted", &o.name)],
                         ),
                     ));
                 }
@@ -341,18 +341,25 @@ impl Engine {
             warnings.push(warn(
                 "unsigned_packages",
                 Severity::Info,
-                "upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's signed metadata",
+                tr("upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's signed metadata"),
             ));
         }
         if packages.iter().any(|p| p.checksum == ChecksumSource::Pending) {
             warnings.push(warn(
                 "no_forge_digest",
                 Severity::Info,
-                format!("{} publishes no checksum: quaid downloads each version once to compute it", fref.host),
+                trf(
+                    "{host} publishes no checksum: quaid downloads each version once to compute it",
+                    &[("host", &fref.host)],
+                ),
             ));
         }
         if latest.release.prerelease {
-            warnings.push(warn("prerelease", Severity::Info, format!("{} is a pre-release", latest.release.tag)));
+            warnings.push(warn(
+                "prerelease",
+                Severity::Info,
+                trf("{tag} is a pre-release", &[("tag", &latest.release.tag)]),
+            ));
         }
         Ok(PreviewCore { forge_ref: fref.clone(), release: latest.release.clone(), packages, variants, warnings })
     }
@@ -460,13 +467,12 @@ impl Engine {
                     continue;
                 }
                 if !allowed.contains(info.name.as_str()) {
+                    let cause = ExclusionCause::NotListed;
                     excluded.push(Excluded {
                         name: info.name.clone(),
                         file: asset.name.clone(),
-                        reason: format!(
-                            "not in this source's package list (allow it with `quai set {id} allow-package {}`)",
-                            info.name
-                        ),
+                        reason: exclusion_reason(&cause, id, &info.name),
+                        cause: Some(cause),
                     });
                     continue;
                 }
@@ -475,13 +481,12 @@ impl Engine {
                     .iter()
                     .find(|o| !allowed.contains(o.name.as_str()) && !allowed_obsoletes.contains(o.name.as_str()))
                 {
+                    let cause = ExclusionCause::Obsoletes { obsoleted: o.name.clone() };
                     excluded.push(Excluded {
                         name: info.name.clone(),
                         file: asset.name.clone(),
-                        reason: format!(
-                            "obsoletes '{}', which this source does not own (allow it with `quai set {id} allow-obsoletes {}`)",
-                            o.name, o.name
-                        ),
+                        reason: exclusion_reason(&cause, id, &info.name),
+                        cause: Some(cause),
                     });
                     continue;
                 }
@@ -491,7 +496,10 @@ impl Engine {
                 let (sha256, checksum, dl_size) = match self.checksum(asset, &mut meta).await {
                     Ok(v) => v,
                     Err(e) => {
-                        errors.push(format!("{}: checksum unavailable: {e:#}", asset.name));
+                        errors.push(trf(
+                            "{file}: checksum unavailable: {error}",
+                            &[("file", &asset.name), ("error", &format!("{e:#}"))],
+                        ));
                         continue;
                     }
                 };
@@ -554,7 +562,7 @@ impl Engine {
 
         let sign = self.global.defaults.sign_metadata;
         if sign && self.signer.is_none() {
-            snap.last_error = Some("signing key missing: run `quai setup`".to_string());
+            snap.last_error = Some(tr("signing key missing: run `quai setup`"));
         }
 
         if fingerprint != snap.fingerprint || !have_repodata {
@@ -580,7 +588,7 @@ impl Engine {
 
     fn write_repodata(&self, id: &str, pkgs: &[RepoPackage], revision: i64, snap: &mut Snapshot) -> Result<()> {
         let dir = self.paths.repodata_dir(id);
-        fs::create_dir_all(&dir).with_context(|| format!("creating {}", dir.display()))?;
+        fs::create_dir_all(&dir).with_context(|| trf("creating {path}", &[("path", &dir.display())]))?;
         let data = repodata::build(pkgs, revision);
         let mut names = Vec::new();
         for f in &data.files {
@@ -636,7 +644,7 @@ pub fn suggest_pattern(asset: &str, version: &str) -> String {
 /// Explain why no release qualified, in the user's terms.
 fn explain_no_rpm(fref: &ForgeRef, releases: &[Release], channel: Channel, has_pattern: bool) -> anyhow::Error {
     if releases.is_empty() {
-        return not_found(format!("{} has no releases", fref.display()));
+        return not_found(trf("{project} has no releases", &[("project", &fref.display())]));
     }
     let with_rpm: Vec<&Release> = releases.iter().filter(|r| r.assets.iter().any(|a| is_binary_rpm(&a.name))).collect();
     if with_rpm.is_empty() {
@@ -648,23 +656,54 @@ fn explain_no_rpm(fref: &ForgeRef, releases: &[Release], channel: Channel, has_p
             .collect();
         kinds.sort();
         kinds.dedup();
-        let found = if kinds.is_empty() { "no assets".to_string() } else { format!("only .{}", kinds.join(", .")) };
-        return not_found(format!(
-            "{} publishes no .rpm in its last {} releases ({found}); quai only manages RPM packages",
-            fref.display(),
-            releases.len()
+        let found = if kinds.is_empty() {
+            tr("no assets")
+        } else {
+            // Translators: {types} is a list of file extensions, such as ".AppImage, .deb".
+            trf("only {types}", &[("types", &format!(".{}", kinds.join(", .")))])
+        };
+        return not_found(trnf(
+            "{project} publishes no .rpm in its last release ({found}); quai only manages RPM packages",
+            "{project} publishes no .rpm in its last {n} releases ({found}); quai only manages RPM packages",
+            releases.len() as u64,
+            &[("project", &fref.display()), ("found", &found)],
         ));
     }
     if channel == Channel::Stable && with_rpm.iter().all(|r| r.prerelease) {
-        return not_found(format!(
-            "{} only ships RPMs in pre-releases; use the prerelease channel to follow them",
-            fref.display()
+        return not_found(trf(
+            "{project} only ships RPMs in pre-releases; use the prerelease channel to follow them",
+            &[("project", &fref.display())],
         ));
     }
     if has_pattern {
-        return not_found(format!("no RPM asset of {} matches the asset pattern", fref.display()));
+        return not_found(trf("no RPM asset of {project} matches the asset pattern", &[("project", &fref.display())]));
     }
-    not_found(format!("no usable RPM release found for {}", fref.display()))
+    not_found(trf("no usable RPM release found for {project}", &[("project", &fref.display())]))
+}
+
+/// Why a package of source `id` is not served, in the current language.
+pub fn exclusion_reason(cause: &ExclusionCause, id: &str, package: &str) -> String {
+    match cause {
+        ExclusionCause::NotListed => trf(
+            "not in this source's package list (allow it with `quai set {id} allow-package {package}`)",
+            &[("id", &id), ("package", &package)],
+        ),
+        ExclusionCause::Obsoletes { obsoleted } => trf(
+            "obsoletes '{obsoleted}', which this source does not own (allow it with `quai set {id} allow-obsoletes {obsoleted}`)",
+            &[("obsoleted", obsoleted), ("id", &id)],
+        ),
+    }
+}
+
+/// `excluded` with each reason written again in the current language.
+pub fn localize_exclusions(excluded: &[Excluded], id: &str) -> Vec<Excluded> {
+    excluded
+        .iter()
+        .map(|x| Excluded {
+            reason: x.cause.as_ref().map(|c| exclusion_reason(c, id, &x.name)).unwrap_or_else(|| x.reason.clone()),
+            ..x.clone()
+        })
+        .collect()
 }
 
 #[cfg(test)]

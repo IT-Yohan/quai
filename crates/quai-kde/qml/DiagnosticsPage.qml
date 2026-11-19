@@ -3,6 +3,7 @@ import QtQuick
 import QtQuick.Controls as QQC2
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
+import io.github.quai.kde
 
 Kirigami.ScrollablePage {
     id: page
@@ -12,7 +13,7 @@ Kirigami.ScrollablePage {
     property var report: null
     property string errorText: ""
 
-    title: "Diagnostics"
+    title: I18n.tr("Diagnostics")
 
     function load() {
         report = null;
@@ -34,7 +35,7 @@ Kirigami.ScrollablePage {
 
     actions: [
         Kirigami.Action {
-            text: "Run Setup"
+            text: I18n.tr("Run Setup")
             icon.name: "system-run"
             visible: page.failed(["config", "signing-key", "socket", "daemon"])
             onTriggered: {
@@ -43,7 +44,7 @@ Kirigami.ScrollablePage {
             }
         },
         Kirigami.Action {
-            text: "Regenerate Repository Files"
+            text: I18n.tr("Regenerate Repository Files")
             icon.name: "view-refresh"
             visible: page.failed(["repo-files"])
             onTriggered: {
@@ -52,7 +53,7 @@ Kirigami.ScrollablePage {
             }
         },
         Kirigami.Action {
-            text: "Run Again"
+            text: I18n.tr("Run Again")
             icon.name: "view-refresh"
             onTriggered: page.load()
         }
@@ -90,7 +91,8 @@ Kirigami.ScrollablePage {
                     }
                     QQC2.Label {
                         Layout.fillWidth: true
-                        text: modelData.detail + (!modelData.ok && modelData.fix ? "\nFix: " + modelData.fix : "")
+                        text: modelData.detail + (!modelData.ok && modelData.fix
+                            ? "\n" + I18n.trf("Fix: {command}", {"command": modelData.fix}) : "")
                         wrapMode: Text.WordWrap
                         font: Kirigami.Theme.smallFont
                         opacity: 0.7
@@ -110,7 +112,7 @@ Kirigami.ScrollablePage {
             width: parent.width - Kirigami.Units.gridUnit * 4
             visible: page.errorText !== ""
             icon.name: "dialog-error"
-            text: "Diagnostics Failed"
+            text: I18n.tr("Diagnostics Failed")
             explanation: page.errorText
         }
     }

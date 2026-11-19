@@ -4,6 +4,7 @@ use crate::config::{GlobalConfig, SourceConfig};
 use crate::fsutil::write_atomic;
 use crate::paths::Paths;
 use anyhow::{Context, Result};
+use quai_i18n::trf;
 use std::fs;
 
 /// First line of every file quai generates; files without it are never touched.
@@ -74,7 +75,7 @@ pub fn remove(paths: &Paths, id: &str) -> Result<bool> {
     let path = paths.repo_file(id);
     match fs::read_to_string(&path) {
         Ok(text) if text.starts_with(MARKER) => {
-            fs::remove_file(&path).with_context(|| format!("removing {}", path.display()))?;
+            fs::remove_file(&path).with_context(|| trf("removing {path}", &[("path", &path.display())]))?;
             Ok(true)
         }
         _ => Ok(false),

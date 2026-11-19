@@ -1,3 +1,4 @@
+use quai_i18n::{tr, trc, trf};
 use quai_types::*;
 
 pub enum Output {
@@ -69,39 +70,73 @@ fn mark(sev: Severity) -> &'static str {
     }
 }
 
+/// An RFC 3339 timestamp as local date and time, "2026-11-19 15:34".
+fn local_time(rfc3339: &str) -> String {
+    chrono::DateTime::parse_from_rfc3339(rfc3339)
+        .map(|t| t.with_timezone(&chrono::Local).format("%Y-%m-%d %H:%M").to_string())
+        .unwrap_or_else(|_| rfc3339.to_string())
+}
+
 fn human_size(bytes: u64) -> String {
     let mb = bytes as f64 / 1_048_576.0;
     if mb >= 1.0 {
-        format!("{mb:.1} MiB")
+        // Translators: a file size in mebibytes.
+        trf("{size} MiB", &[("size", &format!("{mb:.1}"))])
     } else {
-        format!("{:.0} KiB", bytes as f64 / 1024.0)
+        // Translators: a file size in kibibytes.
+        trf("{size} KiB", &[("size", &format!("{:.0}", bytes as f64 / 1024.0))])
+    }
+}
+
+/// Print `label  value` rows with the labels aligned, whatever their length
+/// in the current language.
+fn print_rows(indent: &str, rows: &[(String, String)]) {
+    let width = rows.iter().map(|(l, _)| l.chars().count()).max().unwrap_or(0);
+    for (label, value) in rows {
+        let pad = width - label.chars().count();
+        println!("{indent}{label}{}  {value}", " ".repeat(pad));
     }
 }
 
 pub fn print_preview(p: &Preview) {
     println!("{} ({})", p.suggested_name, p.web_url);
-    println!("  release   {}{}", p.release.tag, if p.release.prerelease { " (pre-release)" } else { "" });
-    println!("  source id {}", p.suggested_id);
+    let release = if p.release.prerelease {
+        trf("{tag} (pre-release)", &[("tag", &p.release.tag)])
+    } else {
+        p.release.tag.clone()
+    };
+    let mut rows = vec![(tr("release"), release), (tr("source id"), p.suggested_id.clone())];
     if let Some(pat) = &p.asset_pattern {
-        println!("  assets    matching /{pat}/");
+        rows.push((tr("assets"), trf("matching /{pattern}/", &[("pattern", pat)])));
     }
-    println!("  packages:");
+    print_rows("  ", &rows);
+    println!("  {}", tr("packages:"));
     for pkg in &p.packages {
-        let here = if quai_core::system::arch_compatible(&pkg.arch, &p.host_arch) { "" } else { "  (other arch)" };
+        let here = if quai_core::system::arch_compatible(&pkg.arch, &p.host_arch) {
+            String::new()
+        } else {
+            format!("  ({})", tr("other architecture"))
+        };
         let size = pkg.size.map(human_size).unwrap_or_default();
         println!("    {} {} {}  {}{}", pkg.name, pkg.evr, pkg.arch, size, here);
         if !pkg.summary.is_empty() {
             println!("      {}", pkg.summary);
         }
         if let Some(i) = &pkg.installed {
-            println!("      installed: {i} (quai will keep it updated)");
+            println!("      {}", trf("installed: {version} (quai will keep it updated)", &[("version", i)]));
         }
         if let Some(r) = &pkg.other_repo {
-            println!("      ⚠ also provided by repository '{r}'");
+            println!("      ⚠ {}", trf("also provided by repository '{repo}'", &[("repo", r)]));
         }
     }
     for v in &p.variants {
-        println!("  ⚠ several files provide {} for {}: {}", v.name, v.arch, v.assets.join(", "));
+        println!(
+            "  ⚠ {}",
+            trf(
+                "several files provide {package} for {arch}: {files}",
+                &[("package", &v.name), ("arch", &v.arch), ("files", &v.assets.join(", "))],
+            )
+        );
     }
     for w in &p.warnings {
         println!("  {} {}", mark(w.severity), w.message);
@@ -114,42 +149,41 @@ fn print_action(a: &ActionResult) {
         println!("  {d}");
     }
     if a.reboot_required {
-        println!("  Reboot to apply the change (rpm-ostree).");
+        println!("  {}", tr("Reboot to apply the change (rpm-ostree)."));
     }
+}
+
+fn no_sources() {
+    println!("{}", tr("No sources. Add one with: sudo quai add owner/repo"));
 }
 
 fn print_sources(list: &[SourceView]) {
     if list.is_empty() {
-        println!("No sources. Add one with: sudo quai add owner/repo");
+        no_sources();
         return;
     }
-    let w = list.iter().map(|s| s.id.len()).max().unwrap_or(2).max(2);
+    let w = list.iter().map(|s| s.id.chars().count()).max().unwrap_or(2).max(2);
     for s in list {
-        println!(
-            "{:<w$}  {}{}  {}  [{}]",
-            s.id,
-            s.web_url,
-            if s.enabled { "" } else { " (disabled)" },
-            s.packages.join(", "),
-            s.channel.as_str()
-        );
+        let disabled = if s.enabled { String::new() } else { format!(" ({})", trc("source state", "disabled")) };
+        println!("{:<w$}  {}{}  {}  [{}]", s.id, s.web_url, disabled, s.packages.join(", "), s.channel.as_str());
     }
 }
 
-fn state_label(s: SourceState) -> &'static str {
-    match s {
-        SourceState::UpToDate => "✓ up to date",
-        SourceState::UpdateAvailable => "↑ update available",
-        SourceState::NotInstalled => "· not installed",
-        SourceState::NeverChecked => "… not checked yet",
-        SourceState::Error => "✗ error",
-        SourceState::Disabled => "– disabled",
-    }
+fn state_label(s: SourceState) -> String {
+    let (mark, text) = match s {
+        SourceState::UpToDate => ("✓", trc("source state", "up to date")),
+        SourceState::UpdateAvailable => ("↑", trc("source state", "update available")),
+        SourceState::NotInstalled => ("·", trc("source state", "not installed")),
+        SourceState::NeverChecked => ("…", trc("source state", "not checked yet")),
+        SourceState::Error => ("✗", trc("source state", "error")),
+        SourceState::Disabled => ("–", trc("source state", "disabled")),
+    };
+    format!("{mark} {text}")
 }
 
 fn print_status(r: &StatusReport) {
     if r.sources.is_empty() {
-        println!("No sources. Add one with: sudo quai add owner/repo");
+        no_sources();
     }
     for s in &r.sources {
         println!("{}  {}  ({})", s.source.id, state_label(s.state), s.source.web_url);
@@ -158,24 +192,33 @@ fn print_status(r: &StatusReport) {
             match &p.installed {
                 Some(i) if p.update_available => println!("  {}  {i} → {avail}", p.name),
                 Some(i) => println!("  {}  {i}", p.name),
-                None => println!("  {}  available {avail}", p.name),
+                None => println!("  {}  {}", p.name, trf("available {version}", &[("version", &avail)])),
             }
         }
         if let Some(t) = &s.last_check {
-            println!("  last check {t}");
+            println!("  {}", trf("last check {time}", &[("time", &local_time(t))]));
         }
         if let Some(e) = &s.last_error {
             println!("  ✗ {e}");
         }
         for x in &s.excluded {
-            println!("  ⚠ {} ({}) not served: {}", x.name, x.file, x.reason);
+            println!(
+                "  ⚠ {}",
+                trf(
+                    "{package} ({file}) not served: {reason}",
+                    &[("package", &x.name), ("file", &x.file), ("reason", &x.reason)],
+                )
+            );
         }
         if !s.repo_file_in_sync {
-            println!("  ⚠ /etc/yum.repos.d/quai-{}.repo is out of date: run `sudo quai sync`", s.source.id);
+            println!(
+                "  ⚠ {}",
+                trf("/etc/yum.repos.d/quai-{id}.repo is out of date: run `sudo quai sync`", &[("id", &s.source.id)],)
+            );
         }
     }
     if !r.daemon_reachable && !r.sources.is_empty() {
-        println!("⚠ quaid is not reachable: run `quai doctor`");
+        println!("⚠ {}", tr("quaid is not reachable: run `quai doctor`"));
     }
 }
 
@@ -183,29 +226,34 @@ fn print_doctor(d: &DoctorReport) {
     for c in &d.checks {
         println!("{} {}: {}", if c.ok { "✓" } else { "✗" }, c.title, c.detail);
         if let (false, Some(fix)) = (c.ok, &c.fix) {
-            println!("    fix: {fix}");
+            println!("    {}", trf("fix: {command}", &[("command", fix)]));
         }
     }
-    println!("{}", if d.ok { "Everything looks fine." } else { "Some checks failed." });
+    println!("{}", if d.ok { tr("Everything looks fine.") } else { tr("Some checks failed.") });
 }
 
 fn print_settings(s: &Settings) {
-    println!("listen               {}", s.listen);
-    println!("check-interval-mins  {}", s.check_interval_mins);
-    println!("keep-versions        {}", s.keep_versions);
-    println!("metadata-expire      {}", s.metadata_expire);
-    println!("sign-metadata        {}", s.sign_metadata);
+    // The setting names are the keys of `quai config KEY VALUE`: not translated.
+    let mut rows = vec![
+        ("listen".to_string(), s.listen.clone()),
+        ("check-interval-mins".to_string(), s.check_interval_mins.to_string()),
+        ("keep-versions".to_string(), s.keep_versions.to_string()),
+        ("metadata-expire".to_string(), s.metadata_expire.clone()),
+        ("sign-metadata".to_string(), s.sign_metadata.to_string()),
+    ];
     for t in &s.tokens {
-        println!("token                {} ({})", t.host, if t.configured { "set" } else { "not set" });
+        let state = if t.configured { trc("token", "set") } else { trc("token", "not set") };
+        rows.push((tr("token"), format!("{} ({state})", t.host)));
     }
+    print_rows("", &rows);
 }
 
 fn print_refresh(r: &RefreshReply) {
     for id in &r.refreshed {
-        println!("✓ {id} checked");
+        println!("✓ {}", trf("{id} checked", &[("id", id)]));
     }
     for id in &r.skipped {
-        println!("· {id} skipped (disabled or checked less than 30 s ago)");
+        println!("· {}", trf("{id} skipped (disabled or checked less than 30 s ago)", &[("id", id)]));
     }
     for (id, e) in &r.errors {
         println!("✗ {id}: {e}");

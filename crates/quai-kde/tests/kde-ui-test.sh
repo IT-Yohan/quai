@@ -8,6 +8,9 @@
 #   KIRIGAMI=system  use the installed Kirigami and Breeze style (kf6-kirigami,
 #                    kf6-qqc2-desktop-style): checks the real component APIs
 #
+# The language follows LANG/LANGUAGE; with QUAI_LOCALEDIR pointing at built
+# catalogues (make translations), a French run also checks the translation.
+#
 # Usage: tests/kde-ui-test.sh [path/to/quai-kde]
 set -euo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"

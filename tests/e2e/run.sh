@@ -21,6 +21,14 @@ cleanup() {
 }
 trap cleanup EXIT
 
+# English messages, whatever the machine's language; the French checks below set their own.
+export LC_ALL=C.UTF-8 LANGUAGE=
+# Catalogues built by `make translations`.
+export QUAI_LOCALEDIR="${QUAI_LOCALEDIR:-$(cd "$here/../.." && pwd)/target/generated/locale}"
+french=""
+if [[ -f "$QUAI_LOCALEDIR/fr/LC_MESSAGES/quai.mo" ]] && locale -a 2>/dev/null | grep -qix 'fr_FR.utf-\?8'; then
+  french=fr_FR.UTF-8
+fi
 export QUAI_CONFIG_DIR="$root/etc/quai" QUAI_REPOS_DIR="$root/repos.d" QUAI_CACHE_DIR="$root/cache"
 export QUAI_SYSTEMD_DIR="$root/systemd" QUAI_RPM_ROOT="$root/sysroot"
 if dnf --version 2>/dev/null | grep -qi dnf5; then
@@ -94,8 +102,11 @@ ok "setup created the configuration and the signing key"
 
 QUAID_FORCE_COOLDOWN_SECS=0 "$QUAID" --listen 127.0.0.1:$QUAID_PORT > "$root/quaid.log" 2>&1 &
 pids+=($!)
-sleep 0.5
-curl -fsS "http://127.0.0.1:$QUAID_PORT/-/health" >/dev/null || die "quaid does not answer"
+for _ in $(seq 50); do
+  curl -fsS "http://127.0.0.1:$QUAID_PORT/-/health" >/dev/null 2>&1 && break
+  sleep 0.1
+done
+curl -fsS "http://127.0.0.1:$QUAID_PORT/-/health" >/dev/null || die "quaid does not answer: $(cat "$root/quaid.log")"
 ok "quaid answers on 127.0.0.1:$QUAID_PORT"
 
 echo "== preview"
@@ -209,6 +220,18 @@ sys.exit(1 if bad else 0)
 PY
 ok "doctor is green apart from the expected exclusion of app 1.2"
 
+if [[ -n "$french" ]]; then
+  echo "== French"
+  out="$(LC_ALL=$french "$QUAI" set nosuch name x 2>&1 || true)"
+  [[ "$out" == *"aucune source nommée"*"nosuch"* ]] || die "CLI error not translated: $out"
+  LC_ALL=$french "$QUAI" --help | grep -q '^Utilisation' || die "--help not translated"
+  { LC_ALL=$french "$QUAI" doctor --json || true; } | jq_ 'any(c["title"] == "Clé de signature des métadonnées" for c in d["checks"])' \
+    | grep -qx True || die "doctor JSON not translated"
+  ok "the CLI speaks French: errors, --help and the JSON the interfaces show"
+else
+  echo "== French: skipped (no fr_FR.UTF-8 locale or no compiled catalogue; run make translations)"
+fi
+
 if [[ -n "${QUAI_E2E_KDE:-}" ]]; then
   echo "== KDE frontend (${QUAI_E2E_KDE} Kirigami)"
   # Earlier steps republished the forge; bring back the two-variant projects.
@@ -226,6 +249,11 @@ PY
   QUAI_BIN="$QUAI" QUAI_API_URL="$API" KIRIGAMI="$QUAI_E2E_KDE" \
     "$here/../../crates/quai-kde/tests/kde-ui-test.sh" "$bin/quai-kde" || die "KDE frontend test failed"
   ok "the Kirigami frontend lists, opens, previews, configures and refreshes sources"
+  if [[ -n "$french" ]]; then
+    LC_ALL=$french QUAI_BIN="$QUAI" QUAI_API_URL="$API" KIRIGAMI="$QUAI_E2E_KDE" \
+      "$here/../../crates/quai-kde/tests/kde-ui-test.sh" "$bin/quai-kde" >/dev/null || die "KDE frontend test failed in French"
+    ok "the same Kirigami run passes in French, with translated pages"
+  fi
 fi
 
 echo

@@ -15,6 +15,7 @@ use gtk::{gio, glib};
 pub const APP_ID: &str = "io.github.quai.Quai";
 
 fn main() -> glib::ExitCode {
+    quai_i18n::init();
     let app = adw::Application::builder().application_id(APP_ID).build();
     app.connect_activate(|app| {
         if let Some(w) = app.active_window() {

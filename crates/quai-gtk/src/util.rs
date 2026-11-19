@@ -1,12 +1,9 @@
+use quai_i18n::{tr, trc, trf, trn};
 use quai_types::{Severity, SourceState, SourceStatus};
 
+/// A size in the user's language and number format ("1,2 Mo"), by GLib.
 pub fn human_size(bytes: u64) -> String {
-    let mb = bytes as f64 / 1_048_576.0;
-    if mb >= 1.0 {
-        format!("{mb:.1} MB")
-    } else {
-        format!("{:.0} kB", bytes as f64 / 1024.0)
-    }
+    gtk::glib::format_size(bytes).to_string()
 }
 
 /// "3 minutes ago" style rendering of an RFC 3339 timestamp.
@@ -17,20 +14,12 @@ pub fn relative_time(rfc3339: &str) -> String {
     let Ok(now) = gtk::glib::DateTime::now_utc() else {
         return rfc3339.to_string();
     };
-    let secs = now.difference(&t).as_seconds();
+    let secs = now.difference(&t).as_seconds().max(0) as u64;
     match secs {
-        s if s < 60 => "just now".to_string(),
-        s if s < 3600 => plural(s / 60, "minute"),
-        s if s < 86_400 => plural(s / 3600, "hour"),
-        s => plural(s / 86_400, "day"),
-    }
-}
-
-fn plural(n: i64, unit: &str) -> String {
-    if n == 1 {
-        format!("1 {unit} ago")
-    } else {
-        format!("{n} {unit}s ago")
+        s if s < 60 => tr("just now"),
+        s if s < 3600 => trn("{n} minute ago", "{n} minutes ago", s / 60),
+        s if s < 86_400 => trn("{n} hour ago", "{n} hours ago", s / 3600),
+        s => trn("{n} day ago", "{n} days ago", s / 86_400),
     }
 }
 
@@ -45,14 +34,14 @@ pub fn state_icon(state: SourceState) -> &'static str {
     }
 }
 
-pub fn state_label(state: SourceState) -> &'static str {
+pub fn state_label(state: SourceState) -> String {
     match state {
-        SourceState::UpToDate => "Up to date",
-        SourceState::UpdateAvailable => "Update available",
-        SourceState::NotInstalled => "Not installed",
-        SourceState::NeverChecked => "Not checked yet",
-        SourceState::Error => "Error",
-        SourceState::Disabled => "Disabled",
+        SourceState::UpToDate => trc("source state", "Up to date"),
+        SourceState::UpdateAvailable => trc("source state", "Update available"),
+        SourceState::NotInstalled => trc("source state", "Not installed"),
+        SourceState::NeverChecked => trc("source state", "Not checked yet"),
+        SourceState::Error => trc("source state", "Error"),
+        SourceState::Disabled => trc("source state", "Disabled"),
     }
 }
 
@@ -91,7 +80,7 @@ pub fn source_subtitle(s: &SourceStatus) -> String {
         }
         Some(p) if p.installed.is_some() => parts.push(p.installed.clone().unwrap_or_default()),
         Some(p) if p.available.is_some() => {
-            parts.push(format!("{} available", p.available.clone().unwrap_or_default()))
+            parts.push(trf("{version} available", &[("version", &p.available.clone().unwrap_or_default())]))
         }
         _ => {}
     }

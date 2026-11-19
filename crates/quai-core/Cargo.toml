@@ -8,6 +8,7 @@ rust-version.workspace = true
 
 [dependencies]
 quai-types = { path = "../quai-types" }
+quai-i18n = { path = "../quai-i18n" }
 anyhow = "1"
 chrono = { version = "0.4", default-features = false, features = ["clock", "serde", "std"] }
 flate2 = "1"

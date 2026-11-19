@@ -5,6 +5,7 @@ use crate::forge::ForgeRef;
 use crate::fsutil::{chown_root_group, write_atomic};
 use crate::paths::Paths;
 use anyhow::{Context, Result};
+use quai_i18n::{tr, trf};
 use quai_types::{Channel, ForgeKind, SourceView};
 use regex::Regex;
 use serde::{Deserialize, Serialize};
@@ -141,19 +142,19 @@ impl SourceConfig {
     pub fn validate(&self) -> Result<()> {
         validate_id(&self.id)?;
         if self.name.trim().is_empty() {
-            return Err(usage("source name is empty"));
+            return Err(usage(tr("source name is empty")));
         }
         if self.project.trim().is_empty() || self.host.trim().is_empty() {
-            return Err(usage("source project or host is empty"));
+            return Err(usage(tr("source project or host is empty")));
         }
         if self.packages.is_empty() {
-            return Err(usage(format!("source '{}' lists no packages", self.id)));
+            return Err(usage(trf("source '{id}' lists no packages", &[("id", &self.id)])));
         }
         for p in &self.packages {
             validate_package_name(p)?;
         }
         if !(1..=20).contains(&self.keep_versions) {
-            return Err(usage("keep_versions must be between 1 and 20"));
+            return Err(usage(tr("keep_versions must be between 1 and 20")));
         }
         self.asset_regex()?;
         Ok(())
@@ -164,7 +165,7 @@ pub fn compile_pattern(pattern: Option<&str>) -> Result<Option<Regex>> {
     match pattern {
         None => Ok(None),
         Some("") => Ok(None),
-        Some(p) => Regex::new(p).map(Some).map_err(|e| usage(format!("invalid asset pattern: {e}"))),
+        Some(p) => Regex::new(p).map(Some).map_err(|e| usage(trf("invalid asset pattern: {error}", &[("error", &e)]))),
     }
 }
 
@@ -175,7 +176,10 @@ pub fn validate_id(id: &str) -> Result<()> {
     if re.is_match(id) && !id.contains("..") {
         Ok(())
     } else {
-        Err(usage(format!("invalid source id '{id}': use lowercase letters, digits, '.', '_' or '-' (max 63)")))
+        Err(usage(trf(
+            "invalid source id '{id}': use lowercase letters, digits, '.', '_' or '-' (max 63)",
+            &[("id", &id)],
+        )))
     }
 }
 
@@ -185,7 +189,7 @@ pub fn validate_package_name(name: &str) -> Result<()> {
     if re.is_match(name) {
         Ok(())
     } else {
-        Err(usage(format!("invalid package name '{name}'")))
+        Err(usage(trf("invalid package name '{name}'", &[("name", &name)])))
     }
 }
 
@@ -211,9 +215,9 @@ pub fn sanitize_id(raw: &str) -> String {
 pub fn load_global(paths: &Paths) -> Result<GlobalConfig> {
     let path = paths.global_config();
     match fs::read_to_string(&path) {
-        Ok(text) => toml::from_str(&text).with_context(|| format!("parsing {}", path.display())),
+        Ok(text) => toml::from_str(&text).with_context(|| trf("parsing {path}", &[("path", &path.display())])),
         Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(GlobalConfig::default()),
-        Err(e) => Err(e).with_context(|| format!("reading {}", path.display())),
+        Err(e) => Err(e).with_context(|| trf("reading {path}", &[("path", &path.display())])),
     }
 }
 
@@ -229,13 +233,17 @@ pub fn load_source(paths: &Paths, id: &str) -> Result<SourceConfig> {
     let text = match fs::read_to_string(&path) {
         Ok(t) => t,
         Err(e) if e.kind() == std::io::ErrorKind::NotFound => {
-            return Err(not_found(format!("no source named '{id}'")));
+            return Err(not_found(trf("no source named '{id}'", &[("id", &id)])));
         }
-        Err(e) => return Err(e).with_context(|| format!("reading {}", path.display())),
+        Err(e) => return Err(e).with_context(|| trf("reading {path}", &[("path", &path.display())])),
     };
-    let src: SourceConfig = toml::from_str(&text).with_context(|| format!("parsing {}", path.display()))?;
+    let src: SourceConfig =
+        toml::from_str(&text).with_context(|| trf("parsing {path}", &[("path", &path.display())]))?;
     if src.id != id {
-        return Err(usage(format!("{} declares id '{}' but its file name says '{id}'", path.display(), src.id)));
+        return Err(usage(trf(
+            "{path} declares id '{declared}' but its file name says '{id}'",
+            &[("path", &path.display()), ("declared", &src.id), ("id", &id)],
+        )));
     }
     Ok(src)
 }
@@ -279,9 +287,9 @@ pub fn remove_source(paths: &Paths, id: &str) -> Result<()> {
     let path = paths.source_file(id);
     fs::remove_file(&path).map_err(|e| {
         if e.kind() == std::io::ErrorKind::NotFound {
-            not_found(format!("no source named '{id}'"))
+            not_found(trf("no source named '{id}'", &[("id", &id)]))
         } else {
-            anyhow::Error::new(e).context(format!("removing {}", path.display()))
+            anyhow::Error::new(e).context(trf("removing {path}", &[("path", &path.display())]))
         }
     })
 }
@@ -321,7 +329,7 @@ pub fn find_by_project(paths: &Paths, forge: ForgeKind, host: &str, project: &st
 pub fn ensure_new_id(paths: &Paths, id: &str) -> Result<()> {
     validate_id(id)?;
     if paths.source_file(id).exists() {
-        return Err(conflict(format!("a source named '{id}' already exists")));
+        return Err(conflict(trf("a source named '{id}' already exists", &[("id", &id)])));
     }
     Ok(())
 }
@@ -363,7 +371,7 @@ pub fn save_tokens(paths: &Paths, tokens: &Tokens) -> Result<()> {
 /// `/etc/quai/private`, mode 0750 root:quai.
 pub fn ensure_private_dir(paths: &Paths) -> Result<()> {
     let dir = paths.private_dir();
-    fs::create_dir_all(&dir).with_context(|| format!("creating {}", dir.display()))?;
+    fs::create_dir_all(&dir).with_context(|| trf("creating {path}", &[("path", &dir.display())]))?;
     crate::fsutil::set_mode(&dir, 0o750)?;
     chown_root_group(&dir, SYSTEM_GROUP)
 }

@@ -5,6 +5,7 @@ use crate::util::*;
 use crate::window::Ui;
 use adw::prelude::*;
 use gtk::glib;
+use quai_i18n::{tr, trc, trf};
 use quai_types::{ActionResult, Preview};
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -32,21 +33,21 @@ struct AddDialog {
 const FORGES: [&str; 4] = ["", "github", "gitlab", "forgejo"];
 
 pub fn show(ui: &Rc<Ui>) {
-    let project = adw::EntryRow::builder().title("owner/repo or project URL").build();
+    let project = adw::EntryRow::builder().title(tr("owner/repo or project URL")).build();
     let forge = adw::ComboRow::builder()
-        .title("Forge")
-        .subtitle("Only needed for self-hosted forges")
-        .model(&gtk::StringList::new(&["Detect automatically", "GitHub", "GitLab", "Forgejo / Gitea"]))
+        .title(tr("Forge"))
+        .subtitle(tr("Only needed for self-hosted forges"))
+        .model(&string_list(&[tr("Detect automatically"), "GitHub".into(), "GitLab".into(), "Forgejo / Gitea".into()]))
         .build();
     let channel = adw::ComboRow::builder()
-        .title("Channel")
-        .model(&gtk::StringList::new(&["Stable releases", "Pre-releases too"]))
+        .title(tr("Channel"))
+        .model(&string_list(&[tr("Stable releases"), tr("Pre-releases too")]))
         .build();
     let group = adw::PreferencesGroup::builder()
-        .title("Project")
-        .description(
+        .title(tr("Project"))
+        .description(tr(
             "A GitHub, GitLab or Codeberg project that attaches .rpm files to its releases, e.g. stablyai/orca.",
-        )
+        ))
         .build();
     group.add(&project);
     group.add(&forge);
@@ -67,7 +68,7 @@ pub fn show(ui: &Rc<Ui>) {
     stack.add_named(&page(&input), Some("input"));
     stack.add_named(&page(&preview_outer), Some("preview"));
 
-    let back = gtk::Button::builder().label("Back").visible(false).build();
+    let back = gtk::Button::builder().label(tr("Back")).visible(false).build();
     let primary = gtk::Button::builder().label("Analyze").css_classes(["suggested-action"]).sensitive(false).build();
     let spinner = gtk::Spinner::new();
     let bottom =
@@ -84,7 +85,7 @@ pub fn show(ui: &Rc<Ui>) {
     toolbar.add_bottom_bar(&bottom);
 
     let dialog =
-        adw::Dialog::builder().title("Add a Source").content_width(560).content_height(620).child(&toolbar).build();
+        adw::Dialog::builder().title(tr("Add a Source")).content_width(560).content_height(620).child(&toolbar).build();
 
     let st = Rc::new(AddDialog {
         ui: ui.clone(),
@@ -136,7 +137,7 @@ pub fn show(ui: &Rc<Ui>) {
         st.back.connect_clicked(move |_| {
             s.stack.set_visible_child_name("input");
             s.back.set_visible(false);
-            s.primary.set_label("Analyze");
+            s.primary.set_label(&tr("Analyze"));
             s.primary.set_sensitive(true);
             s.pattern.replace(None);
         });
@@ -196,7 +197,7 @@ impl AddDialog {
                     s.show_preview(&p);
                     s.stack.set_visible_child_name("preview");
                     s.back.set_visible(true);
-                    s.primary.set_label("Add");
+                    s.primary.set_label(&trc("button", "Add"));
                 }
                 Err(e) => {
                     let on_preview = s.stack.visible_child_name().as_deref() == Some("preview");
@@ -219,7 +220,7 @@ impl AddDialog {
             title = format!(" — {title}");
         }
         let pkgs = adw::PreferencesGroup::builder()
-            .title(esc(&format!("Release {}{title}", p.release.tag)))
+            .title(esc(&format!("{}{title}", trf("Release {tag}", &[("tag", &p.release.tag)]))))
             .description(esc(&format!("{}/{}", p.host, p.project)))
             .build();
         // With variants, default to a Fedora build when there is one.
@@ -249,7 +250,8 @@ impl AddDialog {
         for pkg in &list {
             let mut subtitle = pkg.summary.clone();
             if let Some(i) = &pkg.installed {
-                subtitle = format!("Installed {i}, will be kept up to date · {subtitle}");
+                subtitle =
+                    format!("{} · {subtitle}", trf("Installed {version}, will be kept up to date", &[("version", i)]));
             }
             let row = adw::ActionRow::builder()
                 .title(esc(&format!("{} {}", pkg.name, pkg.evr)))
@@ -271,14 +273,14 @@ impl AddDialog {
 
         if let Some(v) = p.variants.first() {
             let g = adw::PreferencesGroup::builder()
-                .title("Choose a Variant")
-                .description(esc(&format!(
-                    "Several files provide {} for {}. quai follows the one you pick in every future release.",
-                    v.name, v.arch
+                .title(tr("Choose a Variant"))
+                .description(esc(&trf(
+                    "Several files provide {package} for {arch}. quai follows the one you pick in every future release.",
+                    &[("package", &v.name), ("arch", &v.arch)],
                 )))
                 .build();
             let model = gtk::StringList::new(&v.assets.iter().map(|s| s.as_str()).collect::<Vec<_>>());
-            let combo = adw::ComboRow::builder().title("File").model(&model).build();
+            let combo = adw::ComboRow::builder().title(tr("File")).model(&model).build();
             let current = self.pattern.borrow().clone();
             if let Some(i) = current.and_then(|cur| v.patterns.iter().position(|x| *x == cur)) {
                 combo.set_selected(i as u32);
@@ -302,7 +304,7 @@ impl AddDialog {
 
         let warnings: Vec<_> = p.warnings.iter().filter(|w| w.code != "multiple_variants").collect();
         if !warnings.is_empty() {
-            let g = adw::PreferencesGroup::builder().title("Good to Know").build();
+            let g = adw::PreferencesGroup::builder().title(tr("Good to Know")).build();
             for w in warnings {
                 let row = adw::ActionRow::builder().title(esc(&w.message)).title_lines(0).build();
                 let icon = gtk::Image::from_icon_name(severity_icon(w.severity));
@@ -313,14 +315,18 @@ impl AddDialog {
             b.append(&g);
         }
 
-        let opts = adw::PreferencesGroup::builder().title("Options").build();
-        let id_row = adw::EntryRow::builder().title("Source id").text(&p.suggested_id).build();
-        let name_row = adw::EntryRow::builder().title("Display name").text(&p.suggested_name).build();
+        let opts = adw::PreferencesGroup::builder().title(tr("Options")).build();
+        let id_row = adw::EntryRow::builder().title(tr("Source id")).text(&p.suggested_id).build();
+        let name_row = adw::EntryRow::builder().title(tr("Display name")).text(&p.suggested_name).build();
         let all_installed =
             p.packages.iter().filter(|x| x.arch == p.host_arch || x.arch == "noarch").all(|x| x.installed.is_some());
         let install_row = adw::SwitchRow::builder()
-            .title("Install now")
-            .subtitle(if all_installed { "Already installed" } else { "Otherwise install later from the source page" })
+            .title(tr("Install now"))
+            .subtitle(if all_installed {
+                tr("Already installed")
+            } else {
+                tr("Otherwise install later from the source page")
+            })
             .active(!all_installed)
             .sensitive(!all_installed)
             .build();
@@ -358,7 +364,7 @@ impl AddDialog {
                 Ok(r) if r.ok => {
                     let mut msg = r.message.clone();
                     if r.reboot_required {
-                        msg.push_str(" — restart to finish installing");
+                        msg = format!("{msg} — {}", tr("restart to finish installing"));
                     }
                     s.ui.toast(&msg);
                     s.dialog.close();
@@ -375,4 +381,8 @@ impl AddDialog {
             }
         });
     }
+}
+
+fn string_list(items: &[String]) -> gtk::StringList {
+    gtk::StringList::new(&items.iter().map(String::as_str).collect::<Vec<_>>())
 }

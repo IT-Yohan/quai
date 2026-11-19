@@ -12,6 +12,7 @@
 //! bytes of data.
 
 use anyhow::{bail, Context, Result};
+use quai_i18n::{tr, trf};
 use std::collections::HashMap;
 
 pub const LEAD_SIZE: usize = 96;
@@ -118,15 +119,18 @@ fn be32(b: &[u8], at: usize) -> u32 {
 /// Read a header intro and return (nindex, hsize).
 fn intro(b: &[u8]) -> Result<(usize, usize)> {
     if b.len() < 16 {
-        bail!("truncated RPM header");
+        bail!(tr("truncated RPM header"));
     }
     if b[0..3] != HEADER_MAGIC || b[3] != 1 {
-        bail!("bad RPM header magic");
+        bail!(tr("bad RPM header magic"));
     }
     let nindex = be32(b, 8) as usize;
     let hsize = be32(b, 12) as usize;
     if nindex > MAX_ENTRIES || hsize > MAX_HEADER_BYTES {
-        bail!("RPM header too large ({nindex} entries, {hsize} bytes)");
+        bail!(trf(
+            "RPM header too large ({entries} entries, {bytes} bytes)",
+            &[("entries", &nindex), ("bytes", &hsize)]
+        ));
     }
     Ok((nindex, hsize))
 }
@@ -137,7 +141,7 @@ pub fn probe(buf: &[u8]) -> Result<Probe> {
         return Ok(Probe::NeedBytes(LEAD_SIZE + 16));
     }
     if buf[0..4] != LEAD_MAGIC {
-        bail!("not an RPM file (bad lead magic)");
+        bail!(tr("not an RPM file (bad lead magic)"));
     }
     let (n, d) = intro(&buf[LEAD_SIZE..])?;
     let sig_len = 16 + 16 * n + d;
@@ -149,7 +153,7 @@ pub fn probe(buf: &[u8]) -> Result<Probe> {
     let (n2, d2) = intro(&buf[header_start..])?;
     let header_end = header_start + 16 + 16 * n2 + d2;
     if header_end > MAX_HEADER_BYTES {
-        bail!("RPM header too large");
+        bail!(tr("RPM header too large"));
     }
     Ok(Probe::Layout(Layout { sig_len, header_start, header_end }))
 }
@@ -178,7 +182,10 @@ impl<'a> Header<'a> {
         let (n, d) = intro(bytes)?;
         let index_end = 16 + 16 * n;
         if bytes.len() < index_end + d {
-            bail!("truncated RPM header ({} of {} bytes)", bytes.len(), index_end + d);
+            bail!(trf(
+                "truncated RPM header ({have} of {need} bytes)",
+                &[("have", &bytes.len()), ("need", &(index_end + d))]
+            ));
         }
         let data = &bytes[index_end..index_end + d];
         let mut entries = HashMap::with_capacity(n);
@@ -189,7 +196,7 @@ impl<'a> Header<'a> {
             let offset = be32(bytes, at + 8) as usize;
             let count = be32(bytes, at + 12) as usize;
             if offset > d {
-                bail!("RPM header entry {tag} points outside the data store");
+                bail!(trf("RPM header entry {tag} points outside the data store", &[("tag", &tag)]));
             }
             entries.entry(tag).or_insert(Entry { ty, offset, count });
         }
@@ -392,13 +399,16 @@ fn deps(h: &Header, names: u32, flags: u32, versions: u32) -> Vec<Dep> {
 /// Parse lead + signature header + main header (`buf` holds at least `layout.header_end` bytes).
 pub fn parse_package(buf: &[u8], layout: &Layout) -> Result<PackageInfo> {
     if buf.len() < layout.header_end {
-        bail!("RPM header incomplete: have {} of {} bytes", buf.len(), layout.header_end);
+        bail!(trf(
+            "RPM header incomplete: have {have} of {need} bytes",
+            &[("have", &buf.len()), ("need", &layout.header_end)]
+        ));
     }
-    let sig = Header::parse(&buf[LEAD_SIZE..LEAD_SIZE + layout.sig_len]).context("signature header")?;
-    let h = Header::parse(&buf[layout.header_start..layout.header_end]).context("main header")?;
+    let sig = Header::parse(&buf[LEAD_SIZE..LEAD_SIZE + layout.sig_len]).with_context(|| tr("signature header"))?;
+    let h = Header::parse(&buf[layout.header_start..layout.header_end]).with_context(|| tr("main header"))?;
 
-    let name = h.string(tag::NAME).context("package has no name")?;
-    let version = h.string(tag::VERSION).context("package has no version")?;
+    let name = h.string(tag::NAME).with_context(|| tr("package has no name"))?;
+    let version = h.string(tag::VERSION).with_context(|| tr("package has no version"))?;
     let release = h.string(tag::RELEASE).unwrap_or_default();
     let arch = h.string(tag::ARCH).unwrap_or_else(|| "noarch".to_string());
 
@@ -490,7 +500,7 @@ pub fn parse_package(buf: &[u8], layout: &Layout) -> Result<PackageInfo> {
 /// Parse a whole RPM file held in memory (tests, local files).
 pub fn parse_file_bytes(buf: &[u8]) -> Result<(PackageInfo, Layout)> {
     match probe(buf)? {
-        Probe::NeedBytes(n) => bail!("file too short for an RPM header (needs {n} bytes)"),
+        Probe::NeedBytes(n) => bail!(trf("file too short for an RPM header (needs {n} bytes)", &[("n", &n)])),
         Probe::Layout(l) => Ok((parse_package(buf, &l)?, l)),
     }
 }

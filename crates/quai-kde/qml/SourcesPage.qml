@@ -3,6 +3,7 @@ import QtQuick
 import QtQuick.Controls as QQC2
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
+import io.github.quai.kde
 
 Kirigami.ScrollablePage {
     id: page
@@ -13,12 +14,12 @@ Kirigami.ScrollablePage {
 
     actions: [
         Kirigami.Action {
-            text: "Add Source…"
+            text: I18n.tr("Add Source…")
             icon.name: "list-add"
             onTriggered: page.app.openAdd()
         },
         Kirigami.Action {
-            text: "Check Now"
+            text: I18n.tr("Check Now")
             icon.name: "view-refresh"
             enabled: page.app.busy === 0
             onTriggered: page.app.refresh("")
@@ -28,10 +29,10 @@ Kirigami.ScrollablePage {
     header: Kirigami.InlineMessage {
         visible: page.app.report !== null && page.app.report.sources.length > 0 && !page.app.report.daemon_reachable
         type: Kirigami.MessageType.Warning
-        text: "The quai service is not answering, so dnf and Discover cannot see your sources."
+        text: I18n.tr("The quai service is not answering, so dnf and Discover cannot see your sources.")
         actions: [
             Kirigami.Action {
-                text: "Set Up"
+                text: I18n.tr("Set Up")
                 icon.name: "system-run"
                 onTriggered: page.app.act(["setup"])
             }
@@ -103,10 +104,10 @@ Kirigami.ScrollablePage {
             width: parent.width - Kirigami.Units.gridUnit * 4
             visible: page.app.report !== null && list.count === 0
             icon.name: "download"
-            text: "No Sources Yet"
-            explanation: "Add a GitHub, GitLab or Codeberg project that publishes RPM packages. dnf and Discover will then keep it up to date."
+            text: I18n.tr("No Sources Yet")
+            explanation: I18n.tr("Add a GitHub, GitLab or Codeberg project that publishes RPM packages. dnf and Discover will then keep it up to date.")
             helpfulAction: Kirigami.Action {
-                text: "Add a Source"
+                text: I18n.tr("Add a Source")
                 icon.name: "list-add"
                 onTriggered: page.app.openAdd()
             }
@@ -117,7 +118,7 @@ Kirigami.ScrollablePage {
             width: parent.width - Kirigami.Units.gridUnit * 4
             visible: page.app.loadError !== ""
             icon.name: "dialog-error"
-            text: "Cannot Read the Sources"
+            text: I18n.tr("Cannot Read the Sources")
             explanation: page.app.loadError
         }
     }

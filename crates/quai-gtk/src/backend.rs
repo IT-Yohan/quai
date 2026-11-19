@@ -2,6 +2,7 @@
 //! change the system run through `pkexec`, which shows the polkit prompt.
 
 use gtk::gio;
+use quai_i18n::trf;
 use quai_types::frontend;
 use serde::de::DeserializeOwned;
 use std::ffi::OsStr;
@@ -22,13 +23,14 @@ pub async fn quai<T: DeserializeOwned>(args: &[String], privileged: bool, stdin:
     if stdin.is_some() {
         flags |= gio::SubprocessFlags::STDIN_PIPE;
     }
-    let proc = gio::Subprocess::newv(&os, flags).map_err(|e| format!("cannot start quai: {e}"))?;
-    let (out, err) = proc.communicate_utf8_future(stdin).await.map_err(|e| format!("quai did not answer: {e}"))?;
+    let proc = gio::Subprocess::newv(&os, flags).map_err(|e| trf("cannot start quai: {error}", &[("error", &e)]))?;
+    let (out, err) =
+        proc.communicate_utf8_future(stdin).await.map_err(|e| trf("quai did not answer: {error}", &[("error", &e)]))?;
     let out = out.map(|s| s.to_string()).unwrap_or_default();
     let err = err.map(|s| s.to_string()).unwrap_or_default();
     let code = if proc.has_exited() { proc.exit_status() } else { -1 };
     let json = frontend::interpret(&out, &err, code, used_pkexec)?;
-    serde_json::from_str::<T>(&json).map_err(|e| format!("unexpected answer from quai: {e}"))
+    serde_json::from_str::<T>(&json).map_err(|e| trf("unexpected answer from quai: {error}", &[("error", &e)]))
 }
 
 pub fn args(list: &[&str]) -> Vec<String> {

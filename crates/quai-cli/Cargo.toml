@@ -13,9 +13,10 @@ path = "src/main.rs"
 [dependencies]
 quai-core = { path = "../quai-core" }
 quai-types = { path = "../quai-types" }
+quai-i18n = { path = "../quai-i18n" }
 anyhow = "1"
 chrono = { version = "0.4", default-features = false, features = ["clock", "std"] }
-clap = { version = "4", features = ["derive", "env"] }
+clap = { version = "4", features = ["derive", "env", "string"] }
 regex = "1"
 reqwest = { version = "0.12", default-features = false, features = ["json"] }
 serde = { version = "1", features = ["derive"] }
@@ -23,3 +24,5 @@ serde_json = "1"
 tokio = { version = "1", features = ["rt", "macros", "time"] }
 toml = "0.9"
 tracing-subscriber = { version = "0.3", default-features = false, features = ["fmt", "env-filter"] }
+clap_mangen = "0.2"
+clap_complete = "4"

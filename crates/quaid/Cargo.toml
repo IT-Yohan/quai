@@ -9,6 +9,7 @@ rust-version.workspace = true
 [dependencies]
 quai-core = { path = "../quai-core" }
 quai-types = { path = "../quai-types" }
+quai-i18n = { path = "../quai-i18n" }
 anyhow = "1"
 axum = { version = "0.8", default-features = false, features = ["http1", "tokio", "json", "query"] }
 libc = "0.2"

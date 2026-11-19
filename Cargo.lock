@@ -488,6 +488,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "clap_complete"
+version = "4.6.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6a35200383f20018d41c14d1ab19c1727c697f544492143f7d93aa39f0187848"
+dependencies = [
+ "clap",
+]
+
+[[package]]
 name = "clap_derive"
 version = "4.6.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -504,6 +513,16 @@ name = "clap_lex"
 version = "1.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e0921b3876b3a1df8a1c9f912e7f94342458022c2e84288015893d83c4d62a79"
+
+[[package]]
+name = "clap_mangen"
+version = "0.2.33"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7e30ffc187e2e3aeafcd1c6e2aa416e29739454c0ccaa419226d5ecd181f2d78"
+dependencies = [
+ "clap",
+ "roff",
+]
 
 [[package]]
 name = "cmac"
@@ -2479,7 +2498,10 @@ dependencies = [
  "anyhow",
  "chrono",
  "clap",
+ "clap_complete",
+ "clap_mangen",
  "quai-core",
+ "quai-i18n",
  "quai-types",
  "regex",
  "reqwest",
@@ -2502,6 +2524,7 @@ dependencies = [
  "libc",
  "percent-encoding",
  "pgp",
+ "quai-i18n",
  "quai-types",
  "rand 0.8.8",
  "regex",
@@ -2523,9 +2546,17 @@ dependencies = [
  "gtk4",
  "libadwaita",
  "libc",
+ "quai-i18n",
  "quai-types",
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "quai-i18n"
+version = "0.1.0"
+dependencies = [
+ "libc",
 ]
 
 [[package]]
@@ -2537,6 +2568,7 @@ dependencies = [
  "cxx-qt-build",
  "cxx-qt-lib",
  "libc",
+ "quai-i18n",
  "quai-types",
  "serde_json",
 ]
@@ -2545,6 +2577,7 @@ dependencies = [
 name = "quai-types"
 version = "0.1.0"
 dependencies = [
+ "quai-i18n",
  "serde",
  "serde_json",
 ]
@@ -2557,6 +2590,7 @@ dependencies = [
  "axum",
  "libc",
  "quai-core",
+ "quai-i18n",
  "quai-types",
  "serde_json",
  "tokio",
@@ -2806,6 +2840,12 @@ checksum = "bd124222d17ad93a644ed9d011a40f4fb64aa54275c08cc216524a9ea82fb09f"
 dependencies = [
  "digest",
 ]
+
+[[package]]
+name = "roff"
+version = "1.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "323c417e1d9665a65b263ec744ba09030cfb277e9daa0b018a4ab62e57bc8189"
 
 [[package]]
 name = "rsa"

@@ -6,6 +6,7 @@
 mod backend;
 
 fn main() {
+    quai_i18n::init();
     cxx_qt::init_crate!(cxx_qt_lib);
     cxx_qt::init_qml_module!("io.github.quai.kde");
     let version = cxx_qt_lib::QString::from(env!("CARGO_PKG_VERSION"));

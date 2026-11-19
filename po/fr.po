@@ -1,0 +1,2322 @@
+# French translation of quai.
+# This file is distributed under the same license as quai (Apache-2.0).
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: quai\n"
+"Report-Msgid-Bugs-To: https://github.com/quai-rpm/quai/issues\n"
+"PO-Revision-Date: 2026-11-19 20:00+0100\n"
+"Last-Translator: Claude <noreply@anthropic.com>\n"
+"Language-Team: French\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: crates/quai-cli/src/admin.rs crates/quai-core/src/config.rs
+#: crates/quai-core/src/engine.rs crates/quai-core/src/fsutil.rs
+#, python-brace-format
+msgid "creating {path}"
+msgstr "création de {path}"
+
+#: crates/quai-cli/src/admin.rs
+#, python-brace-format
+msgid "created {path}"
+msgstr "{path} créé"
+
+#: crates/quai-cli/src/admin.rs
+#, python-brace-format
+msgid "generated the metadata signing key {fingerprint}"
+msgstr "clé de signature des métadonnées générée : {fingerprint}"
+
+#: crates/quai-cli/src/admin.rs
+#, python-brace-format
+msgid "restored {path}"
+msgstr "{path} restauré"
+
+#: crates/quai-cli/src/admin.rs
+#, python-brace-format
+msgid "quaid.socket now listens on {address}"
+msgstr "quaid.socket écoute maintenant sur {address}"
+
+#: crates/quai-cli/src/admin.rs
+msgid "enabling quaid.socket"
+msgstr "activation de quaid.socket"
+
+#: crates/quai-cli/src/admin.rs
+msgid "enabled quaid.socket"
+msgstr "quaid.socket activé"
+
+#: crates/quai-cli/src/admin.rs
+msgid "started quaid.socket"
+msgstr "quaid.socket démarré"
+
+#: crates/quai-cli/src/admin.rs
+#, python-brace-format
+msgid "updated repo files: {files}"
+msgstr "fichiers de dépôt mis à jour : {files}"
+
+#: crates/quai-cli/src/admin.rs crates/quai-cli/src/status.rs
+#, python-brace-format
+msgid "unreadable source '{id}': {error}"
+msgstr "source « {id} » illisible : {error}"
+
+#: crates/quai-cli/src/admin.rs
+msgid "nothing to do, quai was already set up"
+msgstr "rien à faire, quai était déjà configuré"
+
+#: crates/quai-cli/src/admin.rs
+msgid "quai is set up"
+msgstr "quai est configuré"
+
+#: crates/quai-cli/src/admin.rs
+#, python-brace-format
+msgid "wrote {path}"
+msgstr "{path} écrit"
+
+#: crates/quai-cli/src/admin.rs
+#, python-brace-format
+msgid "removed {path}"
+msgstr "{path} supprimé"
+
+#. Translators: {written} and {removed} are counts of repository files.
+#: crates/quai-cli/src/admin.rs
+#, python-brace-format
+msgid "repository files: {written} written, {removed} removed"
+msgstr "fichiers de dépôt : {written} écrits, {removed} supprimés"
+
+#: crates/quai-cli/src/admin.rs
+#, python-brace-format
+msgid "invalid host '{host}'"
+msgstr "hôte « {host} » invalide"
+
+#: crates/quai-cli/src/admin.rs
+#, python-brace-format
+msgid "Paste the token for {host}, then press Enter and Ctrl-D:"
+msgstr "Collez le jeton pour {host}, puis appuyez sur Entrée et Ctrl-D :"
+
+#: crates/quai-cli/src/admin.rs
+msgid "no valid token on stdin"
+msgstr "aucun jeton valide sur l’entrée standard"
+
+#: crates/quai-cli/src/admin.rs
+#, python-brace-format
+msgid "Token saved for {host}"
+msgstr "Jeton enregistré pour {host}"
+
+#: crates/quai-cli/src/admin.rs
+#, python-brace-format
+msgid "stored in {path}"
+msgstr "conservé dans {path}"
+
+#: crates/quai-cli/src/admin.rs
+#, python-brace-format
+msgid "no token for {host}"
+msgstr "aucun jeton pour {host}"
+
+#: crates/quai-cli/src/admin.rs
+#, python-brace-format
+msgid "Token removed for {host}"
+msgstr "Jeton supprimé pour {host}"
+
+#: crates/quai-cli/src/admin.rs
+msgid "listen must be IP:PORT"
+msgstr "listen doit être de la forme IP:PORT"
+
+#: crates/quai-cli/src/admin.rs
+msgid "quaid must listen on a loopback address"
+msgstr "quaid doit écouter sur une adresse de bouclage"
+
+#: crates/quai-cli/src/admin.rs
+msgid "check-interval-mins must be a number of minutes"
+msgstr "check-interval-mins doit être un nombre de minutes"
+
+#: crates/quai-cli/src/admin.rs
+msgid "check-interval-mins must be between 1 and 1440"
+msgstr "check-interval-mins doit être compris entre 1 et 1440"
+
+#: crates/quai-cli/src/admin.rs crates/quai-cli/src/sources.rs
+msgid "keep-versions must be a number"
+msgstr "keep-versions doit être un nombre"
+
+#: crates/quai-cli/src/admin.rs
+msgid "keep-versions must be between 1 and 20"
+msgstr "keep-versions doit être compris entre 1 et 20"
+
+#: crates/quai-cli/src/admin.rs
+msgid "metadata-expire looks like 6h, 30m, 1d or never"
+msgstr "metadata-expire s’écrit comme 6h, 30m, 1d ou never"
+
+#: crates/quai-cli/src/admin.rs
+msgid "sign-metadata is true or false"
+msgstr "sign-metadata vaut true ou false"
+
+#: crates/quai-cli/src/admin.rs
+#, python-brace-format
+msgid ""
+"unknown setting '{key}'; expected listen, check-interval-mins, keep-"
+"versions, metadata-expire or sign-metadata"
+msgstr ""
+"réglage « {key} » inconnu ; réglages possibles : listen, check-interval-"
+"mins, keep-versions, metadata-expire ou sign-metadata"
+
+#: crates/quai-cli/src/admin.rs
+msgid "Setting saved"
+msgstr "Réglage enregistré"
+
+#: crates/quai-cli/src/admin.rs
+msgid "Nothing to upgrade: none of these packages is installed"
+msgstr "Rien à mettre à jour : aucun de ces paquets n’est installé"
+
+#: crates/quai-cli/src/admin.rs
+msgid "rpm-ostree staged the upgrade"
+msgstr "rpm-ostree a préparé la mise à jour"
+
+#: crates/quai-cli/src/admin.rs crates/quai-cli/src/sources.rs
+msgid "dnf is not installed"
+msgstr "dnf n’est pas installé"
+
+#: crates/quai-cli/src/admin.rs
+msgid "Already up to date"
+msgstr "Déjà à jour"
+
+#: crates/quai-cli/src/admin.rs
+#, python-brace-format
+msgid "Upgraded {n} package"
+msgid_plural "Upgraded {n} packages"
+msgstr[0] "{n} paquet mis à jour"
+msgstr[1] "{n} paquets mis à jour"
+
+#: crates/quai-cli/src/ctx.rs
+#, python-brace-format
+msgid "{command} changes system configuration: run it with sudo"
+msgstr "{command} modifie la configuration du système : lancez-le avec sudo"
+
+#: crates/quai-cli/src/ctx.rs
+#, python-brace-format
+msgid ""
+"quaid is not reachable on {address} ({error}); run `sudo quai setup` or "
+"`systemctl status quaid.socket`"
+msgstr ""
+"quaid ne répond pas sur {address} ({error}) ; lancez `sudo quai setup` ou "
+"`systemctl status quaid.socket`"
+
+#: crates/quai-cli/src/ctx.rs
+#, python-brace-format
+msgid "quaid answered HTTP {status}"
+msgstr "quaid a répondu HTTP {status}"
+
+#: crates/quai-cli/src/ctx.rs
+msgid "decoding quaid's answer"
+msgstr "lecture de la réponse de quaid"
+
+#: crates/quai-cli/src/ctx.rs
+#, python-brace-format
+msgid "{question} Pass --yes to confirm non-interactively."
+msgstr "{question} Ajoutez --yes pour confirmer sans interaction."
+
+#. Translators: the confirmation prompt; keep [y/N] in line with the answers below.
+#: crates/quai-cli/src/ctx.rs
+#, python-brace-format
+msgid "{question} [y/N]"
+msgstr "{question} [o/N]"
+
+#: crates/quai-cli/src/ctx.rs
+msgid "cancelled"
+msgstr "annulé"
+
+#. Translators: the short and the long answer that confirm a [y/N] question, separated by "|". English ones are always accepted too.
+#: crates/quai-cli/src/ctx.rs
+msgid "y|yes"
+msgstr "o|oui"
+
+#: crates/quai-cli/src/help.rs
+msgid "Arguments"
+msgstr "Arguments"
+
+#: crates/quai-cli/src/help.rs crates/quai-gtk/src/add_dialog.rs
+#: crates/quai-kde/qml/AddSourcePage.qml
+msgid "Options"
+msgstr "Options"
+
+#. Translators: the heading in front of a command's synopsis in --help.
+#: crates/quai-cli/src/help.rs
+msgid "Usage:"
+msgstr "Utilisation :"
+
+#: crates/quai-cli/src/help.rs
+msgid "Commands"
+msgstr "Commandes"
+
+#: crates/quai-cli/src/help.rs
+#, python-brace-format
+msgid ""
+"no graphical interface is installed: install {packages} (sudo dnf install "
+"{first})"
+msgstr ""
+"aucune interface graphique n’est installée : installez {packages} (sudo dnf "
+"install {first})"
+
+#. Translators: joins the alternatives of a list, as in "'a' or 'b'".
+#: crates/quai-cli/src/help.rs crates/quai-cli/src/sources.rs
+msgid "or"
+msgstr "ou"
+
+#: crates/quai-cli/src/main.rs
+#, python-brace-format
+msgid "missing value for {key}"
+msgstr "valeur manquante pour {key}"
+
+#: crates/quai-cli/src/main.rs
+#, python-brace-format
+msgid "cannot start {program}: {error}"
+msgstr "impossible de lancer {program} : {error}"
+
+#. Translators: a file size in mebibytes.
+#: crates/quai-cli/src/output.rs
+#, python-brace-format
+msgid "{size} MiB"
+msgstr "{size} Mio"
+
+#. Translators: a file size in kibibytes.
+#: crates/quai-cli/src/output.rs
+#, python-brace-format
+msgid "{size} KiB"
+msgstr "{size} Kio"
+
+#: crates/quai-cli/src/output.rs
+#, python-brace-format
+msgid "{tag} (pre-release)"
+msgstr "{tag} (version préliminaire)"
+
+#: crates/quai-cli/src/output.rs
+msgid "release"
+msgstr "version"
+
+#: crates/quai-cli/src/output.rs
+msgid "source id"
+msgstr "identifiant"
+
+#: crates/quai-cli/src/output.rs
+msgid "assets"
+msgstr "fichiers"
+
+#: crates/quai-cli/src/output.rs
+#, python-brace-format
+msgid "matching /{pattern}/"
+msgstr "correspondant à /{pattern}/"
+
+#: crates/quai-cli/src/output.rs
+msgid "packages:"
+msgstr "paquets :"
+
+#: crates/quai-cli/src/output.rs
+msgid "other architecture"
+msgstr "autre architecture"
+
+#: crates/quai-cli/src/output.rs
+#, python-brace-format
+msgid "installed: {version} (quai will keep it updated)"
+msgstr "installé : {version} (quai le maintiendra à jour)"
+
+#: crates/quai-cli/src/output.rs
+#, python-brace-format
+msgid "also provided by repository '{repo}'"
+msgstr "aussi fourni par le dépôt « {repo} »"
+
+#: crates/quai-cli/src/output.rs
+#, python-brace-format
+msgid "several files provide {package} for {arch}: {files}"
+msgstr "plusieurs fichiers fournissent {package} pour {arch} : {files}"
+
+#: crates/quai-cli/src/output.rs
+msgid "Reboot to apply the change (rpm-ostree)."
+msgstr "Redémarrez pour appliquer le changement (rpm-ostree)."
+
+#: crates/quai-cli/src/output.rs
+msgid "No sources. Add one with: sudo quai add owner/repo"
+msgstr "Aucune source. Ajoutez-en une avec : sudo quai add propriétaire/projet"
+
+#: crates/quai-cli/src/output.rs crates/quai-cli/src/status.rs
+msgctxt "source state"
+msgid "disabled"
+msgstr "désactivée"
+
+#: crates/quai-cli/src/output.rs
+msgctxt "source state"
+msgid "up to date"
+msgstr "à jour"
+
+#: crates/quai-cli/src/output.rs
+msgctxt "source state"
+msgid "update available"
+msgstr "mise à jour disponible"
+
+#: crates/quai-cli/src/output.rs
+msgctxt "source state"
+msgid "not installed"
+msgstr "non installée"
+
+#: crates/quai-cli/src/output.rs
+msgctxt "source state"
+msgid "not checked yet"
+msgstr "pas encore vérifiée"
+
+#: crates/quai-cli/src/output.rs
+msgctxt "source state"
+msgid "error"
+msgstr "erreur"
+
+#: crates/quai-cli/src/output.rs
+#, python-brace-format
+msgid "available {version}"
+msgstr "{version} disponible"
+
+#: crates/quai-cli/src/output.rs
+#, python-brace-format
+msgid "last check {time}"
+msgstr "dernière vérification : {time}"
+
+#: crates/quai-cli/src/output.rs
+#, python-brace-format
+msgid "{package} ({file}) not served: {reason}"
+msgstr "{package} ({file}) non servi : {reason}"
+
+#: crates/quai-cli/src/output.rs
+#, python-brace-format
+msgid "/etc/yum.repos.d/quai-{id}.repo is out of date: run `sudo quai sync`"
+msgstr ""
+"/etc/yum.repos.d/quai-{id}.repo n’est pas à jour : lancez `sudo quai sync`"
+
+#: crates/quai-cli/src/output.rs
+msgid "quaid is not reachable: run `quai doctor`"
+msgstr "quaid ne répond pas : lancez `quai doctor`"
+
+#: crates/quai-cli/src/output.rs
+#, python-brace-format
+msgid "fix: {command}"
+msgstr "solution : {command}"
+
+#: crates/quai-cli/src/output.rs
+msgid "Everything looks fine."
+msgstr "Tout semble en ordre."
+
+#: crates/quai-cli/src/output.rs
+msgid "Some checks failed."
+msgstr "Certaines vérifications ont échoué."
+
+#: crates/quai-cli/src/output.rs
+msgctxt "token"
+msgid "set"
+msgstr "défini"
+
+#: crates/quai-cli/src/output.rs
+msgctxt "token"
+msgid "not set"
+msgstr "non défini"
+
+#: crates/quai-cli/src/output.rs
+msgid "token"
+msgstr "jeton"
+
+#: crates/quai-cli/src/output.rs
+#, python-brace-format
+msgid "{id} checked"
+msgstr "{id} vérifiée"
+
+#: crates/quai-cli/src/output.rs
+#, python-brace-format
+msgid "{id} skipped (disabled or checked less than 30 s ago)"
+msgstr "{id} ignorée (désactivée ou vérifiée il y a moins de 30 s)"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "unknown channel '{channel}'"
+msgstr "canal « {channel} » inconnu"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "unknown forge '{forge}'"
+msgstr "forge « {forge} » inconnue"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid ""
+"{n} file provides {package} for {arch}; pick one with --asset-pattern: "
+"{patterns}"
+msgid_plural ""
+"{n} files provide {package} for {arch}; pick one with --asset-pattern: "
+"{patterns}"
+msgstr[0] ""
+"{n} fichier fournit {package} pour {arch} ; choisissez-le avec --asset-"
+"pattern : {patterns}"
+msgstr[1] ""
+"{n} fichiers fournissent {package} pour {arch} ; choisissez-en un avec --"
+"asset-pattern : {patterns}"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid ""
+"repository '{repo}' already ships a package named {package}; dnf will pick "
+"the newest version"
+msgstr ""
+"le dépôt « {repo} » fournit déjà un paquet nommé {package} ; dnf choisira la "
+"version la plus récente"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "rpm-ostree install {packages}: staged for the next boot"
+msgstr "rpm-ostree install {packages} : prêt pour le prochain démarrage"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "installed {packages}"
+msgstr "installation terminée : {packages}"
+
+#: crates/quai-cli/src/sources.rs
+msgid "rpm-ostree refreshed its metadata"
+msgstr "rpm-ostree a actualisé ses métadonnées"
+
+#: crates/quai-cli/src/sources.rs
+msgid "dnf could not load the quai repository"
+msgstr "dnf n’a pas pu charger le dépôt quai"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "dnf loaded {repos}"
+msgstr "dnf a chargé {repos}"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid ""
+"package {package} already comes from source '{id}' ({project}); remove that "
+"source first"
+msgstr ""
+"le paquet {package} provient déjà de la source « {id} » ({project}) ; "
+"supprimez d’abord cette source"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "this release ships several variants of the same package: {details}"
+msgstr "cette version contient plusieurs variantes du même paquet : {details}"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "{project} is already tracked as '{id}'"
+msgstr "{project} est déjà suivi sous le nom « {id} »"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "{project} ships no package for {arch} (found: {found})"
+msgstr "{project} ne fournit aucun paquet pour {arch} (trouvé : {found})"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "Track {project} as '{id}' and let dnf update {packages}?"
+msgstr ""
+"Suivre {project} sous le nom « {id} » et laisser dnf mettre à jour "
+"{packages} ?"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "wrote {source} and {repo}"
+msgstr "{source} et {repo} écrits"
+
+#: crates/quai-cli/src/sources.rs
+msgid "quaid built the repository"
+msgstr "quaid a construit le dépôt"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "quaid could not build the repository: {error}"
+msgstr "quaid n’a pas pu construire le dépôt : {error}"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "quaid not reachable yet: {error}"
+msgstr "quaid ne répond pas encore : {error}"
+
+#: crates/quai-cli/src/sources.rs
+msgid "dnf not found: skipped the metadata check"
+msgstr "dnf introuvable : vérification des métadonnées ignorée"
+
+#: crates/quai-cli/src/sources.rs
+msgid "already installed: future updates now come through dnf"
+msgstr "déjà installé : les prochaines mises à jour passeront par dnf"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "install with: sudo dnf install {packages}"
+msgstr "pour installer : sudo dnf install {packages}"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "Now tracking {project} as '{id}'"
+msgstr "{project} est maintenant suivi sous le nom « {id} »"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "'{id}' is disabled: run `quai enable {id}` first"
+msgstr "« {id} » est désactivée : lancez d’abord `quai enable {id}`"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "Installed the packages of '{id}'"
+msgstr "Paquets de « {id} » installés"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "Uninstall {packages}?"
+msgstr "Désinstaller {packages} ?"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "uninstalled {packages}"
+msgstr "désinstallation terminée : {packages}"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "{packages} stays installed but will no longer be updated"
+msgid_plural "{packages} stay installed but will no longer be updated"
+msgstr[0] "{packages} reste installé mais ne sera plus mis à jour"
+msgstr[1] "{packages} restent installés mais ne seront plus mis à jour"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "Stopped tracking '{id}'"
+msgstr "« {id} » n’est plus suivie"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "'{id}' enabled"
+msgstr "« {id} » activée"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "'{id}' disabled"
+msgstr "« {id} » désactivée"
+
+#: crates/quai-cli/src/sources.rs
+msgid "name cannot be empty"
+msgstr "le nom ne peut pas être vide"
+
+#: crates/quai-cli/src/sources.rs
+msgid "channel is stable or prerelease"
+msgstr "le canal vaut stable ou prerelease"
+
+#: crates/quai-cli/src/sources.rs
+msgid "a source needs at least one package; use `quai remove` instead"
+msgstr ""
+"une source a besoin d’au moins un paquet ; utilisez plutôt `quai remove`"
+
+#: crates/quai-cli/src/sources.rs
+msgid "package-gpgkey must be an https:// or file:/// URL"
+msgstr "package-gpgkey doit être une URL https:// ou file:///"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid ""
+"unknown key '{key}'; expected name, channel, asset-pattern, keep-versions, "
+"allow-package, disallow-package, allow-obsoletes, disallow-obsoletes or "
+"package-gpgkey"
+msgstr ""
+"clé « {key} » inconnue ; clés possibles : name, channel, asset-pattern, keep-"
+"versions, allow-package, disallow-package, allow-obsoletes, disallow-"
+"obsoletes ou package-gpgkey"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "'{id}': {key} updated"
+msgstr "« {id} » : {key} modifié"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "skipping unreadable source '{id}': {error}"
+msgstr "source « {id} » illisible ignorée : {error}"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "writing {path}"
+msgstr "écriture de {path}"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "Exported {n} source to {path}"
+msgid_plural "Exported {n} sources to {path}"
+msgstr[0] "{n} source exportée dans {path}"
+msgstr[1] "{n} sources exportées dans {path}"
+
+#: crates/quai-cli/src/sources.rs crates/quai-core/src/config.rs
+#: crates/quai-core/src/sign.rs
+#, python-brace-format
+msgid "reading {path}"
+msgstr "lecture de {path}"
+
+#: crates/quai-cli/src/sources.rs crates/quai-core/src/config.rs
+#, python-brace-format
+msgid "parsing {path}"
+msgstr "analyse de {path}"
+
+#: crates/quai-cli/src/sources.rs
+msgid "the file lists no [[source]]"
+msgstr "le fichier ne contient aucune [[source]]"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "source '{id}'"
+msgstr "source « {id} »"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "'{id}' already exists, skipped (use --replace)"
+msgstr "« {id} » existe déjà, ignorée (utilisez --replace)"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "'{id}' skipped: {error}"
+msgstr "« {id} » ignorée : {error}"
+
+#: crates/quai-cli/src/sources.rs
+#, python-brace-format
+msgid "Imported {n} source"
+msgid_plural "Imported {n} sources"
+msgstr[0] "{n} source importée"
+msgstr[1] "{n} sources importées"
+
+#: crates/quai-cli/src/status.rs
+msgid "none"
+msgstr "aucun"
+
+#: crates/quai-cli/src/status.rs
+msgid "Configuration"
+msgstr "Configuration"
+
+#: crates/quai-cli/src/status.rs
+msgid "quai has not been set up yet"
+msgstr "quai n’est pas encore configuré"
+
+#: crates/quai-cli/src/status.rs
+msgid "correct /etc/quai/quai.toml"
+msgstr "corrigez /etc/quai/quai.toml"
+
+#: crates/quai-cli/src/status.rs
+msgid "Sources"
+msgstr "Sources"
+
+#: crates/quai-cli/src/status.rs
+#, python-brace-format
+msgid "{n} source"
+msgid_plural "{n} sources"
+msgstr[0] "{n} source"
+msgstr[1] "{n} sources"
+
+#: crates/quai-cli/src/status.rs
+msgid "correct or remove the files listed under /etc/quai/sources.d"
+msgstr "corrigez ou supprimez les fichiers indiqués dans /etc/quai/sources.d"
+
+#: crates/quai-cli/src/status.rs
+#, python-brace-format
+msgid "key pair present ({path})"
+msgstr "paire de clés présente ({path})"
+
+#: crates/quai-cli/src/status.rs
+msgid "public key present (run as root to check the secret key)"
+msgstr "clé publique présente (lancez en root pour vérifier la clé secrète)"
+
+#: crates/quai-cli/src/status.rs
+msgid "the signing key is missing"
+msgstr "la clé de signature est absente"
+
+#: crates/quai-cli/src/status.rs
+msgid "Metadata signing key"
+msgstr "Clé de signature des métadonnées"
+
+#: crates/quai-cli/src/status.rs
+msgctxt "socket"
+msgid "enabled"
+msgstr "activé"
+
+#: crates/quai-cli/src/status.rs
+msgctxt "socket"
+msgid "not enabled"
+msgstr "non activé"
+
+#: crates/quai-cli/src/status.rs
+msgctxt "socket"
+msgid "listening"
+msgstr "à l’écoute"
+
+#: crates/quai-cli/src/status.rs
+msgctxt "socket"
+msgid "not listening"
+msgstr "pas à l’écoute"
+
+#: crates/quai-cli/src/status.rs
+msgid "quaid answers"
+msgstr "quaid répond"
+
+#: crates/quai-cli/src/status.rs
+#, python-brace-format
+msgid "nothing answers on {address}"
+msgstr "rien ne répond sur {address}"
+
+#: crates/quai-cli/src/status.rs
+msgid "dnf repository files"
+msgstr "Fichiers de dépôt dnf"
+
+#: crates/quai-cli/src/status.rs
+msgid "in sync"
+msgstr "à jour"
+
+#: crates/quai-cli/src/status.rs
+#, python-brace-format
+msgid "out of date: {outdated}; orphaned: {orphaned}"
+msgstr "pas à jour : {outdated} ; orphelins : {orphaned}"
+
+#: crates/quai-cli/src/status.rs
+msgid "Package manager"
+msgstr "Gestionnaire de paquets"
+
+#: crates/quai-cli/src/status.rs
+msgid "Fedora Atomic: rpm-ostree applies updates at the next boot"
+msgstr ""
+"Fedora Atomic : rpm-ostree applique les mises à jour au prochain démarrage"
+
+#: crates/quai-cli/src/status.rs
+msgid "dnf not found"
+msgstr "dnf introuvable"
+
+#: crates/quai-cli/src/status.rs
+msgid "never checked"
+msgstr "jamais vérifiée"
+
+#: crates/quai-cli/src/status.rs
+#, python-brace-format
+msgid "{package} not served: {reason}"
+msgstr "{package} non servi : {reason}"
+
+#: crates/quai-cli/src/status.rs
+#, python-brace-format
+msgid "{n} package served, latest release {tag}"
+msgid_plural "{n} packages served, latest release {tag}"
+msgstr[0] "{n} paquet servi, dernière version {tag}"
+msgstr[1] "{n} paquets servis, dernière version {tag}"
+
+#: crates/quai-cli/src/status.rs
+#, python-brace-format
+msgid "{n} package served"
+msgid_plural "{n} packages served"
+msgstr[0] "{n} paquet servi"
+msgstr[1] "{n} paquets servis"
+
+#: crates/quai-cli/src/status.rs
+#, python-brace-format
+msgid "Source {id}"
+msgstr "Source {id}"
+
+#: crates/quai-cli/src/status.rs
+msgid "API rate limit"
+msgstr "Limite de requêtes de l’API"
+
+#: crates/quai-cli/src/status.rs
+#, python-brace-format
+msgid "{host} API budget nearly used up"
+msgstr "requêtes autorisées par l’API de {host} presque épuisées"
+
+#: crates/quai-core/src/config.rs
+msgid "source name is empty"
+msgstr "le nom de la source est vide"
+
+#: crates/quai-core/src/config.rs
+msgid "source project or host is empty"
+msgstr "le projet ou l’hôte de la source est vide"
+
+#: crates/quai-core/src/config.rs
+#, python-brace-format
+msgid "source '{id}' lists no packages"
+msgstr "la source « {id} » ne liste aucun paquet"
+
+#: crates/quai-core/src/config.rs
+msgid "keep_versions must be between 1 and 20"
+msgstr "keep_versions doit être compris entre 1 et 20"
+
+#: crates/quai-core/src/config.rs
+#, python-brace-format
+msgid "invalid asset pattern: {error}"
+msgstr "motif de fichiers invalide : {error}"
+
+#: crates/quai-core/src/config.rs
+#, python-brace-format
+msgid ""
+"invalid source id '{id}': use lowercase letters, digits, '.', '_' or "
+"'-' (max 63)"
+msgstr ""
+"identifiant de source « {id} » invalide : utilisez des minuscules, des "
+"chiffres, « . », « _ » ou « - » (63 au plus)"
+
+#: crates/quai-core/src/config.rs
+#, python-brace-format
+msgid "invalid package name '{name}'"
+msgstr "nom de paquet « {name} » invalide"
+
+#: crates/quai-core/src/config.rs
+#, python-brace-format
+msgid "no source named '{id}'"
+msgstr "aucune source nommée « {id} »"
+
+#: crates/quai-core/src/config.rs
+#, python-brace-format
+msgid "{path} declares id '{declared}' but its file name says '{id}'"
+msgstr ""
+"{path} déclare l’identifiant « {declared} » mais son nom de fichier indique "
+"« {id} »"
+
+#: crates/quai-core/src/config.rs crates/quai-core/src/repofile.rs
+#, python-brace-format
+msgid "removing {path}"
+msgstr "suppression de {path}"
+
+#: crates/quai-core/src/config.rs
+#, python-brace-format
+msgid "a source named '{id}' already exists"
+msgstr "une source nommée « {id} » existe déjà"
+
+#: crates/quai-core/src/engine.rs
+#, python-brace-format
+msgid "reading the RPM header of {file}"
+msgstr "lecture de l’en-tête RPM de {file}"
+
+#: crates/quai-core/src/engine.rs
+#, python-brace-format
+msgid "parsing the RPM header of {file}"
+msgstr "analyse de l’en-tête RPM de {file}"
+
+#: crates/quai-core/src/engine.rs
+#, python-brace-format
+msgid "no readable binary RPM in {project} release {tag}"
+msgstr "aucun RPM binaire lisible dans la version {tag} de {project}"
+
+#: crates/quai-core/src/engine.rs
+#, python-brace-format
+msgid ""
+"{package} declares Obsoletes: {obsoleted}; quai will not serve it unless you "
+"allow it explicitly"
+msgstr ""
+"{package} déclare Obsoletes: {obsoleted} ; quai ne le servira pas sans votre "
+"autorisation explicite"
+
+#: crates/quai-core/src/engine.rs
+msgid ""
+"upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's "
+"signed metadata"
+msgstr ""
+"le projet ne signe pas ces RPM ; leur intégrité repose sur le SHA-256 des "
+"métadonnées signées par quai"
+
+#: crates/quai-core/src/engine.rs
+#, python-brace-format
+msgid ""
+"{host} publishes no checksum: quaid downloads each version once to compute it"
+msgstr ""
+"{host} ne publie pas d’empreinte : quaid télécharge chaque version une fois "
+"pour la calculer"
+
+#: crates/quai-core/src/engine.rs
+#, python-brace-format
+msgid "{tag} is a pre-release"
+msgstr "{tag} est une version préliminaire"
+
+#: crates/quai-core/src/engine.rs
+#, python-brace-format
+msgid "{file}: checksum unavailable: {error}"
+msgstr "{file} : empreinte indisponible : {error}"
+
+#: crates/quai-core/src/engine.rs
+msgid "signing key missing: run `quai setup`"
+msgstr "clé de signature absente : lancez `quai setup`"
+
+#: crates/quai-core/src/engine.rs
+#, python-brace-format
+msgid "{project} has no releases"
+msgstr "{project} n’a publié aucune version"
+
+#: crates/quai-core/src/engine.rs
+msgid "no assets"
+msgstr "aucun fichier"
+
+#. Translators: {types} is a list of file extensions, such as ".AppImage, .deb".
+#: crates/quai-core/src/engine.rs
+#, python-brace-format
+msgid "only {types}"
+msgstr "seulement {types}"
+
+#: crates/quai-core/src/engine.rs
+#, python-brace-format
+msgid ""
+"{project} publishes no .rpm in its last release ({found}); quai only manages "
+"RPM packages"
+msgid_plural ""
+"{project} publishes no .rpm in its last {n} releases ({found}); quai only "
+"manages RPM packages"
+msgstr[0] ""
+"{project} ne publie aucun .rpm dans sa dernière version ({found}) ; quai ne "
+"gère que les paquets RPM"
+msgstr[1] ""
+"{project} ne publie aucun .rpm dans ses {n} dernières versions ({found}) ; "
+"quai ne gère que les paquets RPM"
+
+#: crates/quai-core/src/engine.rs
+#, python-brace-format
+msgid ""
+"{project} only ships RPMs in pre-releases; use the prerelease channel to "
+"follow them"
+msgstr ""
+"{project} ne fournit des RPM que dans ses versions préliminaires ; utilisez "
+"le canal prerelease pour les suivre"
+
+#: crates/quai-core/src/engine.rs
+#, python-brace-format
+msgid "no RPM asset of {project} matches the asset pattern"
+msgstr "aucun RPM de {project} ne correspond au motif de fichiers"
+
+#: crates/quai-core/src/engine.rs
+#, python-brace-format
+msgid "no usable RPM release found for {project}"
+msgstr "aucune version utilisable avec des RPM trouvée pour {project}"
+
+#: crates/quai-core/src/engine.rs
+#, python-brace-format
+msgid ""
+"not in this source's package list (allow it with `quai set {id} allow-"
+"package {package}`)"
+msgstr ""
+"absent de la liste des paquets de cette source (autorisez-le avec `quai set "
+"{id} allow-package {package}`)"
+
+#: crates/quai-core/src/engine.rs
+#, python-brace-format
+msgid ""
+"obsoletes '{obsoleted}', which this source does not own (allow it with `quai "
+"set {id} allow-obsoletes {obsoleted}`)"
+msgstr ""
+"rend obsolète « {obsoleted} », qui n’appartient pas à cette source "
+"(autorisez-le avec `quai set {id} allow-obsoletes {obsoleted}`)"
+
+#: crates/quai-core/src/forge/forgejo.rs crates/quai-core/src/forge/github.rs
+#: crates/quai-core/src/forge/gitlab.rs
+#, python-brace-format
+msgid "contacting {host}"
+msgstr "connexion à {host}"
+
+#: crates/quai-core/src/forge/forgejo.rs
+msgid "decoding Forgejo releases"
+msgstr "lecture des versions Forgejo"
+
+#: crates/quai-core/src/forge/github.rs
+msgid "decoding GitHub releases"
+msgstr "lecture des versions GitHub"
+
+#: crates/quai-core/src/forge/gitlab.rs
+msgid "decoding GitLab releases"
+msgstr "lecture des versions GitLab"
+
+#: crates/quai-core/src/forge/mod.rs
+#, python-brace-format
+msgid ""
+"{project} not found (private project, typo, or no access with the configured "
+"token)"
+msgstr ""
+"{project} introuvable (projet privé, faute de frappe, ou accès refusé avec "
+"le jeton configuré)"
+
+#: crates/quai-core/src/forge/mod.rs
+#, python-brace-format
+msgid "{host} rejected the token (401)"
+msgstr "{host} a refusé le jeton (401)"
+
+#: crates/quai-core/src/forge/mod.rs
+#, python-brace-format
+msgid ""
+"{host} API rate limit reached; add a token with `quai token set --host {host}"
+"`"
+msgstr ""
+"limite de requêtes de l’API de {host} atteinte ; ajoutez un jeton avec `quai "
+"token set --host {host}`"
+
+#: crates/quai-core/src/forge/mod.rs
+#, python-brace-format
+msgid "{host} answered HTTP {status} for {project}"
+msgstr "{host} a répondu HTTP {status} pour {project}"
+
+#: crates/quai-core/src/fsutil.rs
+msgid "path has no parent directory"
+msgstr "le chemin n’a pas de dossier parent"
+
+#: crates/quai-core/src/fsutil.rs
+msgid "path has no file name"
+msgstr "le chemin n’a pas de nom de fichier"
+
+#: crates/quai-core/src/fsutil.rs
+#, python-brace-format
+msgid "replacing {path}"
+msgstr "remplacement de {path}"
+
+#: crates/quai-core/src/fsutil.rs
+#, python-brace-format
+msgid "changing the mode of {path} to {mode}"
+msgstr "passage des droits de {path} à {mode}"
+
+#: crates/quai-core/src/fsutil.rs
+#, python-brace-format
+msgid "giving {path} to root:{group}"
+msgstr "attribution de {path} à root:{group}"
+
+#: crates/quai-core/src/rpm/fetch.rs
+#, python-brace-format
+msgid "downloading the header of {url}"
+msgstr "téléchargement de l’en-tête de {url}"
+
+#: crates/quai-core/src/rpm/fetch.rs
+#, python-brace-format
+msgid "HTTP {status} while reading {url}"
+msgstr "HTTP {status} pendant la lecture de {url}"
+
+#: crates/quai-core/src/rpm/fetch.rs
+#, python-brace-format
+msgid "downloading {url}"
+msgstr "téléchargement de {url}"
+
+#: crates/quai-core/src/rpm/fetch.rs
+#, python-brace-format
+msgid "HTTP {status} while downloading {url}"
+msgstr "HTTP {status} pendant le téléchargement de {url}"
+
+#: crates/quai-core/src/rpm/header.rs
+msgid "truncated RPM header"
+msgstr "en-tête RPM tronqué"
+
+#: crates/quai-core/src/rpm/header.rs
+msgid "bad RPM header magic"
+msgstr "signature d’en-tête RPM incorrecte"
+
+#: crates/quai-core/src/rpm/header.rs
+#, python-brace-format
+msgid "RPM header too large ({entries} entries, {bytes} bytes)"
+msgstr "en-tête RPM trop grand ({entries} entrées, {bytes} octets)"
+
+#: crates/quai-core/src/rpm/header.rs
+msgid "not an RPM file (bad lead magic)"
+msgstr "pas un fichier RPM (signature de début incorrecte)"
+
+#: crates/quai-core/src/rpm/header.rs
+msgid "RPM header too large"
+msgstr "en-tête RPM trop grand"
+
+#: crates/quai-core/src/rpm/header.rs
+#, python-brace-format
+msgid "truncated RPM header ({have} of {need} bytes)"
+msgstr "en-tête RPM tronqué ({have} octets sur {need})"
+
+#: crates/quai-core/src/rpm/header.rs
+#, python-brace-format
+msgid "RPM header entry {tag} points outside the data store"
+msgstr "l’entrée {tag} de l’en-tête RPM pointe hors de la zone de données"
+
+#: crates/quai-core/src/rpm/header.rs
+#, python-brace-format
+msgid "RPM header incomplete: have {have} of {need} bytes"
+msgstr "en-tête RPM incomplet : {have} octets sur {need}"
+
+#: crates/quai-core/src/rpm/header.rs
+msgid "signature header"
+msgstr "en-tête de signature"
+
+#: crates/quai-core/src/rpm/header.rs
+msgid "main header"
+msgstr "en-tête principal"
+
+#: crates/quai-core/src/rpm/header.rs
+msgid "package has no name"
+msgstr "le paquet n’a pas de nom"
+
+#: crates/quai-core/src/rpm/header.rs
+msgid "package has no version"
+msgstr "le paquet n’a pas de version"
+
+#: crates/quai-core/src/rpm/header.rs
+#, python-brace-format
+msgid "file too short for an RPM header (needs {n} bytes)"
+msgstr "fichier trop court pour un en-tête RPM ({n} octets nécessaires)"
+
+#: crates/quai-core/src/sign.rs
+msgid "building key parameters"
+msgstr "préparation des paramètres de la clé"
+
+#: crates/quai-core/src/sign.rs
+msgid "generating signing key"
+msgstr "génération de la clé de signature"
+
+#: crates/quai-core/src/sign.rs
+msgid "armoring secret key"
+msgstr "encodage ASCII de la clé secrète"
+
+#: crates/quai-core/src/sign.rs
+msgid "armoring public key"
+msgstr "encodage ASCII de la clé publique"
+
+#: crates/quai-core/src/sign.rs
+msgid "reading secret key"
+msgstr "lecture de la clé secrète"
+
+#: crates/quai-core/src/sign.rs
+msgid "signing repomd.xml"
+msgstr "signature de repomd.xml"
+
+#: crates/quai-core/src/sign.rs
+msgid "armoring signature"
+msgstr "encodage ASCII de la signature"
+
+#: crates/quai-core/src/sign.rs
+msgid "reading public key"
+msgstr "lecture de la clé publique"
+
+#: crates/quai-core/src/sign.rs
+msgid "reading signature"
+msgstr "lecture de la signature"
+
+#: crates/quai-core/src/sign.rs
+msgid "signature does not match"
+msgstr "la signature ne correspond pas"
+
+#: crates/quai-core/src/spec.rs
+msgid "empty source; expected owner/repo or a URL"
+msgstr "source vide ; attendu : propriétaire/projet ou une URL"
+
+#: crates/quai-core/src/spec.rs
+#, python-brace-format
+msgid "unknown forge at {host}: pass --forge github, gitlab or forgejo"
+msgstr "forge inconnue sur {host} : précisez --forge github, gitlab ou forgejo"
+
+#: crates/quai-core/src/spec.rs
+#, python-brace-format
+msgid "unknown prefix '{prefix}:' in '{input}'"
+msgstr "préfixe « {prefix}: » inconnu dans « {input} »"
+
+#: crates/quai-core/src/spec.rs
+#, python-brace-format
+msgid "{prefix}: needs a host, e.g. {prefix}:git.example.org/owner/repo"
+msgstr ""
+"{prefix}: demande un hôte, par exemple {prefix}:git.example.org/propriétaire/"
+"projet"
+
+#: crates/quai-core/src/spec.rs
+#, python-brace-format
+msgid "cannot read a project from '{path}': expected owner/repo"
+msgstr ""
+"impossible de lire un projet dans « {path} » : attendu : propriétaire/projet"
+
+#: crates/quai-core/src/system.rs
+#, python-brace-format
+msgid "running {command}"
+msgstr "exécution de {command}"
+
+#: crates/quai-core/src/system.rs
+#, python-brace-format
+msgid "{command} failed ({status})"
+msgstr "{command} a échoué ({status})"
+
+#: crates/quai-core/src/system.rs
+#, python-brace-format
+msgid "{command} failed ({status}): {output}"
+msgstr "{command} a échoué ({status}) : {output}"
+
+#: crates/quai-gtk/src/add_dialog.rs crates/quai-kde/qml/AddSourcePage.qml
+msgid "owner/repo or project URL"
+msgstr "propriétaire/projet ou adresse du projet"
+
+#: crates/quai-gtk/src/add_dialog.rs
+msgid "Forge"
+msgstr "Forge"
+
+#: crates/quai-gtk/src/add_dialog.rs
+msgid "Only needed for self-hosted forges"
+msgstr "Utile seulement pour les forges auto-hébergées"
+
+#: crates/quai-gtk/src/add_dialog.rs crates/quai-kde/qml/AddSourcePage.qml
+msgid "Detect automatically"
+msgstr "Détecter automatiquement"
+
+#: crates/quai-gtk/src/add_dialog.rs crates/quai-gtk/src/window.rs
+msgid "Channel"
+msgstr "Canal"
+
+#: crates/quai-gtk/src/add_dialog.rs crates/quai-gtk/src/window.rs
+#: crates/quai-kde/qml/AddSourcePage.qml crates/quai-kde/qml/SourcePage.qml
+msgid "Stable releases"
+msgstr "Versions stables"
+
+#: crates/quai-gtk/src/add_dialog.rs crates/quai-gtk/src/window.rs
+#: crates/quai-kde/qml/AddSourcePage.qml crates/quai-kde/qml/SourcePage.qml
+msgid "Pre-releases too"
+msgstr "Versions préliminaires aussi"
+
+#: crates/quai-gtk/src/add_dialog.rs
+msgid "Project"
+msgstr "Projet"
+
+#: crates/quai-gtk/src/add_dialog.rs crates/quai-kde/qml/AddSourcePage.qml
+msgid ""
+"A GitHub, GitLab or Codeberg project that attaches .rpm files to its "
+"releases, e.g. stablyai/orca."
+msgstr ""
+"Un projet GitHub, GitLab ou Codeberg qui joint des fichiers .rpm à ses "
+"versions, par exemple stablyai/orca."
+
+#: crates/quai-gtk/src/add_dialog.rs crates/quai-kde/qml/AddSourcePage.qml
+msgid "Back"
+msgstr "Retour"
+
+#: crates/quai-gtk/src/add_dialog.rs crates/quai-gtk/src/window.rs
+#: crates/quai-kde/qml/AddSourcePage.qml crates/quai-kde/qml/SourcesPage.qml
+msgid "Add a Source"
+msgstr "Ajouter une source"
+
+#: crates/quai-gtk/src/add_dialog.rs crates/quai-kde/qml/AddSourcePage.qml
+msgid "Analyze"
+msgstr "Analyser"
+
+#: crates/quai-gtk/src/add_dialog.rs crates/quai-kde/qml/AddSourcePage.qml
+msgctxt "button"
+msgid "Add"
+msgstr "Ajouter"
+
+#: crates/quai-gtk/src/add_dialog.rs crates/quai-kde/qml/AddSourcePage.qml
+#, python-brace-format
+msgid "Release {tag}"
+msgstr "Version {tag}"
+
+#: crates/quai-gtk/src/add_dialog.rs crates/quai-kde/qml/AddSourcePage.qml
+#, python-brace-format
+msgid "Installed {version}, will be kept up to date"
+msgstr "{version} installée, sera maintenue à jour"
+
+#: crates/quai-gtk/src/add_dialog.rs
+msgid "Choose a Variant"
+msgstr "Choisir une variante"
+
+#: crates/quai-gtk/src/add_dialog.rs crates/quai-kde/qml/AddSourcePage.qml
+#, python-brace-format
+msgid ""
+"Several files provide {package} for {arch}. quai follows the one you pick in "
+"every future release."
+msgstr ""
+"Plusieurs fichiers fournissent {package} pour {arch}. quai suivra celui que "
+"vous choisissez dans toutes les versions à venir."
+
+#: crates/quai-gtk/src/add_dialog.rs
+msgid "File"
+msgstr "Fichier"
+
+#: crates/quai-gtk/src/add_dialog.rs
+msgid "Good to Know"
+msgstr "Bon à savoir"
+
+#: crates/quai-gtk/src/add_dialog.rs
+msgid "Source id"
+msgstr "Identifiant de la source"
+
+#: crates/quai-gtk/src/add_dialog.rs
+msgid "Display name"
+msgstr "Nom affiché"
+
+#: crates/quai-gtk/src/add_dialog.rs crates/quai-kde/qml/AddSourcePage.qml
+msgid "Install now"
+msgstr "Installer maintenant"
+
+#: crates/quai-gtk/src/add_dialog.rs crates/quai-kde/qml/AddSourcePage.qml
+msgid "Already installed"
+msgstr "Déjà installé"
+
+#: crates/quai-gtk/src/add_dialog.rs
+msgid "Otherwise install later from the source page"
+msgstr "Sinon, installez plus tard depuis la page de la source"
+
+#: crates/quai-gtk/src/add_dialog.rs crates/quai-kde/qml/AddSourcePage.qml
+msgid "restart to finish installing"
+msgstr "redémarrez pour terminer l’installation"
+
+#: crates/quai-gtk/src/backend.rs crates/quai-kde/src/backend.rs
+#, python-brace-format
+msgid "cannot start quai: {error}"
+msgstr "impossible de lancer quai : {error}"
+
+#: crates/quai-gtk/src/backend.rs crates/quai-kde/src/backend.rs
+#, python-brace-format
+msgid "quai did not answer: {error}"
+msgstr "quai n’a pas répondu : {error}"
+
+#: crates/quai-gtk/src/backend.rs crates/quai-kde/qml/Main.qml
+#, python-brace-format
+msgid "unexpected answer from quai: {error}"
+msgstr "réponse inattendue de quai : {error}"
+
+#: crates/quai-gtk/src/dialogs.rs crates/quai-kde/qml/Main.qml
+msgid ""
+"Keeps RPM packages published as GitHub, GitLab or Forgejo releases up to "
+"date through dnf."
+msgstr ""
+"Maintient à jour avec dnf les paquets RPM publiés dans les versions GitHub, "
+"GitLab ou Forgejo."
+
+#. Translators: your names, one "Name <email>" per line, credited in the About window. Leave untranslated to show no translator.
+#: crates/quai-gtk/src/dialogs.rs crates/quai-kde/qml/Main.qml
+msgid "translator-credits"
+msgstr ""
+
+#: crates/quai-gtk/src/dialogs.rs crates/quai-gtk/src/window.rs
+msgid "Preferences"
+msgstr "Préférences"
+
+#: crates/quai-gtk/src/dialogs.rs
+msgid "General"
+msgstr "Général"
+
+#: crates/quai-gtk/src/dialogs.rs
+msgid "Checking for Releases"
+msgstr "Recherche de nouvelles versions"
+
+#: crates/quai-gtk/src/dialogs.rs
+msgid ""
+"quaid asks the forges for new releases at most this often, whenever dnf or "
+"GNOME Software refreshes."
+msgstr ""
+"quaid interroge les forges au plus à cette fréquence, chaque fois que dnf ou "
+"GNOME Logiciels s’actualise."
+
+#: crates/quai-gtk/src/dialogs.rs
+msgid "Minimum interval (minutes)"
+msgstr "Intervalle minimum (minutes)"
+
+#: crates/quai-gtk/src/dialogs.rs
+msgid "Versions kept for new sources"
+msgstr "Versions conservées pour les nouvelles sources"
+
+#: crates/quai-gtk/src/dialogs.rs crates/quai-gtk/src/window.rs
+#: crates/quai-kde/qml/PreferencesPage.qml crates/quai-kde/qml/SourcePage.qml
+msgid "Apply"
+msgstr "Appliquer"
+
+#: crates/quai-gtk/src/dialogs.rs
+msgid "Access Tokens"
+msgstr "Jetons d’accès"
+
+#: crates/quai-gtk/src/dialogs.rs crates/quai-kde/qml/PreferencesPage.qml
+msgid ""
+"Without a token GitHub allows 60 requests per hour. A token raises that to "
+"5,000; for public projects it needs no permissions. Tokens are readable by "
+"root and quaid only."
+msgstr ""
+"Sans jeton, GitHub autorise 60 requêtes par heure. Un jeton porte ce nombre "
+"à 5 000 ; pour les projets publics, il n’a besoin d’aucune permission. Seuls "
+"root et quaid peuvent lire les jetons."
+
+#: crates/quai-gtk/src/dialogs.rs crates/quai-kde/qml/PreferencesPage.qml
+msgid "Token set"
+msgstr "Jeton défini"
+
+#: crates/quai-gtk/src/dialogs.rs crates/quai-kde/qml/PreferencesPage.qml
+msgid "Optional"
+msgstr "Facultatif"
+
+#: crates/quai-gtk/src/dialogs.rs crates/quai-kde/qml/PreferencesPage.qml
+msgid "Set…"
+msgstr "Définir…"
+
+#: crates/quai-gtk/src/dialogs.rs crates/quai-kde/qml/PreferencesPage.qml
+msgid "Remove Token"
+msgstr "Supprimer le jeton"
+
+#: crates/quai-gtk/src/dialogs.rs crates/quai-kde/qml/PreferencesPage.qml
+msgid "Service"
+msgstr "Service"
+
+#: crates/quai-gtk/src/dialogs.rs
+msgid "quaid address"
+msgstr "Adresse de quaid"
+
+#: crates/quai-gtk/src/dialogs.rs
+msgid "Signed metadata"
+msgstr "Métadonnées signées"
+
+#: crates/quai-gtk/src/dialogs.rs crates/quai-kde/qml/PreferencesPage.qml
+msgid "On: dnf verifies every repomd.xml"
+msgstr "Oui : dnf vérifie chaque repomd.xml"
+
+#: crates/quai-gtk/src/dialogs.rs crates/quai-kde/qml/PreferencesPage.qml
+msgid "Off"
+msgstr "Non"
+
+#: crates/quai-gtk/src/dialogs.rs crates/quai-kde/qml/PreferencesPage.qml
+#, python-brace-format
+msgid "Token for {host}"
+msgstr "Jeton pour {host}"
+
+#: crates/quai-gtk/src/dialogs.rs crates/quai-kde/qml/PreferencesPage.qml
+msgid ""
+"Paste a personal access token. It is stored in /etc/quai/private/tokens.toml."
+msgstr ""
+"Collez un jeton d’accès personnel. Il est conservé dans /etc/quai/private/"
+"tokens.toml."
+
+#: crates/quai-gtk/src/dialogs.rs crates/quai-gtk/src/window.rs
+#: crates/quai-kde/qml/SourcePage.qml
+msgid "Cancel"
+msgstr "Annuler"
+
+#: crates/quai-gtk/src/dialogs.rs
+msgid "Save"
+msgstr "Enregistrer"
+
+#: crates/quai-gtk/src/dialogs.rs crates/quai-gtk/src/window.rs
+#: crates/quai-kde/qml/DiagnosticsPage.qml crates/quai-kde/qml/Main.qml
+msgid "Diagnostics"
+msgstr "Diagnostic"
+
+#: crates/quai-gtk/src/dialogs.rs
+msgid "Diagnostics failed"
+msgstr "Le diagnostic a échoué"
+
+#: crates/quai-gtk/src/dialogs.rs crates/quai-kde/qml/DiagnosticsPage.qml
+#, python-brace-format
+msgid "Fix: {command}"
+msgstr "Solution : {command}"
+
+#: crates/quai-gtk/src/dialogs.rs crates/quai-kde/qml/DiagnosticsPage.qml
+msgid "Run Setup"
+msgstr "Lancer la configuration"
+
+#: crates/quai-gtk/src/dialogs.rs crates/quai-kde/qml/DiagnosticsPage.qml
+msgid "Regenerate Repository Files"
+msgstr "Régénérer les fichiers de dépôt"
+
+#: crates/quai-gtk/src/util.rs crates/quai-kde/qml/Main.qml
+msgid "just now"
+msgstr "à l’instant"
+
+#: crates/quai-gtk/src/util.rs crates/quai-kde/qml/Main.qml
+#, python-brace-format
+msgid "{n} minute ago"
+msgid_plural "{n} minutes ago"
+msgstr[0] "il y a {n} minute"
+msgstr[1] "il y a {n} minutes"
+
+#: crates/quai-gtk/src/util.rs crates/quai-kde/qml/Main.qml
+#, python-brace-format
+msgid "{n} hour ago"
+msgid_plural "{n} hours ago"
+msgstr[0] "il y a {n} heure"
+msgstr[1] "il y a {n} heures"
+
+#: crates/quai-gtk/src/util.rs crates/quai-kde/qml/Main.qml
+#, python-brace-format
+msgid "{n} day ago"
+msgid_plural "{n} days ago"
+msgstr[0] "il y a {n} jour"
+msgstr[1] "il y a {n} jours"
+
+#: crates/quai-gtk/src/util.rs crates/quai-kde/qml/Main.qml
+msgctxt "source state"
+msgid "Up to date"
+msgstr "À jour"
+
+#: crates/quai-gtk/src/util.rs crates/quai-kde/qml/Main.qml
+msgctxt "source state"
+msgid "Update available"
+msgstr "Mise à jour disponible"
+
+#: crates/quai-gtk/src/util.rs crates/quai-kde/qml/Main.qml
+msgctxt "source state"
+msgid "Not installed"
+msgstr "Non installée"
+
+#: crates/quai-gtk/src/util.rs crates/quai-kde/qml/Main.qml
+msgctxt "source state"
+msgid "Not checked yet"
+msgstr "Pas encore vérifiée"
+
+#: crates/quai-gtk/src/util.rs crates/quai-kde/qml/Main.qml
+msgctxt "source state"
+msgid "Error"
+msgstr "Erreur"
+
+#: crates/quai-gtk/src/util.rs crates/quai-kde/qml/Main.qml
+msgctxt "source state"
+msgid "Disabled"
+msgstr "Désactivée"
+
+#: crates/quai-gtk/src/util.rs crates/quai-kde/qml/Main.qml
+#, python-brace-format
+msgid "{version} available"
+msgstr "{version} disponible"
+
+#: crates/quai-gtk/src/window.rs crates/quai-kde/qml/Main.qml
+msgid "Check All Sources Now"
+msgstr "Vérifier toutes les sources maintenant"
+
+#: crates/quai-gtk/src/window.rs crates/quai-kde/qml/Main.qml
+msgid "About Quai"
+msgstr "À propos de Quai"
+
+#: crates/quai-gtk/src/window.rs
+msgid "Main Menu"
+msgstr "Menu principal"
+
+#: crates/quai-gtk/src/window.rs
+msgid ""
+"Each source is a project whose RPM releases dnf and GNOME Software keep up "
+"to date."
+msgstr ""
+"Chaque source est un projet dont dnf et GNOME Logiciels maintiennent les "
+"versions RPM à jour."
+
+#: crates/quai-gtk/src/window.rs crates/quai-kde/qml/SourcesPage.qml
+msgid "No Sources Yet"
+msgstr "Aucune source pour l’instant"
+
+#: crates/quai-gtk/src/window.rs
+msgid ""
+"Add a GitHub, GitLab or Codeberg project that publishes RPM packages.\n"
+"dnf and GNOME Software will then keep it up to date."
+msgstr ""
+"Ajoutez un projet GitHub, GitLab ou Codeberg qui publie des paquets RPM.\n"
+"dnf et GNOME Logiciels le maintiendront ensuite à jour."
+
+#: crates/quai-gtk/src/window.rs crates/quai-kde/qml/SourcesPage.qml
+msgid "Cannot Read the Sources"
+msgstr "Impossible de lire les sources"
+
+#: crates/quai-gtk/src/window.rs
+msgid "The quai service is not answering, so dnf cannot see your sources."
+msgstr "Le service quai ne répond pas : dnf ne voit donc pas vos sources."
+
+#: crates/quai-gtk/src/window.rs crates/quai-kde/qml/SourcesPage.qml
+msgid "Set Up"
+msgstr "Configurer"
+
+#: crates/quai-gtk/src/window.rs crates/quai-kde/qml/SourcePage.qml
+#: crates/quai-kde/qml/SourcesPage.qml
+msgid "Check Now"
+msgstr "Vérifier maintenant"
+
+#: crates/quai-gtk/src/window.rs
+msgid "Last check failed"
+msgstr "La dernière vérification a échoué"
+
+#: crates/quai-gtk/src/window.rs crates/quai-kde/qml/SourcePage.qml
+msgid "Packages"
+msgstr "Paquets"
+
+#: crates/quai-gtk/src/window.rs crates/quai-kde/qml/SourcePage.qml
+#, python-brace-format
+msgid "Installed {installed} · {available} available"
+msgstr "{installed} installée · {available} disponible"
+
+#: crates/quai-gtk/src/window.rs crates/quai-kde/qml/SourcePage.qml
+#, python-brace-format
+msgid "Installed {version}"
+msgstr "{version} installée"
+
+#: crates/quai-gtk/src/window.rs crates/quai-kde/qml/SourcePage.qml
+#, python-brace-format
+msgid "Not installed · {version} available"
+msgstr "Non installé · {version} disponible"
+
+#: crates/quai-gtk/src/window.rs crates/quai-kde/qml/SourcePage.qml
+msgctxt "package state"
+msgid "Not installed"
+msgstr "Non installé"
+
+#: crates/quai-gtk/src/window.rs crates/quai-kde/qml/SourcePage.qml
+msgid "Install"
+msgstr "Installer"
+
+#: crates/quai-gtk/src/window.rs crates/quai-kde/qml/SourcePage.qml
+msgctxt "verb"
+msgid "Update"
+msgstr "Mettre à jour"
+
+#: crates/quai-gtk/src/window.rs
+msgid "Not Served"
+msgstr "Non servis"
+
+#: crates/quai-gtk/src/window.rs crates/quai-kde/qml/SourcePage.qml
+msgid "Source"
+msgstr "Source"
+
+#: crates/quai-gtk/src/window.rs
+msgid "Enabled"
+msgstr "Activée"
+
+#: crates/quai-gtk/src/window.rs
+msgid "When off, dnf ignores this source"
+msgstr "Désactivée, dnf ignore cette source"
+
+#: crates/quai-gtk/src/window.rs
+msgid "Pre-releases are often less tested"
+msgstr "Les versions préliminaires sont souvent moins testées"
+
+#: crates/quai-gtk/src/window.rs
+msgid "Versions Kept"
+msgstr "Versions conservées"
+
+#: crates/quai-gtk/src/window.rs
+msgid "Older versions stay available for dnf downgrade"
+msgstr "Les anciennes versions restent disponibles pour dnf downgrade"
+
+#: crates/quai-gtk/src/window.rs
+msgid "Asset pattern (regex)"
+msgstr "Motif de fichiers (expression régulière)"
+
+#: crates/quai-gtk/src/window.rs crates/quai-kde/qml/SourcePage.qml
+msgid "Status"
+msgstr "État"
+
+#: crates/quai-gtk/src/window.rs
+msgid "Latest release"
+msgstr "Dernière version"
+
+#: crates/quai-gtk/src/window.rs
+msgid "Last check"
+msgstr "Dernière vérification"
+
+#: crates/quai-gtk/src/window.rs crates/quai-kde/qml/Main.qml
+msgid "never"
+msgstr "jamais"
+
+#: crates/quai-gtk/src/window.rs
+msgid "dnf repository"
+msgstr "Dépôt dnf"
+
+#: crates/quai-gtk/src/window.rs
+msgid "Repository file out of date"
+msgstr "Fichier de dépôt pas à jour"
+
+#: crates/quai-gtk/src/window.rs
+msgid "Regenerate /etc/yum.repos.d/quai-*.repo"
+msgstr "Régénérer /etc/yum.repos.d/quai-*.repo"
+
+#: crates/quai-gtk/src/window.rs
+msgid "Fix"
+msgstr "Corriger"
+
+#: crates/quai-gtk/src/window.rs
+msgid "Remove Source"
+msgstr "Supprimer la source"
+
+#: crates/quai-gtk/src/window.rs crates/quai-kde/qml/SourcePage.qml
+msgid "dnf will stop seeing this source."
+msgstr "dnf ne verra plus cette source."
+
+#: crates/quai-gtk/src/window.rs
+#, python-brace-format
+msgid ""
+"{packages} will stay installed but stop receiving updates, unless you "
+"uninstall it too."
+msgid_plural ""
+"{packages} will stay installed but stop receiving updates, unless you "
+"uninstall them too."
+msgstr[0] ""
+"{packages} restera installé mais ne recevra plus de mises à jour, sauf si "
+"vous le désinstallez aussi."
+msgstr[1] ""
+"{packages} resteront installés mais ne recevront plus de mises à jour, sauf "
+"si vous les désinstallez aussi."
+
+#: crates/quai-gtk/src/window.rs crates/quai-kde/qml/SourcePage.qml
+#, python-brace-format
+msgid "Remove {name}?"
+msgstr "Supprimer {name} ?"
+
+#: crates/quai-gtk/src/window.rs crates/quai-kde/qml/SourcePage.qml
+msgid "Remove and Uninstall"
+msgstr "Supprimer et désinstaller"
+
+#: crates/quai-gtk/src/window.rs crates/quai-kde/qml/SourcePage.qml
+msgid "Remove"
+msgstr "Supprimer"
+
+#: crates/quai-gtk/src/window.rs crates/quai-kde/qml/Main.qml
+msgid "restart to apply"
+msgstr "redémarrez pour appliquer"
+
+#: crates/quai-gtk/src/window.rs crates/quai-kde/qml/Main.qml
+msgid "Checked less than 30 seconds ago"
+msgstr "Vérifié il y a moins de 30 secondes"
+
+#: crates/quai-gtk/src/window.rs crates/quai-kde/qml/Main.qml
+msgid "Checked for new releases"
+msgstr "Nouvelles versions recherchées"
+
+#: crates/quai-gtk/src/window.rs crates/quai-kde/qml/Main.qml
+#, python-brace-format
+msgid "Checked {n} source"
+msgid_plural "Checked {n} sources"
+msgstr[0] "{n} source vérifiée"
+msgstr[1] "{n} sources vérifiées"
+
+#: crates/quai-kde/qml/AddSourcePage.qml crates/quai-kde/qml/SourcePage.qml
+msgid "Project:"
+msgstr "Projet :"
+
+#: crates/quai-kde/qml/AddSourcePage.qml
+msgid "Forge:"
+msgstr "Forge :"
+
+#: crates/quai-kde/qml/AddSourcePage.qml crates/quai-kde/qml/SourcePage.qml
+msgid "Channel:"
+msgstr "Canal :"
+
+#: crates/quai-kde/qml/AddSourcePage.qml
+msgid "Variant:"
+msgstr "Variante :"
+
+#: crates/quai-kde/qml/AddSourcePage.qml
+msgid "Display name:"
+msgstr "Nom affiché :"
+
+#: crates/quai-kde/qml/AddSourcePage.qml
+msgid "Source id:"
+msgstr "Identifiant de la source :"
+
+#: crates/quai-kde/qml/AddSourcePage.qml
+msgid "Install:"
+msgstr "Installation :"
+
+#: crates/quai-kde/qml/DiagnosticsPage.qml
+msgid "Run Again"
+msgstr "Relancer"
+
+#: crates/quai-kde/qml/DiagnosticsPage.qml
+msgid "Diagnostics Failed"
+msgstr "Le diagnostic a échoué"
+
+#: crates/quai-kde/qml/Main.qml crates/quai-kde/qml/SourcesPage.qml
+msgid "Add Source…"
+msgstr "Ajouter une source…"
+
+#: crates/quai-kde/qml/Main.qml
+msgid "Configure Quai…"
+msgstr "Configurer Quai…"
+
+#: crates/quai-kde/qml/PreferencesPage.qml
+msgid "Configure Quai"
+msgstr "Configurer Quai"
+
+#: crates/quai-kde/qml/PreferencesPage.qml
+msgid "Checking for releases"
+msgstr "Recherche de nouvelles versions"
+
+#: crates/quai-kde/qml/PreferencesPage.qml
+msgid "Minimum interval (minutes):"
+msgstr "Intervalle minimum (minutes) :"
+
+#: crates/quai-kde/qml/PreferencesPage.qml
+msgid "Versions kept for new sources:"
+msgstr "Versions conservées pour les nouvelles sources :"
+
+#: crates/quai-kde/qml/PreferencesPage.qml
+msgid "Access tokens"
+msgstr "Jetons d’accès"
+
+#: crates/quai-kde/qml/PreferencesPage.qml
+msgid "quaid address:"
+msgstr "Adresse de quaid :"
+
+#: crates/quai-kde/qml/PreferencesPage.qml
+msgid "Signed metadata:"
+msgstr "Métadonnées signées :"
+
+#: crates/quai-kde/qml/PreferencesPage.qml
+msgid "Token"
+msgstr "Jeton"
+
+#: crates/quai-kde/qml/SourcePage.qml
+msgid "Remove Source…"
+msgstr "Supprimer la source…"
+
+#: crates/quai-kde/qml/SourcePage.qml
+#, python-brace-format
+msgid "Last check failed: {error}"
+msgstr "La dernière vérification a échoué : {error}"
+
+#: crates/quai-kde/qml/SourcePage.qml
+#, python-brace-format
+msgid "{package} ({file}) is not served: {reason}"
+msgstr "{package} ({file}) n’est pas servi : {reason}"
+
+#: crates/quai-kde/qml/SourcePage.qml
+msgid "State:"
+msgstr "État :"
+
+#: crates/quai-kde/qml/SourcePage.qml
+msgid "Enabled:"
+msgstr "Activée :"
+
+#: crates/quai-kde/qml/SourcePage.qml
+msgid "dnf uses this source"
+msgstr "dnf utilise cette source"
+
+#: crates/quai-kde/qml/SourcePage.qml
+msgid "dnf ignores this source"
+msgstr "dnf ignore cette source"
+
+#: crates/quai-kde/qml/SourcePage.qml
+msgid "Versions kept:"
+msgstr "Versions conservées :"
+
+#: crates/quai-kde/qml/SourcePage.qml
+msgid "Asset pattern:"
+msgstr "Motif de fichiers :"
+
+#: crates/quai-kde/qml/SourcePage.qml
+msgid "Regular expression, optional"
+msgstr "Expression régulière, facultative"
+
+#: crates/quai-kde/qml/SourcePage.qml
+msgid "Latest release:"
+msgstr "Dernière version :"
+
+#: crates/quai-kde/qml/SourcePage.qml
+msgid "Last check:"
+msgstr "Dernière vérification :"
+
+#: crates/quai-kde/qml/SourcePage.qml
+msgid "dnf repository:"
+msgstr "Dépôt dnf :"
+
+#: crates/quai-kde/qml/SourcePage.qml
+msgid "Repository file:"
+msgstr "Fichier de dépôt :"
+
+#: crates/quai-kde/qml/SourcePage.qml
+msgid "out of date"
+msgstr "pas à jour"
+
+#: crates/quai-kde/qml/SourcePage.qml
+msgid "Regenerate"
+msgstr "Régénérer"
+
+#: crates/quai-kde/qml/SourcePage.qml
+msgid ""
+"Its packages stay installed but stop receiving updates, unless you uninstall "
+"them too."
+msgstr ""
+"Ses paquets restent installés mais ne reçoivent plus de mises à jour, sauf "
+"si vous les désinstallez aussi."
+
+#: crates/quai-kde/qml/SourcesPage.qml
+msgid ""
+"The quai service is not answering, so dnf and Discover cannot see your "
+"sources."
+msgstr ""
+"Le service quai ne répond pas : dnf et Discover ne voient donc pas vos "
+"sources."
+
+#: crates/quai-kde/qml/SourcesPage.qml
+msgid ""
+"Add a GitHub, GitLab or Codeberg project that publishes RPM packages. dnf "
+"and Discover will then keep it up to date."
+msgstr ""
+"Ajoutez un projet GitHub, GitLab ou Codeberg qui publie des paquets RPM. dnf "
+"et Discover le maintiendront ensuite à jour."
+
+#: crates/quai-types/src/lib.rs
+msgid "Authentication was cancelled or refused."
+msgstr "L’authentification a été annulée ou refusée."
+
+#: crates/quai-types/src/lib.rs
+#, python-brace-format
+msgid "quai failed (exit code {code})"
+msgstr "quai a échoué (code de sortie {code})"
+
+#: crates/quai-types/src/lib.rs
+#, python-brace-format
+msgid "unknown frontend '{name}' (expected gtk or kde)"
+msgstr "interface « {name} » inconnue (gtk ou kde attendu)"
+
+#. Translators: help of `quai`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid ""
+"Track RPM packages published as GitHub, GitLab or Forgejo releases, through "
+"dnf."
+msgstr ""
+"Suit avec dnf les paquets RPM publiés dans les versions GitHub, GitLab ou "
+"Forgejo."
+
+#. Translators: help of `quai`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid ""
+"Examples:\n"
+"  quai preview stablyai/orca\n"
+"  sudo quai add stablyai/orca --install\n"
+"  quai status\n"
+"  sudo quai upgrade orca"
+msgstr ""
+"Exemples :\n"
+"  quai preview stablyai/orca\n"
+"  sudo quai add stablyai/orca --install\n"
+"  quai status\n"
+"  sudo quai upgrade orca"
+
+#. Translators: help of `quai`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Print one JSON document on stdout (used by the graphical interfaces)"
+msgstr ""
+"Écrit un document JSON sur la sortie standard (utilisé par les interfaces "
+"graphiques)"
+
+#. Translators: help of `quai`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Answer yes to confirmations"
+msgstr "Répond oui aux confirmations"
+
+#. Translators: help of `quai`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Print help"
+msgstr "Affiche l’aide"
+
+#. Translators: help of `quai`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Print version"
+msgstr "Affiche la version"
+
+#. Translators: help of `quai preview`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Show what `add` would do, without changing anything"
+msgstr "Montre ce que ferait `add`, sans rien modifier"
+
+#. Translators: help of `quai preview`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid ""
+"owner/repo, a forge URL, or forge:host/owner/repo (codeberg:, gitlab:, "
+"forgejo:)"
+msgstr ""
+"propriétaire/projet, une URL de forge, ou forge:hôte/propriétaire/projet "
+"(codeberg:, gitlab:, forgejo:)"
+
+#. Translators: help of `quai preview`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Forge type for hosts quai does not know: github, gitlab or forgejo"
+msgstr ""
+"Type de forge pour les hôtes que quai ne connaît pas : github, gitlab ou "
+"forgejo"
+
+#. Translators: help of `quai preview`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Follow stable releases only (default) or pre-releases too"
+msgstr ""
+"Suivre les versions stables seulement (par défaut) ou aussi les versions "
+"préliminaires"
+
+#. Translators: help of `quai preview`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Regex on asset file names, when a release ships several RPM variants"
+msgstr ""
+"Expression régulière sur les noms de fichiers, quand une version contient "
+"plusieurs variantes RPM"
+
+#. Translators: help of `quai preview`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "API base URL override (GitHub Enterprise; tests)"
+msgstr "Remplace l’URL de base de l’API (GitHub Enterprise ; tests)"
+
+#. Translators: help of `quai add`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Start tracking a project (root)"
+msgstr "Commence à suivre un projet (root)"
+
+#. Translators: help of `quai add`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Source id (default: the project name)"
+msgstr "Identifiant de la source (par défaut : le nom du projet)"
+
+#. Translators: help of `quai add`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Number of versions kept available for downgrades"
+msgstr "Nombre de versions gardées disponibles pour revenir en arrière"
+
+#. Translators: help of `quai add`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Install the packages right away"
+msgstr "Installe les paquets tout de suite"
+
+#. Translators: help of `quai install`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Install the packages of a tracked source (root)"
+msgstr "Installe les paquets d’une source suivie (root)"
+
+#. Translators: help of `quai remove`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Stop tracking a source (root)"
+msgstr "Arrête de suivre une source (root)"
+
+#. Translators: help of `quai remove`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Also uninstall its packages"
+msgstr "Désinstalle aussi ses paquets"
+
+#. Translators: help of `quai list`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "List tracked sources"
+msgstr "Liste les sources suivies"
+
+#. Translators: help of `quai status`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Installed versus available versions"
+msgstr "Versions installées et versions disponibles"
+
+#. Translators: help of `quai refresh`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Ask quaid to check the forges now"
+msgstr "Demande à quaid d’interroger les forges maintenant"
+
+#. Translators: help of `quai upgrade`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Upgrade the packages of one source, or of all (root)"
+msgstr "Met à jour les paquets d’une source, ou de toutes (root)"
+
+#. Translators: help of `quai enable`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Enable a source (root)"
+msgstr "Active une source (root)"
+
+#. Translators: help of `quai disable`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Disable a source without removing it (root)"
+msgstr "Désactive une source sans la supprimer (root)"
+
+#. Translators: help of `quai set`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Change a setting of a source (root)"
+msgstr "Modifie un réglage d’une source (root)"
+
+#. Translators: help of `quai set`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid ""
+"Change a setting of a source (root).\n"
+"\n"
+"Keys: name, channel, asset-pattern, keep-versions, allow-package, disallow-"
+"package, allow-obsoletes, disallow-obsoletes, package-gpgkey. An empty value "
+"clears asset-pattern and package-gpgkey."
+msgstr ""
+"Modifie un réglage d’une source (root).\n"
+"\n"
+"Clés : name, channel, asset-pattern, keep-versions, allow-package, disallow-"
+"package, allow-obsoletes, disallow-obsoletes, package-gpgkey. Une valeur "
+"vide efface asset-pattern et package-gpgkey."
+
+#. Translators: help of `quai set`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Print help (see more with '--help')"
+msgstr "Affiche l’aide (plus de détails avec « --help »)"
+
+#. Translators: help of `quai set`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Print help (see a summary with '-h')"
+msgstr "Affiche l’aide (résumé avec « -h »)"
+
+#. Translators: help of `quai sync`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Regenerate /etc/yum.repos.d/quai-*.repo from the source files (root)"
+msgstr ""
+"Régénère /etc/yum.repos.d/quai-*.repo à partir des fichiers des sources "
+"(root)"
+
+#. Translators: help of `quai export`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Write all sources to one TOML file, for dotfiles"
+msgstr "Écrit toutes les sources dans un fichier TOML, pour les dotfiles"
+
+#. Translators: help of `quai import`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Add every source from an exported file (root)"
+msgstr "Ajoute toutes les sources d’un fichier exporté (root)"
+
+#. Translators: help of `quai import`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Install the packages too"
+msgstr "Installe aussi les paquets"
+
+#. Translators: help of `quai import`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Replace sources that already exist"
+msgstr "Remplace les sources qui existent déjà"
+
+#. Translators: help of `quai setup`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Create the signing key, directories and enable quaid.socket (root)"
+msgstr ""
+"Crée la clé de signature et les dossiers, et active quaid.socket (root)"
+
+#. Translators: help of `quai setup`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Do not touch systemd units"
+msgstr "Ne touche pas aux unités systemd"
+
+#. Translators: help of `quai token`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Manage forge API tokens (root)"
+msgstr "Gère les jetons d’API des forges (root)"
+
+#. Translators: help of `quai token set`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Store a token for a forge host; the token is read from stdin"
+msgstr ""
+"Enregistre un jeton pour un hôte de forge ; le jeton est lu sur l’entrée "
+"standard"
+
+#. Translators: help of `quai token clear`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Forget the token of a host"
+msgstr "Oublie le jeton d’un hôte"
+
+#. Translators: help of `quai token list`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Hosts that have a token"
+msgstr "Hôtes qui ont un jeton"
+
+#. Translators: help of `quai token help`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Print this message or the help of the given subcommand(s)"
+msgstr "Affiche ce message ou l’aide des sous-commandes indiquées"
+
+#. Translators: help of `quai config`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid ""
+"Show global settings, or change one (root): listen, check-interval-mins, "
+"keep-versions, metadata-expire, sign-metadata"
+msgstr ""
+"Affiche les réglages généraux, ou en modifie un (root) : listen, check-"
+"interval-mins, keep-versions, metadata-expire, sign-metadata"
+
+#. Translators: help of `quai doctor`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Check the whole setup and explain how to fix problems"
+msgstr ""
+"Vérifie toute l’installation et explique comment corriger les problèmes"
+
+#. Translators: help of `quai gui`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid ""
+"Open the graphical interface that fits the desktop: Kirigami on KDE Plasma, "
+"GTK/libadwaita elsewhere, or whichever one is installed"
+msgstr ""
+"Ouvre l’interface graphique adaptée au bureau : Kirigami sous KDE Plasma, "
+"GTK/libadwaita ailleurs, ou celle qui est installée"
+
+#. Translators: help of `quai gui`; keep commands, options and values as they are.
+#: crates/quai-cli/src/cli.rs
+msgid "Use this frontend instead of choosing one (also $QUAI_GUI)"
+msgstr "Utilise cette interface au lieu d’en choisir une (aussi $QUAI_GUI)"
+
+#: data/desktop/io.github.quai.Quai.desktop.in
+msgid "Quai"
+msgstr "Quai"
+
+#: data/desktop/io.github.quai.Quai.desktop.in
+msgid "RPM Release Tracker"
+msgstr "Suivi des versions RPM"
+
+#: data/desktop/io.github.quai.Quai.desktop.in
+msgid ""
+"Keep RPM packages from GitHub, GitLab or Codeberg releases up to date with "
+"dnf"
+msgstr ""
+"Maintenir à jour avec dnf les paquets RPM publiés sur GitHub, GitLab ou "
+"Codeberg"
+
+#: data/desktop/io.github.quai.Quai.desktop.in
+msgid "rpm;dnf;github;gitlab;codeberg;releases;updates;repository;"
+msgstr ""
+"rpm;dnf;github;gitlab;codeberg;releases;updates;repository;versions;mises à "
+"jour;dépôt;paquets;"
+
+#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+msgid "Keep RPMs from forge releases up to date with dnf"
+msgstr "Maintenez à jour avec dnf les RPM publiés sur les forges"
+
+#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+msgid ""
+"Many projects publish their Fedora packages only as .rpm files attached to "
+"GitHub, GitLab or Codeberg releases. Installed by hand, those packages never "
+"receive updates."
+msgstr ""
+"Beaucoup de projets ne publient leurs paquets Fedora que sous forme de "
+"fichiers .rpm joints à leurs versions sur GitHub, GitLab ou Codeberg. "
+"Installés à la main, ces paquets ne reçoivent jamais de mises à jour."
+
+#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+msgid ""
+"Quai turns each project into a small signed dnf repository served on your "
+"own machine. dnf, GNOME Software, Discover and rpm-ostree then install, "
+"update and roll back these packages like any other Fedora package."
+msgstr ""
+"Quai transforme chaque projet en un petit dépôt dnf signé, servi sur votre "
+"propre machine. dnf, GNOME Logiciels, Discover et rpm-ostree installent, "
+"mettent à jour et restaurent alors ces paquets comme n’importe quel paquet "
+"Fedora."
+
+#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+msgid ""
+"Its window is native on both main Fedora desktops: GTK and libadwaita on "
+"GNOME, Kirigami on KDE Plasma."
+msgstr ""
+"Sa fenêtre est native sur les deux principaux bureaux de Fedora : GTK et "
+"libadwaita sous GNOME, Kirigami sous KDE Plasma."
+
+#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+msgid "Add a project by typing owner/repo or pasting its URL"
+msgstr ""
+"Ajoutez un projet en tapant propriétaire/projet ou en collant son adresse"
+
+#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+msgid "See what it ships before adding it, with clear warnings"
+msgstr ""
+"Voyez ce qu’il fournit avant de l’ajouter, avec des avertissements clairs"
+
+#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+msgid "Updates arrive through dnf, GNOME Software and Discover"
+msgstr "Les mises à jour arrivent par dnf, GNOME Logiciels et Discover"
+
+#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+msgid "Metadata signed with a key local to your machine"
+msgstr "Métadonnées signées avec une clé propre à votre machine"
+
+#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+msgid "Works on Fedora Workstation and Fedora Atomic desktops"
+msgstr "Fonctionne sur Fedora Workstation et les bureaux Fedora Atomic"
+
+#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+msgid "Tracked sources and their update state"
+msgstr "Les sources suivies et leur état de mise à jour"
+
+#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+msgid "Adding a project after previewing its packages"
+msgstr "L’ajout d’un projet après l’aperçu de ses paquets"
+
+#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+msgid "First release."
+msgstr "Première version."
+
+#: data/polkit/io.github.quai.policy.in
+msgid "Manage quai package sources"
+msgstr "Gérer les sources de paquets de quai"
+
+#: data/polkit/io.github.quai.policy.in
+msgid ""
+"Authentication is required to change which projects dnf installs and updates "
+"from their releases"
+msgstr ""
+"Une authentification est nécessaire pour modifier les projets que dnf "
+"installe et met à jour à partir de leurs versions"

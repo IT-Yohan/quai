@@ -2,8 +2,11 @@
 
 #include <QApplication>
 #include <QIcon>
+#include <QLibraryInfo>
+#include <QLocale>
 #include <QQmlApplicationEngine>
 #include <QQuickStyle>
+#include <QTranslator>
 #include <QUrl>
 
 std::int32_t run_app(const QString& version)
@@ -21,6 +24,15 @@ std::int32_t run_app(const QString& version)
     QGuiApplication::setApplicationDisplayName(QStringLiteral("Quai"));
     QGuiApplication::setDesktopFileName(QStringLiteral("io.github.quai.Quai"));
     QApplication::setWindowIcon(QIcon::fromTheme(QStringLiteral("io.github.quai.Quai")));
+
+    // quai's own texts come from gettext (the I18n singleton). Qt's built-in
+    // texts come from Qt's catalogues, which also turn the layout right-to-left
+    // for languages written that way. Kirigami loads its own catalogue itself.
+    static QTranslator qtTranslator;
+    if (qtTranslator.load(QLocale(), QStringLiteral("qtbase"), QStringLiteral("_"),
+                          QLibraryInfo::path(QLibraryInfo::TranslationsPath))) {
+        QCoreApplication::installTranslator(&qtTranslator);
+    }
 
     // Same rule as every Kirigami application: Breeze controls unless the user chose otherwise.
     if (qEnvironmentVariableIsEmpty("QT_QUICK_CONTROLS_STYLE")) {

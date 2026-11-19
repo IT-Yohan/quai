@@ -8,6 +8,7 @@ use crate::error::{network, not_found, QuaiError};
 use crate::Kind;
 use anyhow::Result;
 use chrono::{DateTime, Utc};
+use quai_i18n::trf;
 use quai_types::ForgeKind;
 use serde::{Deserialize, Serialize};
 
@@ -111,16 +112,19 @@ pub(crate) fn status_error(fref: &ForgeRef, resp: &reqwest::Response) -> anyhow:
     let remaining =
         resp.headers().get("x-ratelimit-remaining").and_then(|v| v.to_str().ok()).and_then(|v| v.parse::<u64>().ok());
     match status.as_u16() {
-        404 => not_found(format!(
-            "{} not found (private project, typo, or no access with the configured token)",
-            fref.display()
+        404 => not_found(trf(
+            "{project} not found (private project, typo, or no access with the configured token)",
+            &[("project", &fref.display())],
         )),
-        401 => QuaiError::wrap(Kind::Permission, format!("{} rejected the token (401)", fref.host)),
-        403 | 429 if remaining == Some(0) => network(format!(
-            "{} API rate limit reached; add a token with `quai token set --host {}`",
-            fref.host, fref.host
+        401 => QuaiError::wrap(Kind::Permission, trf("{host} rejected the token (401)", &[("host", &fref.host)])),
+        403 | 429 if remaining == Some(0) => network(trf(
+            "{host} API rate limit reached; add a token with `quai token set --host {host}`",
+            &[("host", &fref.host)],
         )),
-        _ => network(format!("{} answered HTTP {} for {}", fref.host, status, fref.display())),
+        _ => network(trf(
+            "{host} answered HTTP {status} for {project}",
+            &[("host", &fref.host), ("status", &status), ("project", &fref.display())],
+        )),
     }
 }
 

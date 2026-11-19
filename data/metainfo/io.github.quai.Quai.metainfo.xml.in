@@ -3,7 +3,7 @@
   <id>io.github.quai.Quai</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>Apache-2.0</project_license>
-  <name>Quai</name>
+  <name translate="no">Quai</name>
   <summary>Keep RPMs from forge releases up to date with dnf</summary>
   <description>
     <p>
@@ -32,7 +32,7 @@
   <url type="homepage">https://github.com/quai-rpm/quai</url>
   <url type="bugtracker">https://github.com/quai-rpm/quai/issues</url>
   <developer id="io.github.quai">
-    <name>The quai contributors</name>
+    <name translate="no">The quai contributors</name>
   </developer>
   <provides>
     <binary>quai</binary>

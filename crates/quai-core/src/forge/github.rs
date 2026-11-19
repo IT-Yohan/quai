@@ -1,6 +1,7 @@
 use super::{etag_of, rate_limit_from, status_error, Asset, Fetch, ForgeRef, Release, PAGE_SIZE};
 use anyhow::{Context, Result};
 use chrono::{DateTime, Utc};
+use quai_i18n::{tr, trf};
 use serde::Deserialize;
 
 #[derive(Deserialize)]
@@ -45,7 +46,7 @@ pub(super) async fn list(
     if let Some(e) = etag {
         req = req.header(reqwest::header::IF_NONE_MATCH, e);
     }
-    let resp = req.send().await.with_context(|| format!("contacting {}", fref.host))?;
+    let resp = req.send().await.with_context(|| trf("contacting {host}", &[("host", &fref.host)]))?;
     let rate_limit = rate_limit_from(resp.headers());
     if resp.status() == reqwest::StatusCode::NOT_MODIFIED {
         return Ok(Fetch::NotModified { rate_limit });
@@ -54,7 +55,7 @@ pub(super) async fn list(
         return Err(status_error(fref, &resp));
     }
     let new_etag = etag_of(resp.headers());
-    let raw: Vec<GhRelease> = resp.json().await.context("decoding GitHub releases")?;
+    let raw: Vec<GhRelease> = resp.json().await.with_context(|| tr("decoding GitHub releases"))?;
     let releases = raw
         .into_iter()
         .map(|r| Release {

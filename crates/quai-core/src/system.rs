@@ -1,6 +1,7 @@
 //! Questions asked to the running system: rpm database, dnf, ostree, privileges.
 
 use anyhow::{Context, Result};
+use quai_i18n::trf;
 use std::collections::BTreeMap;
 use std::path::Path;
 use std::process::{Command, Stdio};
@@ -111,9 +112,9 @@ pub fn other_repo_providing(name: &str) -> Option<String> {
 /// Run a command with inherited stdio (dnf asks questions, shows progress).
 pub fn run_interactive(cmd: &mut Command) -> Result<()> {
     let desc = format!("{cmd:?}");
-    let status = cmd.status().with_context(|| format!("running {desc}"))?;
+    let status = cmd.status().with_context(|| trf("running {command}", &[("command", &desc)]))?;
     if !status.success() {
-        anyhow::bail!("{desc} failed ({status})");
+        anyhow::bail!(trf("{command} failed ({status})", &[("command", &desc), ("status", &status)]));
     }
     Ok(())
 }
@@ -121,12 +122,15 @@ pub fn run_interactive(cmd: &mut Command) -> Result<()> {
 /// Run a command, capturing output; stderr is returned in the error.
 pub fn run_captured(cmd: &mut Command) -> Result<String> {
     let desc = format!("{cmd:?}");
-    let output = cmd.stdin(Stdio::null()).output().with_context(|| format!("running {desc}"))?;
+    let output = cmd.stdin(Stdio::null()).output().with_context(|| trf("running {command}", &[("command", &desc)]))?;
     if !output.status.success() {
         let err = String::from_utf8_lossy(&output.stderr);
         let tail: Vec<&str> = err.lines().rev().take(6).collect();
         let tail: Vec<&str> = tail.into_iter().rev().collect();
-        anyhow::bail!("{desc} failed ({}): {}", output.status, tail.join(" | "));
+        anyhow::bail!(trf(
+            "{command} failed ({status}): {output}",
+            &[("command", &desc), ("status", &output.status), ("output", &tail.join(" | "))],
+        ));
     }
     Ok(String::from_utf8_lossy(&output.stdout).into_owned())
 }

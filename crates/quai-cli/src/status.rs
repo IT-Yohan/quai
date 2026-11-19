@@ -7,6 +7,7 @@ use quai_core::config::{self, SourceConfig};
 use quai_core::engine::{Engine, Snapshot};
 use quai_core::evr::compare_evr;
 use quai_core::{repofile, system};
+use quai_i18n::{tr, trc, trf, trn, trnf};
 use quai_types::{DoctorCheck, DoctorReport, PackageState, SourceState, SourceStatus, StatusReport};
 use std::cmp::Ordering;
 use std::collections::BTreeMap;
@@ -14,7 +15,7 @@ use std::collections::BTreeMap;
 pub fn list(ctx: &Ctx) -> Result<Output> {
     let (sources, bad) = config::load_sources(&ctx.paths);
     for (id, e) in bad {
-        ctx.note(format!("unreadable source '{id}': {e:#}"));
+        ctx.note(trf("unreadable source '{id}': {error}", &[("id", &id), ("error", &format!("{e:#}"))]));
     }
     Ok(Output::Sources(sources.iter().map(|s| s.to_view()).collect()))
 }
@@ -72,7 +73,7 @@ fn source_status(
         last_check: snap.and_then(|s| s.last_check).map(|t| t.to_rfc3339()),
         last_error: snap.and_then(|s| s.last_error.clone()),
         latest_release: snap.and_then(|s| s.latest_release.clone()),
-        excluded: snap.map(|s| s.excluded.clone()).unwrap_or_default(),
+        excluded: snap.map(|s| quai_core::engine::localize_exclusions(&s.excluded, &src.id)).unwrap_or_default(),
         repo_file_in_sync: repofile::in_sync(&ctx.paths, &ctx.global, src),
     }
 }
@@ -98,6 +99,14 @@ pub async fn status(ctx: &Ctx, id: Option<&str>) -> Result<Output> {
     Ok(Output::Status(compute_status(ctx, id).await?))
 }
 
+fn list_or_none(ids: &[String]) -> String {
+    if ids.is_empty() {
+        tr("none")
+    } else {
+        ids.join(", ")
+    }
+}
+
 fn check(id: &str, title: &str, ok: bool, detail: impl Into<String>, fix: Option<&str>) -> DoctorCheck {
     DoctorCheck { id: id.into(), title: title.into(), ok, detail: detail.into(), fix: fix.map(|s| s.to_string()) }
 }
@@ -109,23 +118,27 @@ pub async fn doctor(ctx: &Ctx) -> Result<Output> {
     let global_ok = config::load_global(p);
     checks.push(match &global_ok {
         Ok(_) if p.global_config().exists() => {
-            check("config", "Configuration", true, p.global_config().display().to_string(), None)
+            check("config", &tr("Configuration"), true, p.global_config().display().to_string(), None)
         }
-        Ok(_) => check("config", "Configuration", false, "quai has not been set up yet", Some("sudo quai setup")),
-        Err(e) => check("config", "Configuration", false, format!("{e:#}"), Some("fix /etc/quai/quai.toml")),
+        Ok(_) => {
+            check("config", &tr("Configuration"), false, tr("quai has not been set up yet"), Some("sudo quai setup"))
+        }
+        Err(e) => {
+            check("config", &tr("Configuration"), false, format!("{e:#}"), Some(&tr("correct /etc/quai/quai.toml")))
+        }
     });
 
     let (sources, bad) = config::load_sources(p);
     checks.push(check(
         "sources",
-        "Sources",
+        &tr("Sources"),
         bad.is_empty(),
         if bad.is_empty() {
-            format!("{} source(s)", sources.len())
+            trn("{n} source", "{n} sources", sources.len() as u64)
         } else {
             bad.iter().map(|(id, e)| format!("{id}: {e:#}")).collect::<Vec<_>>().join("; ")
         },
-        Some("fix or remove the files listed under /etc/quai/sources.d"),
+        Some(&tr("correct or remove the files listed under /etc/quai/sources.d")),
     ));
 
     if ctx.global.defaults.sign_metadata {
@@ -133,11 +146,11 @@ pub async fn doctor(ctx: &Ctx) -> Result<Output> {
         let secret = if system::is_root() { Some(p.secret_key().exists()) } else { None };
         let ok = public && secret.unwrap_or(true);
         let detail = match (public, secret) {
-            (true, Some(true)) => format!("key pair present ({})", p.public_key().display()),
-            (true, None) => "public key present (run as root to check the secret key)".into(),
-            _ => "the signing key is missing".into(),
+            (true, Some(true)) => trf("key pair present ({path})", &[("path", &p.public_key().display())]),
+            (true, None) => tr("public key present (run as root to check the secret key)"),
+            _ => tr("the signing key is missing"),
         };
-        checks.push(check("signing-key", "Metadata signing key", ok, detail, Some("sudo quai setup")));
+        checks.push(check("signing-key", &tr("Metadata signing key"), ok, detail, Some("sudo quai setup")));
     }
 
     if system::has_systemd() {
@@ -150,8 +163,8 @@ pub async fn doctor(ctx: &Ctx) -> Result<Output> {
             enabled && active,
             format!(
                 "{}, {}",
-                if enabled { "enabled" } else { "not enabled" },
-                if active { "listening" } else { "not listening" }
+                if enabled { trc("socket", "enabled") } else { trc("socket", "not enabled") },
+                if active { trc("socket", "listening") } else { trc("socket", "not listening") }
             ),
             Some("sudo systemctl enable --now quaid.socket"),
         ));
@@ -160,12 +173,12 @@ pub async fn doctor(ctx: &Ctx) -> Result<Output> {
     let healthy = ctx.daemon_healthy().await;
     checks.push(check(
         "daemon",
-        "quaid answers",
+        &tr("quaid answers"),
         healthy,
         if healthy {
             format!("http://{}", ctx.global.daemon.listen)
         } else {
-            format!("nothing answers on {}", ctx.global.daemon.listen)
+            trf("nothing answers on {address}", &[("address", &ctx.global.daemon.listen)])
         },
         Some("sudo quai setup; journalctl -u quaid.service"),
     ));
@@ -176,12 +189,15 @@ pub async fn doctor(ctx: &Ctx) -> Result<Output> {
         repofile::managed_ids(p).into_iter().filter(|id| !sources.iter().any(|s| &s.id == id)).collect();
     checks.push(check(
         "repo-files",
-        "dnf repository files",
+        &tr("dnf repository files"),
         out_of_sync.is_empty() && orphans.is_empty(),
         if out_of_sync.is_empty() && orphans.is_empty() {
-            "in sync".to_string()
+            tr("in sync")
         } else {
-            format!("out of date: {:?}, orphaned: {:?}", out_of_sync, orphans)
+            trf(
+                "out of date: {outdated}; orphaned: {orphaned}",
+                &[("outdated", &list_or_none(&out_of_sync)), ("orphaned", &list_or_none(&orphans))],
+            )
         },
         Some("sudo quai sync"),
     ));
@@ -189,12 +205,12 @@ pub async fn doctor(ctx: &Ctx) -> Result<Output> {
     let dnf = system::dnf_command();
     checks.push(check(
         "dnf",
-        "Package manager",
+        &tr("Package manager"),
         dnf.is_some() || system::is_atomic(),
         match (dnf, system::is_atomic()) {
-            (_, true) => "Fedora Atomic: rpm-ostree applies updates at the next boot".to_string(),
+            (_, true) => tr("Fedora Atomic: rpm-ostree applies updates at the next boot"),
             (Some(d), false) => d.to_string(),
-            (None, false) => "dnf not found".to_string(),
+            (None, false) => tr("dnf not found"),
         },
         None,
     ));
@@ -203,8 +219,8 @@ pub async fn doctor(ctx: &Ctx) -> Result<Output> {
     for s in &sources {
         let snap = Engine::load_snapshot(p, &s.id);
         let (ok, detail) = match &snap {
-            None if !s.enabled => (true, "disabled".to_string()),
-            None => (false, "never checked".to_string()),
+            None if !s.enabled => (true, trc("source state", "disabled")),
+            None => (false, tr("never checked")),
             Some(sn) => {
                 if let Some(rl) = &sn.rate_limit {
                     if rl.remaining.map(|r| r < 10).unwrap_or(false) {
@@ -215,19 +231,25 @@ pub async fn doctor(ctx: &Ctx) -> Result<Output> {
                     (Some(e), _) => (false, e.clone()),
                     (None, false) => (
                         false,
-                        sn.excluded
+                        quai_core::engine::localize_exclusions(&sn.excluded, &s.id)
                             .iter()
-                            .map(|x| format!("{} not served: {}", x.name, x.reason))
+                            .map(|x| {
+                                trf("{package} not served: {reason}", &[("package", &x.name), ("reason", &x.reason)])
+                            })
                             .collect::<Vec<_>>()
                             .join("; "),
                     ),
                     (None, true) => (
                         true,
-                        format!(
-                            "{} package(s) served{}",
-                            sn.packages.len(),
-                            sn.latest_release.as_ref().map(|t| format!(", latest {t}")).unwrap_or_default()
-                        ),
+                        match &sn.latest_release {
+                            Some(tag) => trnf(
+                                "{n} package served, latest release {tag}",
+                                "{n} packages served, latest release {tag}",
+                                sn.packages.len() as u64,
+                                &[("tag", tag)],
+                            ),
+                            None => trn("{n} package served", "{n} packages served", sn.packages.len() as u64),
+                        },
                     ),
                 }
             }
@@ -235,15 +257,21 @@ pub async fn doctor(ctx: &Ctx) -> Result<Output> {
         // Exclusions already name the command that lifts them; errors usually clear on a new check.
         let has_error = snap.as_ref().map(|sn| sn.last_error.is_some()).unwrap_or(true);
         let fix = has_error.then(|| format!("quai refresh {}", s.id));
-        checks.push(check(&format!("source-{}", s.id), &format!("Source {}", s.id), ok, detail, fix.as_deref()));
+        checks.push(check(
+            &format!("source-{}", s.id),
+            &trf("Source {id}", &[("id", &s.id)]),
+            ok,
+            detail,
+            fix.as_deref(),
+        ));
     }
     if let Some(host) = low_rate {
         let fix = format!("sudo quai token set --host {host}");
         checks.push(check(
             "rate-limit",
-            "API rate limit",
+            &tr("API rate limit"),
             false,
-            format!("{host} API budget nearly used up"),
+            trf("{host} API budget nearly used up", &[("host", &host)]),
             Some(&fix),
         ));
     }

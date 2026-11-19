@@ -185,7 +185,22 @@ pub struct PackageState {
 pub struct Excluded {
     pub name: String,
     pub file: String,
+    /// Why, in words. quaid records it in the system language; `quai status`
+    /// writes it again in the user's from `cause`.
     pub reason: String,
+    /// The same reason as data (absent in state written by quai 0.1.0).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub cause: Option<ExclusionCause>,
+}
+
+/// Why quaid does not serve a package of a release.
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
+#[serde(tag = "kind", rename_all = "snake_case")]
+pub enum ExclusionCause {
+    /// The package is not in the source's `packages` list.
+    NotListed,
+    /// The package obsoletes `obsoleted`, which the source does not own.
+    Obsoletes { obsoleted: String },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
@@ -270,6 +285,7 @@ pub struct RefreshReply {
 /// `quai --json` as a subprocess. Standard library only.
 pub mod frontend {
     use super::ErrorReport;
+    use quai_i18n::{tr, trf};
 
     /// The `quai` binary: `$QUAI_BIN`, else the first one in `$PATH`, else `/usr/bin/quai`.
     pub fn quai_binary() -> String {
@@ -310,7 +326,7 @@ pub mod frontend {
     /// so the document wins over the exit code unless it is an [`ErrorReport`].
     pub fn interpret(stdout: &str, stderr: &str, exit_code: i32, used_pkexec: bool) -> Result<String, String> {
         if used_pkexec && (exit_code == 126 || exit_code == 127) && stdout.trim().is_empty() {
-            return Err("Authentication was cancelled or refused.".to_string());
+            return Err(tr("Authentication was cancelled or refused."));
         }
         if let Ok(report) = serde_json::from_str::<ErrorReport>(stdout) {
             return Err(report.error);
@@ -319,7 +335,11 @@ pub mod frontend {
             return Ok(stdout.to_string());
         }
         let msg = stderr.trim();
-        Err(if msg.is_empty() { format!("quai failed (exit code {exit_code})") } else { msg.to_string() })
+        Err(if msg.is_empty() {
+            trf("quai failed (exit code {code})", &[("code", &exit_code)])
+        } else {
+            msg.to_string()
+        })
     }
 
     /// The graphical frontends, in the order `quai gui` tries them.
@@ -332,7 +352,7 @@ pub mod frontend {
         match requested.map(str::trim).filter(|r| !r.is_empty()) {
             Some("gtk") => return Ok(vec!["quai-gtk"]),
             Some("kde") => return Ok(vec!["quai-kde"]),
-            Some(other) => return Err(format!("unknown frontend '{other}' (expected gtk or kde)")),
+            Some(other) => return Err(trf("unknown frontend '{name}' (expected gtk or kde)", &[("name", &other)])),
             None => {}
         }
         let plasma = current_desktop.split(':').any(|d| d.eq_ignore_ascii_case("KDE"));
