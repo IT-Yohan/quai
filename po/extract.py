@@ -36,7 +36,7 @@ HEADER = r"""# Translations of quai, the RPM release tracker.
 msgid ""
 msgstr ""
 "Project-Id-Version: quai\n"
-"Report-Msgid-Bugs-To: https://github.com/quai-rpm/quai/issues\n"
+"Report-Msgid-Bugs-To: https://github.com/IT-Yohan/quai/issues\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"

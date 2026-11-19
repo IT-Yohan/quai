@@ -12,7 +12,7 @@ mod window;
 use adw::prelude::*;
 use gtk::{gio, glib};
 
-pub const APP_ID: &str = "io.github.quai.Quai";
+pub const APP_ID: &str = "io.github.it_yohan.Quai";
 
 fn main() -> glib::ExitCode {
     quai_i18n::init();

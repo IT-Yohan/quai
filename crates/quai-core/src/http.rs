@@ -6,7 +6,7 @@ pub const API_TIMEOUT: Duration = Duration::from_secs(30);
 
 /// Shared HTTP client: system certificate store, `HTTPS_PROXY` honoured, redirects followed.
 pub fn client() -> Result<reqwest::Client> {
-    let ua = format!("quai/{} (+https://github.com/quai-rpm/quai)", crate::VERSION);
+    let ua = format!("quai/{} (+https://github.com/IT-Yohan/quai)", crate::VERSION);
     Ok(reqwest::Client::builder()
         .user_agent(ua)
         .connect_timeout(Duration::from_secs(15))

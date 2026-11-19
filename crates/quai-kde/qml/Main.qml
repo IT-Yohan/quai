@@ -268,16 +268,16 @@ Kirigami.ApplicationWindow {
                 "productName": "quai",
                 "componentName": "quai-kde",
                 "shortDescription": I18n.tr("Keeps RPM packages published as GitHub, GitLab or Forgejo releases up to date through dnf."),
-                "homepage": "https://github.com/quai-rpm/quai",
-                "bugAddress": "https://github.com/quai-rpm/quai/issues",
+                "homepage": "https://github.com/IT-Yohan/quai",
+                "bugAddress": "https://github.com/IT-Yohan/quai/issues",
                 "version": Qt.application.version,
                 "otherText": "",
-                "authors": [{ "name": "The quai contributors", "task": "", "emailAddress": "", "webAddress": "https://github.com/quai-rpm/quai", "ocsUsername": "" }],
+                "authors": [{ "name": "The quai contributors", "task": "", "emailAddress": "", "webAddress": "https://github.com/IT-Yohan/quai", "ocsUsername": "" }],
                 "credits": [],
                 "translators": root.translators(),
                 "licenses": [{ "name": "Apache License 2.0", "text": "Licensed under the Apache License, Version 2.0.", "spdx": "Apache-2.0" }],
                 "copyrightStatement": "© The quai contributors",
-                "desktopFileName": "io.github.quai.Quai"
+                "desktopFileName": "io.github.it_yohan.Quai"
             }
         }
     }

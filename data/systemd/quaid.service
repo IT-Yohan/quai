@@ -1,6 +1,6 @@
 [Unit]
 Description=quai local repository gateway
-Documentation=https://github.com/quai-rpm/quai
+Documentation=https://github.com/IT-Yohan/quai
 Requires=quaid.socket
 After=quaid.socket
 

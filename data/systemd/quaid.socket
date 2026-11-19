@@ -1,6 +1,6 @@
 [Unit]
 Description=quai local repository gateway (socket)
-Documentation=https://github.com/quai-rpm/quai
+Documentation=https://github.com/IT-Yohan/quai
 
 [Socket]
 # A privileged port: unprivileged users cannot take it over. Change it with

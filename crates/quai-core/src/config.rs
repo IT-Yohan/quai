@@ -223,7 +223,7 @@ pub fn load_global(paths: &Paths) -> Result<GlobalConfig> {
 
 pub fn save_global(paths: &Paths, cfg: &GlobalConfig) -> Result<()> {
     let body = toml::to_string_pretty(cfg)?;
-    let text = format!("# quai global configuration. See `man quai` or https://github.com/quai-rpm/quai\n\n{body}");
+    let text = format!("# quai global configuration. See `man quai` or https://github.com/IT-Yohan/quai\n\n{body}");
     write_atomic(&paths.global_config(), text.as_bytes(), 0o644)
 }
 

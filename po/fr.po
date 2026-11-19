@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: quai\n"
-"Report-Msgid-Bugs-To: https://github.com/quai-rpm/quai/issues\n"
+"Report-Msgid-Bugs-To: https://github.com/IT-Yohan/quai/issues\n"
 "PO-Revision-Date: 2026-11-19 20:00+0100\n"
 "Last-Translator: Claude <noreply@anthropic.com>\n"
 "Language-Team: French\n"
@@ -2220,15 +2220,15 @@ msgstr ""
 msgid "Use this frontend instead of choosing one (also $QUAI_GUI)"
 msgstr "Utilise cette interface au lieu d’en choisir une (aussi $QUAI_GUI)"
 
-#: data/desktop/io.github.quai.Quai.desktop.in
+#: data/desktop/io.github.it_yohan.Quai.desktop.in
 msgid "Quai"
 msgstr "Quai"
 
-#: data/desktop/io.github.quai.Quai.desktop.in
+#: data/desktop/io.github.it_yohan.Quai.desktop.in
 msgid "RPM Release Tracker"
 msgstr "Suivi des versions RPM"
 
-#: data/desktop/io.github.quai.Quai.desktop.in
+#: data/desktop/io.github.it_yohan.Quai.desktop.in
 msgid ""
 "Keep RPM packages from GitHub, GitLab or Codeberg releases up to date with "
 "dnf"
@@ -2236,17 +2236,17 @@ msgstr ""
 "Maintenir à jour avec dnf les paquets RPM publiés sur GitHub, GitLab ou "
 "Codeberg"
 
-#: data/desktop/io.github.quai.Quai.desktop.in
+#: data/desktop/io.github.it_yohan.Quai.desktop.in
 msgid "rpm;dnf;github;gitlab;codeberg;releases;updates;repository;"
 msgstr ""
 "rpm;dnf;github;gitlab;codeberg;releases;updates;repository;versions;mises à "
 "jour;dépôt;paquets;"
 
-#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid "Keep RPMs from forge releases up to date with dnf"
 msgstr "Maintenez à jour avec dnf les RPM publiés sur les forges"
 
-#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid ""
 "Many projects publish their Fedora packages only as .rpm files attached to "
 "GitHub, GitLab or Codeberg releases. Installed by hand, those packages never "
@@ -2256,7 +2256,7 @@ msgstr ""
 "fichiers .rpm joints à leurs versions sur GitHub, GitLab ou Codeberg. "
 "Installés à la main, ces paquets ne reçoivent jamais de mises à jour."
 
-#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid ""
 "Quai turns each project into a small signed dnf repository served on your "
 "own machine. dnf, GNOME Software, Discover and rpm-ostree then install, "
@@ -2267,7 +2267,7 @@ msgstr ""
 "mettent à jour et restaurent alors ces paquets comme n’importe quel paquet "
 "Fedora."
 
-#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid ""
 "Its window is native on both main Fedora desktops: GTK and libadwaita on "
 "GNOME, Kirigami on KDE Plasma."
@@ -2275,45 +2275,45 @@ msgstr ""
 "Sa fenêtre est native sur les deux principaux bureaux de Fedora : GTK et "
 "libadwaita sous GNOME, Kirigami sous KDE Plasma."
 
-#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid "Add a project by typing owner/repo or pasting its URL"
 msgstr ""
 "Ajoutez un projet en tapant propriétaire/projet ou en collant son adresse"
 
-#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid "See what it ships before adding it, with clear warnings"
 msgstr ""
 "Voyez ce qu’il fournit avant de l’ajouter, avec des avertissements clairs"
 
-#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid "Updates arrive through dnf, GNOME Software and Discover"
 msgstr "Les mises à jour arrivent par dnf, GNOME Logiciels et Discover"
 
-#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid "Metadata signed with a key local to your machine"
 msgstr "Métadonnées signées avec une clé propre à votre machine"
 
-#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid "Works on Fedora Workstation and Fedora Atomic desktops"
 msgstr "Fonctionne sur Fedora Workstation et les bureaux Fedora Atomic"
 
-#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid "Tracked sources and their update state"
 msgstr "Les sources suivies et leur état de mise à jour"
 
-#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid "Adding a project after previewing its packages"
 msgstr "L’ajout d’un projet après l’aperçu de ses paquets"
 
-#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid "First release."
 msgstr "Première version."
 
-#: data/polkit/io.github.quai.policy.in
+#: data/polkit/io.github.it-yohan.quai.policy.in
 msgid "Manage quai package sources"
 msgstr "Gérer les sources de paquets de quai"
 
-#: data/polkit/io.github.quai.policy.in
+#: data/polkit/io.github.it-yohan.quai.policy.in
 msgid ""
 "Authentication is required to change which projects dnf installs and updates "
 "from their releases"

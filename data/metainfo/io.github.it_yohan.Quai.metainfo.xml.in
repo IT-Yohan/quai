@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>io.github.quai.Quai</id>
+  <id>io.github.it_yohan.Quai</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>Apache-2.0</project_license>
   <name translate="no">Quai</name>
@@ -28,10 +28,10 @@
       <li>Works on Fedora Workstation and Fedora Atomic desktops</li>
     </ul>
   </description>
-  <launchable type="desktop-id">io.github.quai.Quai.desktop</launchable>
-  <url type="homepage">https://github.com/quai-rpm/quai</url>
-  <url type="bugtracker">https://github.com/quai-rpm/quai/issues</url>
-  <developer id="io.github.quai">
+  <launchable type="desktop-id">io.github.it_yohan.Quai.desktop</launchable>
+  <url type="homepage">https://github.com/IT-Yohan/quai</url>
+  <url type="bugtracker">https://github.com/IT-Yohan/quai/issues</url>
+  <developer id="io.github.it_yohan">
     <name translate="no">The quai contributors</name>
   </developer>
   <provides>
@@ -44,11 +44,11 @@
   <screenshots>
     <screenshot type="default">
       <caption>Tracked sources and their update state</caption>
-      <image>https://raw.githubusercontent.com/quai-rpm/quai/main/docs/screenshots/sources.png</image>
+      <image>https://raw.githubusercontent.com/IT-Yohan/quai/main/docs/screenshots/sources.png</image>
     </screenshot>
     <screenshot>
       <caption>Adding a project after previewing its packages</caption>
-      <image>https://raw.githubusercontent.com/quai-rpm/quai/main/docs/screenshots/add-source.png</image>
+      <image>https://raw.githubusercontent.com/IT-Yohan/quai/main/docs/screenshots/add-source.png</image>
     </screenshot>
   </screenshots>
   <releases>

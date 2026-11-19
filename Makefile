@@ -32,8 +32,8 @@ CARGO       ?= cargo
 TARGET_DIR  ?= target/release
 GEN         ?= target/generated
 VERSION     := $(shell sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -1)
-APPID       := io.github.quai.Quai
-POLICY      := io.github.quai.policy
+APPID       := io.github.it_yohan.Quai
+POLICY      := io.github.it-yohan.quai.policy
 FRONTENDS   ?= gtk kde
 PACKAGES    := -p quai-i18n -p quai-types -p quai-core -p quai-cli -p quaid $(foreach f,$(FRONTENDS),-p quai-$(f))
 LINGUAS     := $(shell sed 's/#.*//' po/LINGUAS)

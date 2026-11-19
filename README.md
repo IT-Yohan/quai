@@ -1,4 +1,4 @@
-<p align="center"><img src="data/icons/hicolor/scalable/apps/io.github.quai.Quai.svg" width="96" alt=""></p>
+<p align="center"><img src="data/icons/hicolor/scalable/apps/io.github.it_yohan.Quai.svg" width="96" alt=""></p>
 
 # Quai
 
@@ -51,7 +51,7 @@ No toolkit is native on both GNOME and Plasma, so Quai has two thin frontends ov
 * **One launcher.** The `quai-gui` package owns the only `.desktop` file and AppStream component;
   it runs `quai gui`, which opens `quai-kde` when `$XDG_CURRENT_DESKTOP` contains `KDE` and
   `quai-gtk` otherwise, falling back to whichever is installed (`quai gui --frontend gtk|kde` or
-  `QUAI_GUI=` pins one). Both windows use the app id `io.github.quai.Quai`, so the panel shows
+  `QUAI_GUI=` pins one). Both windows use the app id `io.github.it_yohan.Quai`, so the panel shows
   the same icon.
 * **The right one is installed.** `quai` recommends `quai-gui` on a desktop, and `quai-gui`
   recommends `quai-kde` if `plasma-workspace` is installed, `quai-gtk` otherwise (both with two

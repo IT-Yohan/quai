@@ -22,8 +22,8 @@ std::int32_t run_app(const QString& version)
     QCoreApplication::setApplicationName(QStringLiteral("quai-kde"));
     QCoreApplication::setApplicationVersion(version);
     QGuiApplication::setApplicationDisplayName(QStringLiteral("Quai"));
-    QGuiApplication::setDesktopFileName(QStringLiteral("io.github.quai.Quai"));
-    QApplication::setWindowIcon(QIcon::fromTheme(QStringLiteral("io.github.quai.Quai")));
+    QGuiApplication::setDesktopFileName(QStringLiteral("io.github.it_yohan.Quai"));
+    QApplication::setWindowIcon(QIcon::fromTheme(QStringLiteral("io.github.it_yohan.Quai")));
 
     // quai's own texts come from gettext (the I18n singleton). Qt's built-in
     // texts come from Qt's catalogues, which also turn the layout right-to-left

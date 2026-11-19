@@ -4,11 +4,11 @@
  "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
 <policyconfig>
   <vendor>quai</vendor>
-  <vendor_url>https://github.com/quai-rpm/quai</vendor_url>
-  <icon_name>io.github.quai.Quai</icon_name>
+  <vendor_url>https://github.com/IT-Yohan/quai</vendor_url>
+  <icon_name>io.github.it_yohan.Quai</icon_name>
 
   <!-- Used by both graphical interfaces, which run `pkexec /usr/bin/quai ...` for every change. -->
-  <action id="io.github.quai.manage">
+  <action id="io.github.it-yohan.quai.manage">
     <description>Manage quai package sources</description>
     <message>Authentication is required to change which projects dnf installs and updates from their releases</message>
     <defaults>

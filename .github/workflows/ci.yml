@@ -43,9 +43,9 @@ jobs:
         run: tests/packaging/weak-deps.sh
       - name: Validate the translated desktop integration files
         run: |
-          desktop-file-validate target/generated/io.github.quai.Quai.desktop
-          appstream-util validate-relax --nonet target/generated/io.github.quai.Quai.metainfo.xml
-          appstreamcli validate --no-net target/generated/io.github.quai.Quai.metainfo.xml
+          desktop-file-validate target/generated/io.github.it_yohan.Quai.desktop
+          appstream-util validate-relax --nonet target/generated/io.github.it_yohan.Quai.metainfo.xml
+          appstreamcli validate --no-net target/generated/io.github.it_yohan.Quai.metainfo.xml
       - name: Man pages and shell completions
         run: |
           make docs TARGET_DIR=target/debug

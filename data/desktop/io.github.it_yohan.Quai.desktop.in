@@ -5,7 +5,7 @@ Comment=Keep RPM packages from GitHub, GitLab or Codeberg releases up to date wi
 # `quai gui` opens the Kirigami interface on KDE Plasma and the GTK/libadwaita
 # one elsewhere, so there is a single launcher whichever frontends are installed.
 Exec=quai gui
-Icon=io.github.quai.Quai
+Icon=io.github.it_yohan.Quai
 Terminal=false
 Type=Application
 Categories=System;PackageManager;

@@ -12,12 +12,12 @@ use std::rc::Rc;
 pub fn about(ui: &Rc<Ui>) {
     let about = adw::AboutDialog::builder()
         .application_name("Quai")
-        .application_icon("io.github.quai.Quai")
+        .application_icon("io.github.it_yohan.Quai")
         .developer_name("The quai contributors")
         .version(env!("CARGO_PKG_VERSION"))
         .comments(tr("Keeps RPM packages published as GitHub, GitLab or Forgejo releases up to date through dnf."))
-        .website("https://github.com/quai-rpm/quai")
-        .issue_url("https://github.com/quai-rpm/quai/issues")
+        .website("https://github.com/IT-Yohan/quai")
+        .issue_url("https://github.com/IT-Yohan/quai/issues")
         .license_type(gtk::License::Apache20)
         .build();
     // Translators: your names, one "Name <email>" per line, credited in the

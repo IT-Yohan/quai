@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: quai\n"
-"Report-Msgid-Bugs-To: https://github.com/quai-rpm/quai/issues\n"
+"Report-Msgid-Bugs-To: https://github.com/IT-Yohan/quai/issues\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2110,85 +2110,85 @@ msgstr ""
 msgid "Use this frontend instead of choosing one (also $QUAI_GUI)"
 msgstr ""
 
-#: data/desktop/io.github.quai.Quai.desktop.in
+#: data/desktop/io.github.it_yohan.Quai.desktop.in
 msgid "Quai"
 msgstr ""
 
-#: data/desktop/io.github.quai.Quai.desktop.in
+#: data/desktop/io.github.it_yohan.Quai.desktop.in
 msgid "RPM Release Tracker"
 msgstr ""
 
-#: data/desktop/io.github.quai.Quai.desktop.in
+#: data/desktop/io.github.it_yohan.Quai.desktop.in
 msgid ""
 "Keep RPM packages from GitHub, GitLab or Codeberg releases up to date with "
 "dnf"
 msgstr ""
 
-#: data/desktop/io.github.quai.Quai.desktop.in
+#: data/desktop/io.github.it_yohan.Quai.desktop.in
 msgid "rpm;dnf;github;gitlab;codeberg;releases;updates;repository;"
 msgstr ""
 
-#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid "Keep RPMs from forge releases up to date with dnf"
 msgstr ""
 
-#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid ""
 "Many projects publish their Fedora packages only as .rpm files attached to "
 "GitHub, GitLab or Codeberg releases. Installed by hand, those packages never "
 "receive updates."
 msgstr ""
 
-#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid ""
 "Quai turns each project into a small signed dnf repository served on your "
 "own machine. dnf, GNOME Software, Discover and rpm-ostree then install, "
 "update and roll back these packages like any other Fedora package."
 msgstr ""
 
-#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid ""
 "Its window is native on both main Fedora desktops: GTK and libadwaita on "
 "GNOME, Kirigami on KDE Plasma."
 msgstr ""
 
-#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid "Add a project by typing owner/repo or pasting its URL"
 msgstr ""
 
-#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid "See what it ships before adding it, with clear warnings"
 msgstr ""
 
-#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid "Updates arrive through dnf, GNOME Software and Discover"
 msgstr ""
 
-#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid "Metadata signed with a key local to your machine"
 msgstr ""
 
-#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid "Works on Fedora Workstation and Fedora Atomic desktops"
 msgstr ""
 
-#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid "Tracked sources and their update state"
 msgstr ""
 
-#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid "Adding a project after previewing its packages"
 msgstr ""
 
-#: data/metainfo/io.github.quai.Quai.metainfo.xml.in
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid "First release."
 msgstr ""
 
-#: data/polkit/io.github.quai.policy.in
+#: data/polkit/io.github.it-yohan.quai.policy.in
 msgid "Manage quai package sources"
 msgstr ""
 
-#: data/polkit/io.github.quai.policy.in
+#: data/polkit/io.github.it-yohan.quai.policy.in
 msgid ""
 "Authentication is required to change which projects dnf installs and updates "
 "from their releases"
