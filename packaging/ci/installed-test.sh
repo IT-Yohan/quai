@@ -17,10 +17,10 @@ mapfile -t rpms < <(find "$dir" -maxdepth 1 -name '*.rpm' ! -name '*.src.rpm' ! 
 # Fedora's container images install neither translations nor documentation
 # (man pages included); a real system does, so install like one.
 rm -f /etc/rpm/macros.image-language-conf
-nodocs=(--setopt=tsflags=)
+with_docs=(--setopt=tsflags=)
 # Tools for the checks and the end-to-end test.
-dnf -y -q "${nodocs[@]}" install desktop-file-utils appstream man-db glibc-langpack-fr rpm-build python3 curl >/dev/null
-dnf -y -q "${nodocs[@]}" install "${rpms[@]}" >/dev/null
+dnf -y -q "${with_docs[@]}" install desktop-file-utils appstream man-db glibc-langpack-fr rpm-build python3 curl >/dev/null
+dnf -y -q "${with_docs[@]}" install "${rpms[@]}" >/dev/null
 ok "dnf installs $(printf '%s ' "${rpms[@]##*/}")"
 
 [[ "$(rpm -q --qf '%{version}' quai)" == "$(rpm -q --qf '%{version}' quai-gui)" ]] || die "versions differ"

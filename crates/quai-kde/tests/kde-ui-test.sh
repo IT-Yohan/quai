@@ -37,9 +37,10 @@ status=0
 QT_QPA_PLATFORM=offscreen QUAI_KDE_MAIN="$here/ui-test.qml" timeout 120 "$bin" >"$log" 2>&1 || status=$?
 grep -E "^qml: (ok|UI TEST)" "$log" | sed 's/^qml: /    /' || true
 errors='TypeError|ReferenceError|is not defined|Cannot assign|Unable to assign|Binding loop|non-existent|is not a type|unavailable|Cannot read property|module .* is not installed'
-if grep -qE "$errors" "$log"; then
+# Ours only: Kirigami's own files have binding loops of their own with some Qt versions.
+if grep -E "$errors" "$log" | grep -qv '/org/kde/kirigami/'; then
   echo "QML runtime errors:"
-  grep -E "$errors" "$log" | sort -u | head -20
+  grep -E "$errors" "$log" | grep -v '/org/kde/kirigami/' | sort -u | head -20
   exit 1
 fi
 if ! grep -q "UI TEST PASSED" "$log"; then

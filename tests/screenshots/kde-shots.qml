@@ -38,8 +38,9 @@ QtObject {
     }
 
     function shot(name) {
-        // The window's root item: page header, pages, drawers and dialogs.
-        const root = win.contentItem.parent && win.contentItem.parent.width > 0 ? win.contentItem.parent : win.contentItem;
+        // The window's content: Kirigami's page header and the pages, layers included
+        // (the root item above it is not the QML engine's, so it cannot be grabbed).
+        const root = win.contentItem;
         const dpr = win.screen ? win.screen.devicePixelRatio : Screen.devicePixelRatio;
         const path = out + "/" + name + suffix + ".png";
         pending++;

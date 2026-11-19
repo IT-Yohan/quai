@@ -97,7 +97,7 @@ Kirigami.ScrollablePage {
                 errorText = data.message;
                 return;
             }
-            app.showPassiveNotification(data.message + (data.reboot_required ? " — " + I18n.tr("restart to finish installing") : ""));
+            app.notify(data.message + (data.reboot_required ? " — " + I18n.tr("restart to finish installing") : ""));
             app.reload();
             app.pageStack.layers.pop();
         });

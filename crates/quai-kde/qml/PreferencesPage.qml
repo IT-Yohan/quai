@@ -20,7 +20,7 @@ Kirigami.ScrollablePage {
             if (ok) {
                 settings = data;
             } else {
-                app.showPassiveNotification(data, "long");
+                app.notify(data, "long");
             }
         });
     }

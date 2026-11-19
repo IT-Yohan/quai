@@ -18,10 +18,20 @@ Kirigami.ScrollablePage {
 
     title: s ? s.source.name : ""
 
-    // The source disappeared (removed elsewhere): go back to the list.
+    /** The source was found at least once (not merely loading). */
+    property bool seen: false
+
+    // The source disappeared (removed elsewhere): go back to the list, once the
+    // change has settled (popping inside the binding update would loop on `s`).
     onSChanged: {
-        if (s === null && app.report !== null) {
-            app.pageStack.pop();
+        if (s !== null) {
+            seen = true;
+        } else if (seen && app.report !== null) {
+            Qt.callLater(() => {
+                if (app.pageStack.currentItem === page) {
+                    app.pageStack.pop();
+                }
+            });
         }
     }
 

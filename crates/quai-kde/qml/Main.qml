@@ -16,6 +16,8 @@ Kirigami.ApplicationWindow {
 
     /** Last `quai status` document, null until loaded. */
     property var report: null
+    /** Text of the last passive notification (tests read it). */
+    property string lastNotification: ""
     property string loadError: ""
     /** Number of quai commands in flight. */
     property int busy: 0
@@ -70,11 +72,11 @@ Kirigami.ApplicationWindow {
         const asRoot = privileged === undefined ? true : privileged;
         call(args, asRoot, stdin || "", (ok, data) => {
             if (!ok) {
-                showPassiveNotification(data, "long");
+                notify(data, "long");
             } else if (data.ok) {
-                showPassiveNotification(data.message + (data.reboot_required ? " — " + I18n.tr("restart to apply") : ""));
+                notify(data.message + (data.reboot_required ? " — " + I18n.tr("restart to apply") : ""));
             } else {
-                showPassiveNotification(data.message, "long");
+                notify(data.message, "long");
             }
             reload();
         });
@@ -84,18 +86,23 @@ Kirigami.ApplicationWindow {
     function refresh(id) {
         call(id ? ["refresh", id] : ["refresh"], false, "", (ok, data) => {
             if (!ok) {
-                showPassiveNotification(data, "long");
+                notify(data, "long");
             } else if (data.errors.length > 0) {
-                showPassiveNotification(data.errors.map(e => e[0] + ": " + e[1]).join("\n"), "long");
+                notify(data.errors.map(e => e[0] + ": " + e[1]).join("\n"), "long");
             } else if (data.refreshed.length === 0) {
-                showPassiveNotification(I18n.tr("Checked less than 30 seconds ago"));
+                notify(I18n.tr("Checked less than 30 seconds ago"));
             } else {
-                showPassiveNotification(data.refreshed.length === 1
+                notify(data.refreshed.length === 1
                     ? I18n.tr("Checked for new releases")
                     : I18n.trn("Checked {n} source", "Checked {n} sources", data.refreshed.length));
             }
             reload();
         });
+    }
+
+    function notify(text, timeout) {
+        lastNotification = text;
+        showPassiveNotification(text, timeout);
     }
 
     function sourceById(id) {
