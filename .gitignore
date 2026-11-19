@@ -1,5 +1,7 @@
 /target
 /vendor
+/dist
 *.tar.*
+*.src.rpm
 !tests/fixtures/rpms/*.rpm
 .qmlls.ini

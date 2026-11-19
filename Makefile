@@ -5,7 +5,7 @@
 #   make e2e             end-to-end test against dnf (root, needs rpmbuild + dnf)
 #   make kde-ui-test     drive the Kirigami frontend (needs a running e2e tree)
 #   sudo make install    install under PREFIX (default /usr)
-#   make dist            source and vendored-dependency tarballs for the RPM spec
+#   make srpm            source RPM, source and vendored-crate archives in dist/
 #
 # Translations (gettext, one catalogue for every program and data file):
 #   make pot             regenerate po/quai.pot from the sources
@@ -44,7 +44,7 @@ DATA_IN     := data/desktop/$(APPID).desktop.in data/metainfo/$(APPID).metainfo.
 export GETTEXTDATADIRS := $(CURDIR)/po
 
 .PHONY: all build translations docs check e2e kde-ui-test fixtures lint pot update-po check-po \
-	install install-core install-gui install-translations uninstall dist clean $(addprefix install-,$(FRONTENDS))
+	install install-core install-gui install-translations uninstall srpm clean $(addprefix install-,$(FRONTENDS))
 
 all: build
 
@@ -167,11 +167,9 @@ uninstall:
 	rm -f $(DESTDIR)$(LOCALEDIR)/*/LC_MESSAGES/quai.mo
 	@echo "Configuration in $(SYSCONFDIR)/quai and $(SYSCONFDIR)/yum.repos.d/quai-*.repo was kept."
 
-dist:
-	git archive --format=tar.gz --prefix=quai-$(VERSION)/ -o quai-$(VERSION).tar.gz HEAD
-	rm -rf vendor && $(CARGO) vendor --locked --versioned-dirs vendor >/dev/null
-	tar -cJf quai-$(VERSION)-vendor.tar.xz vendor && rm -rf vendor
-	@ls -l quai-$(VERSION).tar.gz quai-$(VERSION)-vendor.tar.xz
+# Source RPM and its two archives in dist/ (see packaging/make-srpm.sh).
+srpm:
+	packaging/make-srpm.sh --outdir dist
 
 clean:
 	$(CARGO) clean
