@@ -38,9 +38,9 @@ QtObject {
     }
 
     function shot(name) {
-        // The window's content: Kirigami's page header and the pages, layers included
-        // (the root item above it is not the QML engine's, so it cannot be grabbed).
-        const root = win.contentItem;
+        // Kirigami's page stack: the page header and the pages, layers included. (The
+        // window's own items are made in C++, outside the QML engine: not grabbable.)
+        const root = win.pageStack;
         const dpr = win.screen ? win.screen.devicePixelRatio : Screen.devicePixelRatio;
         const path = out + "/" + name + suffix + ".png";
         pending++;

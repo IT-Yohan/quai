@@ -122,11 +122,17 @@ for s in json.load(open(sys.argv[1]))["sources"]:
     print(f"   {s['source']['name']:24} {s['state']}")
 PY
 
-# One display for the GTK window; the Kirigami one renders offscreen.
-export DISPLAY=:77
-Xvfb "$DISPLAY" -screen 0 3200x2400x24 -nolisten tcp >/dev/null 2>&1 &
-pids+=($!)
-sleep 1
+# A fresh X display for each GTK capture; the Kirigami window renders offscreen.
+display=70
+start_x() {
+  display=$((display + 1))
+  export DISPLAY=":$display"
+  Xvfb "$DISPLAY" -screen 0 3200x2400x24 -nolisten tcp > "$root/xvfb-$display.log" 2>&1 &
+  xpid=$!
+  pids+=($xpid)
+  for _ in $(seq 50); do xdotool getmouselocation >/dev/null 2>&1 && return; sleep 0.1; done
+  echo "Xvfb did not start: $(cat "$root/xvfb-$display.log")"; exit 1
+}
 
 # GNOME's defaults: Adwaita fonts and icons, only a close button.
 export XDG_CONFIG_HOME="$root/config"
@@ -145,6 +151,7 @@ gtk_shot() { # name scheme [env...] -- keys...
   [[ "${1:-}" == -- ]] && shift
   keys=("$@")
   say "GTK: $name ($scheme)"
+  start_x
   env GDK_BACKEND=x11 GSK_RENDERER=cairo GDK_SCALE="$SCALE" NO_AT_BRIDGE=1 ADW_DEBUG_COLOR_SCHEME="$scheme" \
     "${envs[@]}" dbus-run-session -- "$bin/quai-gtk" > "$root/gtk-$name.log" 2>&1 &
   local pid=$!
@@ -167,7 +174,8 @@ gtk_shot() { # name scheme [env...] -- keys...
   xdotool windowkill "$wid" 2>/dev/null || true
   pkill -f "^$bin/quai-gtk" 2>/dev/null || true
   wait "$pid" 2>/dev/null || true
-  while xdotool search --onlyvisible --name '^Quai$' >/dev/null 2>&1; do sleep 0.2; done
+  kill "$xpid" 2>/dev/null || true
+  wait "$xpid" 2>/dev/null || true
 }
 
 gtk_shot gnome-sources prefer-light
