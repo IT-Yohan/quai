@@ -211,6 +211,12 @@ kde_shots "" ""
 dark=/usr/share/color-schemes/BreezeDark.colors
 if [[ -f "$dark" ]]; then kde_shots -dark "$dark"; else echo "   no $dark: no dark Plasma captures"; fi
 
+# Keep what the AppStream file shows (and the README uses).
+metainfo="$here/../../data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in"
+for f in "$out"/*.png; do
+  grep -q "data/screenshots/$(basename "$f")<" "$metainfo" || rm "$f"
+done
+
 say "optimising"
 if command -v oxipng >/dev/null; then oxipng -q -o 3 --strip safe "$out"/*.png; fi
 cp "$root/quaid.log" "$out/logs/"

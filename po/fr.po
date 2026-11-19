@@ -2374,6 +2374,10 @@ msgid "In the dark style"
 msgstr "En style sombre"
 
 #: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid "With Breeze Dark"
+msgstr "Avec Breeze sombre"
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid "First release of Quai."
 msgstr "Première version de Quai."
 

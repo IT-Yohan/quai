@@ -2240,6 +2240,10 @@ msgid "In the dark style"
 msgstr ""
 
 #: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
+msgid "With Breeze Dark"
+msgstr ""
+
+#: data/metainfo/io.github.it_yohan.Quai.metainfo.xml.in
 msgid "First release of Quai."
 msgstr ""
 

@@ -102,6 +102,10 @@
       <caption>In the dark style</caption>
       <image type="source" width="1800" height="1240">https://raw.githubusercontent.com/IT-Yohan/quai/v@VERSION@/data/screenshots/gnome-sources-dark.png</image>
     </screenshot>
+    <screenshot environment="plasma">
+      <caption>With Breeze Dark</caption>
+      <image type="source" width="1800" height="1240">https://raw.githubusercontent.com/IT-Yohan/quai/v@VERSION@/data/screenshots/plasma-sources-dark.png</image>
+    </screenshot>
   </screenshots>
 
   <releases>
