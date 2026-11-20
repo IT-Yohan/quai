@@ -6,7 +6,9 @@
 #      crates (the spec's Source1) and SHA256SUMS;
 #   4. builds the same source RPM in COPR (when the COPR_CONFIG secret is set)
 #      and adds the COPR instructions to the release.
-# "Run workflow" on an existing tag redoes the missing steps (copr_only for 4).
+# "Run workflow" (Actions tab, also from the GitHub mobile app) does the same
+# without git: a new tag is created on the chosen branch once step 1 passes; an
+# existing tag is published again (copr_only: only step 4).
 name: Release
 
 on:
@@ -15,7 +17,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Existing tag, e.g. v0.1.0"
+        description: "Version tag, e.g. v0.1.0 (created on the chosen branch if new)"
         required: true
       copr_only:
         description: "Only build in COPR (the GitHub release exists)"
@@ -40,6 +42,8 @@ jobs:
   check:
     name: Version and release notes
     runs-on: ubuntu-24.04
+    permissions:
+      contents: write # creates the tag when run by hand
     outputs:
       tag: ${{ env.TAG }}
       fedora: ${{ steps.r.outputs.fedora }}
@@ -47,9 +51,27 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: ${{ env.TAG }}
+          fetch-depth: 0
+      - name: Check out the tag
+        id: tag
+        run: |
+          if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+            git checkout -q "$TAG"
+          elif [[ "$GITHUB_EVENT_NAME" == workflow_dispatch ]]; then
+            echo "new=true" >> "$GITHUB_OUTPUT"
+            echo "$TAG does not exist: it will be created on $GITHUB_REF_NAME ($(git rev-parse --short HEAD))"
+          else
+            echo "::error::no tag $TAG"; exit 1
+          fi
       - name: Tag, Cargo.toml, spec and AppStream agree
         run: python3 packaging/release-notes.py "$TAG" > notes.md && cat notes.md
+      - name: Create the tag
+        if: ${{ steps.tag.outputs.new == 'true' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git tag -a "$TAG" -m "Quai ${TAG#v}"
+          git push origin "$TAG"
       - name: Supported Fedora releases
         id: r
         run: python3 .github/fedora-releases.py

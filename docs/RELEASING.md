@@ -15,12 +15,15 @@ which publishes the GitHub release and builds the same source RPM in COPR.
 5. If the windows changed, run the **Screenshots** workflow, then bring its images in with
    `git checkout origin/screenshots -- data/screenshots`: the AppStream file points at them
    under the release tag.
-6. Commit, wait for CI to pass on `main`, then:
+6. Commit, wait for CI to pass on `main`, then either push a tag:
 
    ```
    git tag -a vX.Y.Z -m "Quai X.Y.Z"
    git push origin vX.Y.Z
    ```
+
+   or, without git (the GitHub mobile app works too): Actions → Release → Run workflow, branch
+   `main`, tag `vX.Y.Z`. The workflow creates the tag once the checks below pass.
 
 `packaging/release-notes.py vX.Y.Z` runs first and stops the release if the tag,
 `Cargo.toml`, the spec and the AppStream file disagree. "Run workflow" on the Release
