@@ -1,0 +1,25 @@
+# One-off research run (branch catalog-scan only): which notable projects
+# attach RPMs to their GitHub releases, and what else they offer.
+name: Catalog scan
+on:
+  push:
+    branches: [catalog-scan]
+permissions:
+  contents: write
+jobs:
+  scan:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v6
+      - name: Scan
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 scan/scan.py scan/repos.txt scan/results.json
+      - name: Save the results on the branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add scan/results.json
+          git commit -q -m "Scan results"
+          git push origin HEAD:catalog-scan
