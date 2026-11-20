@@ -1,5 +1,6 @@
-# One-off research run (branch catalog-scan only): which notable projects
-# attach RPMs to their GitHub releases, and what else they offer.
+# One-off research run (branch catalog-scan only): download counts of the
+# graphical apps that only ship RPMs, what quai serves for each on Fedora, and
+# a dnf test transaction for the most downloaded ones.
 name: Catalog scan
 on:
   push:
@@ -7,19 +8,28 @@ on:
 permissions:
   contents: write
 jobs:
-  scan:
+  usage:
     runs-on: ubuntu-24.04
-    timeout-minutes: 120
+    container: registry.fedoraproject.org/fedora:43
+    timeout-minutes: 180
     steps:
+      - name: Tools and quai from COPR
+        run: |
+          dnf -y -q install git python3 curl dnf5-plugins
+          dnf -y -q copr enable it-yohan/quai
+          dnf -y -q install quai
+          quai --version
       - uses: actions/checkout@v6
       - name: Scan
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: python3 scan/scan.py scan/repos.txt scan/results.json
+          TOP: "40"
+        run: python3 scan/usage.py scan/gui.txt scan/usage.json
       - name: Save the results on the branch
         run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git config user.name "github-actions[bot]"
           git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
-          git add scan/results.json
-          git commit -q -m "Scan results"
+          git add scan/usage.json
+          git commit -q -m "Usage scan results"
           git push origin HEAD:catalog-scan
