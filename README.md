@@ -68,6 +68,17 @@ No toolkit is native on both GNOME and Plasma, so Quai has two thin frontends ov
 
 Quai targets the supported Fedora releases (dnf5) and the Fedora Atomic desktops.
 
+From [COPR](https://copr.fedorainfracloud.org/coprs/it-yohan/quai/), with updates through dnf,
+GNOME Software and Discover:
+
+```
+sudo dnf copr enable it-yohan/quai
+sudo dnf install quai
+```
+
+On Silverblue, Kinoite and the other Atomic desktops, see the instructions on the COPR page
+(`rpm-ostree install quai quai-gui`).
+
 From a [release](https://github.com/IT-Yohan/quai/releases/latest): download the files for your
 Fedora release (`.fcNN`) and architecture, then
 `sudo dnf install ./quai-*.rpm` (pick `quai-gtk` or `quai-kde`, or both). Once installed, Quai can

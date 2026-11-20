@@ -49,7 +49,8 @@ Snapshots: every push builds and tests the packages (`ci.yml`) with a version su
    starting with `[copr-cli]`.
 3. In the GitHub repository: Settings → Secrets and variables → Actions → New repository
    secret, name `COPR_CONFIG`, value: the whole file.
-4. Optional: a repository variable `COPR_PROJECT` to use another project name than `quai`.
+4. Optional: a repository variable `COPR_PROJECT` to use another project name than `quai`
+   (the README points at `it-yohan/quai`).
 
 The first release (or "Run workflow" with `copr_only`) creates the project with the
 description and instructions in `packaging/copr/`, and updates them on every release.
