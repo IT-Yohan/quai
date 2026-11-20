@@ -1,0 +1,1405 @@
+{
+ "fedora": "NAME=\"Fedora Linux\"\nVERSION=\"43 (Container Image)\"\nRELEASE_TYPE=stable\nID=fedora\nVERSION_ID=43\nVERSION_CODENAME=\"\"\nPRETTY_NAME=\"Fedora Linux 43 (Container Image)\"\nANSI_COLOR=\"0;38;2;60;110;180\"\nLOGO=fedora-logo-icon\nCPE_NAME=\"cpe:/o:fedoraproject:fedora:43\"\nDEFAULT_HOSTNAME=\"fedora\"\nHOME_URL=\"https://fedoraproject.org/\"\nDOCUMENTATION_URL=\"https://docs.fedoraproject.org/en-US/fedora/f43/\"\nSUPPORT_URL=\"https://ask.fedoraproject.org/\"\nBUG_REPORT_URL=\"https://bugzilla.redhat.com/\"\nREDHAT_BUGZILLA_PRODUCT=\"Fedora\"\nREDHAT_BUGZILLA_PRODUCT_VERSION=43\nREDHAT_SUPPORT_PRODUCT=\"Fedora\"\nREDHAT_SUPPORT_PRODUCT_VERSION=43\nSUPPORT_END=2026-12-02\nVARIANT=\"Container Image\"\nVARIANT_ID=container\n",
+ "quai": "quai 0.1.0",
+ "results": {
+  "balena-io/etcher": {
+   "stats": {
+    "rpm": 229601,
+    "rpm_x86": 229601,
+    "releases": 10,
+    "oldest": "2025-02-27T16:17:55Z",
+    "latest_assets": {
+     "balena-etcher-2.1.9-1.x86_64.rpm": 10706
+    },
+    "days": 630,
+    "x86_per_day": 364.4
+   },
+   "quai": {
+    "ok": true,
+    "preview": {
+     "forge": "github",
+     "host": "github.com",
+     "project": "balena-io/etcher",
+     "web_url": "https://github.com/balena-io/etcher",
+     "suggested_id": "etcher",
+     "suggested_name": "Etcher",
+     "release": {
+      "tag": "v2.1.9",
+      "name": "v2.1.9",
+      "published_at": "2026-10-22T19:24:32+00:00",
+      "prerelease": false
+     },
+     "packages": [
+      {
+       "name": "balena-etcher",
+       "evr": "2.1.9-1",
+       "arch": "x86_64",
+       "summary": "Flash OS images to SD cards and USB drives, safely and easily",
+       "size": 159785905,
+       "asset_name": "balena-etcher-2.1.9-1.x86_64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      }
+     ],
+     "variants": [],
+     "warnings": [
+      {
+       "code": "unsigned_packages",
+       "severity": "info",
+       "message": "upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's signed metadata"
+      }
+     ],
+     "asset_pattern": null,
+     "host_arch": "x86_64"
+    }
+   },
+   "dnf_test": [
+    {
+     "asset": "balena-etcher-2.1.9-1.x86_64.rpm",
+     "ok": true,
+     "log": " 100% | 566.8 KiB/s | 533.9 KiB |  00m01s\n[260/270] pipewire-jack-audio-connectio 100% | 237.6 KiB/s |  10.9 KiB |  00m00s\n[261/270] pipewire-jack-audio-connectio 100% |   2.9 MiB/s | 144.9 KiB |  00m00s\n[262/270] pipewire-pulseaudio-0:1.4.11- 100% |   4.6 MiB/s | 209.7 KiB |  00m00s\n[263/270] usbmuxd-0:1.1.1^20240915git0b 100% |   1.8 MiB/s |  66.9 KiB |  00m00s\n[264/270] pipewire-plugin-libcamera-0:1 100% |   1.7 MiB/s |  73.8 KiB |  00m00s\n[265/270] polkit-pkla-compat-0:0.1-31.f 100% |   1.0 MiB/s |  43.9 KiB |  00m00s\n[266/270] libyuv-0:0-0.57.20240704git96 100% |   3.8 MiB/s | 202.1 KiB |  00m00s\n[267/270] libcamera-0:0.5.2-5.fc43.x86_ 100% |   9.0 MiB/s | 682.2 KiB |  00m00s\n[268/270] lttng-ust-0:2.14.0-4.fc43.x86 100% |   4.9 MiB/s | 366.3 KiB |  00m00s\n[269/270] numactl-libs-0:2.0.19-3.fc43. 100% | 817.7 KiB/s |  31.1 KiB |  00m00s\n[270/270] libcamera-ipa-0:0.5.2-5.fc43. 100% |   3.6 MiB/s | 179.1 KiB |  00m00s\n--------------------------------------------------------------------------------\n[270/270] Total                         100% |  11.4 MiB/s | 171.9 MiB |  00m15s\nRunning transaction\nWarning: skipped OpenPGP checks for 1 package from repository: @commandline\nComplete!"
+    }
+   ]
+  },
+  "winboat-org/winboat": {
+   "stats": {
+    "rpm": 81134,
+    "rpm_x86": 81134,
+    "releases": 10,
+    "oldest": "2025-09-23T23:25:42Z",
+    "latest_assets": {
+     "winboat-0.9.2-x86_64.rpm": 9658
+    },
+    "days": 422,
+    "x86_per_day": 192.3
+   },
+   "quai": {
+    "ok": true,
+    "preview": {
+     "forge": "github",
+     "host": "github.com",
+     "project": "winboat-org/winboat",
+     "web_url": "https://github.com/winboat-org/winboat",
+     "suggested_id": "winboat",
+     "suggested_name": "Winboat",
+     "release": {
+      "tag": "v0.9.2",
+      "name": "v0.9.2",
+      "published_at": "2026-08-25T17:37:32+00:00",
+      "prerelease": false
+     },
+     "packages": [
+      {
+       "name": "winboat",
+       "evr": "0.9.2-1",
+       "arch": "x86_64",
+       "summary": "Windows for Penguins",
+       "size": 113790249,
+       "asset_name": "winboat-0.9.2-x86_64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      }
+     ],
+     "variants": [],
+     "warnings": [
+      {
+       "code": "unsigned_packages",
+       "severity": "info",
+       "message": "upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's signed metadata"
+      }
+     ],
+     "asset_pattern": null,
+     "host_arch": "x86_64"
+    }
+   },
+   "dnf_test": [
+    {
+     "asset": "winboat-0.9.2-x86_64.rpm",
+     "ok": true,
+     "log": " 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[267/271] libcamera-0:0.5.2-5.fc43.x86_ 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[268/271] libyuv-0:0-0.57.20240704git96 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[269/271] lttng-ust-0:2.14.0-4.fc43.x86 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[270/271] numactl-libs-0:2.0.19-3.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[271/271] libcamera-ipa-0:0.5.2-5.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n--------------------------------------------------------------------------------\n[271/271] Total                         100% |   0.0   B/s |   0.0   B |  00m00s\nRunning transaction\nWarning: skipped OpenPGP checks for 1 package from repository: @commandline\nComplete!"
+    }
+   ]
+  },
+  "Heroic-Games-Launcher/HeroicGamesLauncher": {
+   "stats": {
+    "rpm": 40085,
+    "rpm_x86": 38572,
+    "releases": 10,
+    "oldest": "2026-01-27T09:29:15Z",
+    "latest_assets": {
+     "Heroic-2.22.4-linux-aarch64.rpm": 1513,
+     "Heroic-2.22.4-linux-x86_64.rpm": 5276
+    },
+    "days": 296,
+    "x86_per_day": 130.3
+   },
+   "quai": {
+    "ok": true,
+    "preview": {
+     "forge": "github",
+     "host": "github.com",
+     "project": "Heroic-Games-Launcher/HeroicGamesLauncher",
+     "web_url": "https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher",
+     "suggested_id": "heroicgameslauncher",
+     "suggested_name": "HeroicGamesLauncher",
+     "release": {
+      "tag": "v2.22.4",
+      "name": "2.22.4 Hotfix 4",
+      "published_at": "2026-10-15T02:27:48+00:00",
+      "prerelease": false
+     },
+     "packages": [
+      {
+       "name": "heroic",
+       "evr": "2.22.4-1",
+       "arch": "aarch64",
+       "summary": "An Open Source Launcher for GOG, Epic Games and Amazon Games",
+       "size": 107951541,
+       "asset_name": "Heroic-2.22.4-linux-aarch64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      },
+      {
+       "name": "heroic",
+       "evr": "2.22.4-1",
+       "arch": "x86_64",
+       "summary": "An Open Source Launcher for GOG, Epic Games and Amazon Games",
+       "size": 114241593,
+       "asset_name": "Heroic-2.22.4-linux-x86_64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      }
+     ],
+     "variants": [],
+     "warnings": [
+      {
+       "code": "unsigned_packages",
+       "severity": "info",
+       "message": "upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's signed metadata"
+      }
+     ],
+     "asset_pattern": null,
+     "host_arch": "x86_64"
+    }
+   },
+   "dnf_test": [
+    {
+     "asset": "Heroic-2.22.4-linux-x86_64.rpm",
+     "ok": true,
+     "log": " 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[267/271] libcamera-0:0.5.2-5.fc43.x86_ 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[268/271] libyuv-0:0-0.57.20240704git96 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[269/271] lttng-ust-0:2.14.0-4.fc43.x86 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[270/271] numactl-libs-0:2.0.19-3.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[271/271] libcamera-ipa-0:0.5.2-5.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n--------------------------------------------------------------------------------\n[271/271] Total                         100% |   0.0   B/s |   0.0   B |  00m00s\nRunning transaction\nWarning: skipped OpenPGP checks for 1 package from repository: @commandline\nComplete!"
+    }
+   ]
+  },
+  "martpie/museeks": {
+   "stats": {
+    "rpm": 55906,
+    "rpm_x86": 30723,
+    "releases": 10,
+    "oldest": "2025-06-10T12:46:40Z",
+    "latest_assets": {
+     "Museeks-0.23.4-1.aarch64.rpm": 14317,
+     "Museeks-0.23.4-1.x86_64.rpm": 14849
+    },
+    "days": 527,
+    "x86_per_day": 58.3
+   },
+   "quai": {
+    "ok": true,
+    "preview": {
+     "forge": "github",
+     "host": "github.com",
+     "project": "martpie/museeks",
+     "web_url": "https://github.com/martpie/museeks",
+     "suggested_id": "museeks",
+     "suggested_name": "Museeks",
+     "release": {
+      "tag": "0.23.4",
+      "name": "0.23.4",
+      "published_at": "2026-02-19T11:38:24+00:00",
+      "prerelease": false
+     },
+     "packages": [
+      {
+       "name": "museeks",
+       "evr": "0.23.4-1",
+       "arch": "aarch64",
+       "summary": "A simple, clean, and cross-platform music player",
+       "size": 4861382,
+       "asset_name": "Museeks-0.23.4-1.aarch64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      },
+      {
+       "name": "museeks",
+       "evr": "0.23.4-1",
+       "arch": "x86_64",
+       "summary": "A simple, clean, and cross-platform music player",
+       "size": 5014087,
+       "asset_name": "Museeks-0.23.4-1.x86_64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      }
+     ],
+     "variants": [],
+     "warnings": [
+      {
+       "code": "unsigned_packages",
+       "severity": "info",
+       "message": "upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's signed metadata"
+      }
+     ],
+     "asset_pattern": null,
+     "host_arch": "x86_64"
+    }
+   },
+   "dnf_test": [
+    {
+     "asset": "Museeks-0.23.4-1.x86_64.rpm",
+     "ok": true,
+     "log": " 100% | 990.7 KiB/s |  59.4 KiB |  00m00s\n[294/304] soundtouch-0:2.4.0-2.fc43.x86 100% |   1.3 MiB/s |  84.8 KiB |  00m00s\n[295/304] libnice-0:0.1.22-8.fc43.x86_6 100% |   4.4 MiB/s | 200.2 KiB |  00m00s\n[296/304] gssdp-0:1.6.6-1.fc43.x86_64   100% |   2.8 MiB/s |  59.4 KiB |  00m00s\n[297/304] gupnp-igd-0:1.6.0-7.fc43.x86_ 100% | 729.1 KiB/s |  33.5 KiB |  00m00s\n[298/304] openal-soft-0:1.24.2-4.fc43.x 100% |   5.6 MiB/s | 651.3 KiB |  00m00s\n[299/304] gupnp-0:1.6.10-1.fc43.x86_64  100% |   4.9 MiB/s | 106.2 KiB |  00m00s\n[300/304] libv4l-0:1.32.0-1.fc43.x86_64 100% |   6.4 MiB/s | 136.6 KiB |  00m00s\n[301/304] faad2-libs-1:2.11.2-5.fc43.x8 100% |   9.3 MiB/s | 229.4 KiB |  00m00s\n[302/304] vulkan-loader-0:1.4.341.0-1.f 100% |   2.6 MiB/s | 161.6 KiB |  00m00s\n[303/304] libdisplay-info-0:0.2.0-4.fc4 100% |   1.6 MiB/s |  85.4 KiB |  00m00s\n[304/304] mesa-vulkan-drivers-0:25.3.6- 100% |  73.7 MiB/s |  24.8 MiB |  00m00s\n--------------------------------------------------------------------------------\n[304/304] Total                         100% |  36.0 MiB/s |  86.5 MiB |  00m02s\nRunning transaction\nWarning: skipped OpenPGP checks for 1 package from repository: @commandline\nComplete!"
+    }
+   ]
+  },
+  "JannisX11/blockbench": {
+   "stats": {
+    "rpm": 23633,
+    "rpm_x86": 0,
+    "releases": 10,
+    "oldest": "2026-04-04T13:03:19Z",
+    "latest_assets": {
+     "Blockbench_5.2.2.rpm": 3676
+    },
+    "days": 229,
+    "x86_per_day": 0.0
+   },
+   "quai": {
+    "ok": true,
+    "preview": {
+     "forge": "github",
+     "host": "github.com",
+     "project": "JannisX11/blockbench",
+     "web_url": "https://github.com/JannisX11/blockbench",
+     "suggested_id": "blockbench",
+     "suggested_name": "Blockbench",
+     "release": {
+      "tag": "v5.2.2",
+      "name": "5.2.2 - The Screen-Space Update [Patch 2]",
+      "published_at": "2026-10-08T21:26:54+00:00",
+      "prerelease": false
+     },
+     "packages": [
+      {
+       "name": "Blockbench",
+       "evr": "5.2.2-1",
+       "arch": "x86_64",
+       "summary": "Low-poly modeling and animation software",
+       "size": 94958713,
+       "asset_name": "Blockbench_5.2.2.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      }
+     ],
+     "variants": [],
+     "warnings": [
+      {
+       "code": "unsigned_packages",
+       "severity": "info",
+       "message": "upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's signed metadata"
+      }
+     ],
+     "asset_pattern": null,
+     "host_arch": "x86_64"
+    }
+   },
+   "dnf_test": [
+    {
+     "asset": "Blockbench_5.2.2.rpm",
+     "ok": true,
+     "log": " 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[267/271] libcamera-0:0.5.2-5.fc43.x86_ 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[268/271] libyuv-0:0-0.57.20240704git96 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[269/271] lttng-ust-0:2.14.0-4.fc43.x86 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[270/271] numactl-libs-0:2.0.19-3.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[271/271] libcamera-ipa-0:0.5.2-5.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n--------------------------------------------------------------------------------\n[271/271] Total                         100% |   0.0   B/s |   0.0   B |  00m00s\nRunning transaction\nWarning: skipped OpenPGP checks for 1 package from repository: @commandline\nComplete!"
+    }
+   ]
+  },
+  "upscayl/upscayl": {
+   "stats": {
+    "rpm": 22068,
+    "rpm_x86": 0,
+    "releases": 10,
+    "oldest": "2024-01-15T14:52:36Z",
+    "latest_assets": {
+     "upscayl-2.15.0-linux.rpm": 16065
+    },
+    "days": 1039,
+    "x86_per_day": 0.0
+   },
+   "quai": {
+    "ok": true,
+    "preview": {
+     "forge": "github",
+     "host": "github.com",
+     "project": "upscayl/upscayl",
+     "web_url": "https://github.com/upscayl/upscayl",
+     "suggested_id": "upscayl",
+     "suggested_name": "Upscayl",
+     "release": {
+      "tag": "v2.15.0",
+      "name": "2.15 New Year Update",
+      "published_at": "2024-12-25T13:44:34+00:00",
+      "prerelease": false
+     },
+     "packages": [
+      {
+       "name": "upscayl",
+       "evr": "2.15.0-1",
+       "arch": "x86_64",
+       "summary": "AI Image Upscaler",
+       "size": 249795225,
+       "asset_name": "upscayl-2.15.0-linux.rpm",
+       "checksum": "pending",
+       "installed": null,
+       "other_repo": null
+      }
+     ],
+     "variants": [],
+     "warnings": [
+      {
+       "code": "unsigned_packages",
+       "severity": "info",
+       "message": "upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's signed metadata"
+      },
+      {
+       "code": "no_forge_digest",
+       "severity": "info",
+       "message": "github.com publishes no checksum: quaid downloads each version once to compute it"
+      }
+     ],
+     "asset_pattern": null,
+     "host_arch": "x86_64"
+    }
+   },
+   "dnf_test": [
+    {
+     "asset": "upscayl-2.15.0-linux.rpm",
+     "ok": true,
+     "log": " 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[267/271] libcamera-0:0.5.2-5.fc43.x86_ 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[268/271] libyuv-0:0-0.57.20240704git96 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[269/271] lttng-ust-0:2.14.0-4.fc43.x86 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[270/271] numactl-libs-0:2.0.19-3.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[271/271] libcamera-ipa-0:0.5.2-5.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n--------------------------------------------------------------------------------\n[271/271] Total                         100% |   0.0   B/s |   0.0   B |  00m00s\nRunning transaction\nWarning: skipped OpenPGP checks for 1 package from repository: @commandline\nComplete!"
+    }
+   ]
+  },
+  "pear-devs/pear-desktop": {
+   "stats": {
+    "rpm": 28297,
+    "rpm_x86": 22055,
+    "releases": 10,
+    "oldest": "2025-02-17T04:04:08Z",
+    "latest_assets": {
+     "youtube-music-3.12.1.aarch64.rpm": 74,
+     "youtube-music-3.12.1.x86_64.rpm": 406
+    },
+    "days": 641,
+    "x86_per_day": 34.4
+   },
+   "quai": {
+    "ok": true,
+    "preview": {
+     "forge": "github",
+     "host": "github.com",
+     "project": "pear-devs/pear-desktop",
+     "web_url": "https://github.com/pear-devs/pear-desktop",
+     "suggested_id": "pear-desktop",
+     "suggested_name": "Pear-desktop",
+     "release": {
+      "tag": "v3.12.1",
+      "name": "v3.12.1",
+      "published_at": "2026-11-15T07:44:26+00:00",
+      "prerelease": false
+     },
+     "packages": [
+      {
+       "name": "youtube-music",
+       "evr": "3.12.1-1",
+       "arch": "aarch64",
+       "summary": "YouTube Music Desktop App - including custom plugins",
+       "size": 97544064,
+       "asset_name": "youtube-music-3.12.1.aarch64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      },
+      {
+       "name": "youtube-music",
+       "evr": "3.12.1-1",
+       "arch": "x86_64",
+       "summary": "YouTube Music Desktop App - including custom plugins",
+       "size": 102305620,
+       "asset_name": "youtube-music-3.12.1.x86_64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      }
+     ],
+     "variants": [],
+     "warnings": [
+      {
+       "code": "unsigned_packages",
+       "severity": "info",
+       "message": "upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's signed metadata"
+      }
+     ],
+     "asset_pattern": null,
+     "host_arch": "x86_64"
+    }
+   },
+   "dnf_test": [
+    {
+     "asset": "youtube-music-3.12.1.x86_64.rpm",
+     "ok": true,
+     "log": "Package        Arch   Version  Repository        Size\nInstalling:\n youtube-music x86_64 3.12.1-1 @commandline 316.8 MiB\n\nTransaction Summary:\n Installing:         1 package\n\nUpdating and loading repositories:\nRepositories loaded.\nTotal size of inbound packages is 98 MiB. Need to download 0 B.\nAfter this operation, 317 MiB extra will be used (install 317 MiB, remove 0 B).\nTest mode enabled: Only package downloads, OpenPGP key installations and transaction checks will be performed.\nRunning transaction\nWarning: skipped OpenPGP checks for 1 package from repository: @commandline\nComplete!"
+    }
+   ]
+  },
+  "tom-james-watson/breaktimer-app": {
+   "stats": {
+    "rpm": 17597,
+    "rpm_x86": 0,
+    "releases": 10,
+    "oldest": "2021-11-08T09:03:39Z",
+    "latest_assets": {
+     "BreakTimer.rpm": 16265
+    },
+    "days": 1837,
+    "x86_per_day": 0.0
+   },
+   "quai": {
+    "ok": true,
+    "preview": {
+     "forge": "github",
+     "host": "github.com",
+     "project": "tom-james-watson/breaktimer-app",
+     "web_url": "https://github.com/tom-james-watson/breaktimer-app",
+     "suggested_id": "breaktimer-app",
+     "suggested_name": "Breaktimer-app",
+     "release": {
+      "tag": "v2.0.3",
+      "name": "v2.0.3",
+      "published_at": "2025-11-13T22:00:24+00:00",
+      "prerelease": false
+     },
+     "packages": [
+      {
+       "name": "breaktimer",
+       "evr": "2.0.3-1",
+       "arch": "x86_64",
+       "summary": "Manage periodic breaks",
+       "size": 84889141,
+       "asset_name": "BreakTimer.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      }
+     ],
+     "variants": [],
+     "warnings": [
+      {
+       "code": "unsigned_packages",
+       "severity": "info",
+       "message": "upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's signed metadata"
+      }
+     ],
+     "asset_pattern": null,
+     "host_arch": "x86_64"
+    }
+   },
+   "dnf_test": [
+    {
+     "asset": "BreakTimer.rpm",
+     "ok": true,
+     "log": " 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[267/271] libcamera-0:0.5.2-5.fc43.x86_ 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[268/271] libyuv-0:0-0.57.20240704git96 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[269/271] lttng-ust-0:2.14.0-4.fc43.x86 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[270/271] numactl-libs-0:2.0.19-3.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[271/271] libcamera-ipa-0:0.5.2-5.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n--------------------------------------------------------------------------------\n[271/271] Total                         100% |   0.0   B/s |   0.0   B |  00m00s\nRunning transaction\nWarning: skipped OpenPGP checks for 1 package from repository: @commandline\nComplete!"
+    }
+   ]
+  },
+  "ipfs/ipfs-desktop": {
+   "stats": {
+    "rpm": 13754,
+    "rpm_x86": 13754,
+    "releases": 10,
+    "oldest": "2025-08-28T19:23:00Z",
+    "latest_assets": {
+     "ipfs-desktop-0.50.1-linux-x86_64.rpm": 2616
+    },
+    "days": 448,
+    "x86_per_day": 30.7
+   },
+   "quai": {
+    "ok": true,
+    "preview": {
+     "forge": "github",
+     "host": "github.com",
+     "project": "ipfs/ipfs-desktop",
+     "web_url": "https://github.com/ipfs/ipfs-desktop",
+     "suggested_id": "ipfs-desktop",
+     "suggested_name": "Ipfs-desktop",
+     "release": {
+      "tag": "v0.50.1",
+      "name": "v0.50.1",
+      "published_at": "2026-09-15T17:15:01+00:00",
+      "prerelease": false
+     },
+     "packages": [
+      {
+       "name": "ipfs-desktop",
+       "evr": "0.50.1-1",
+       "arch": "x86_64",
+       "summary": "A desktop client for IPFS",
+       "size": 146628705,
+       "asset_name": "ipfs-desktop-0.50.1-linux-x86_64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      }
+     ],
+     "variants": [],
+     "warnings": [
+      {
+       "code": "unsigned_packages",
+       "severity": "info",
+       "message": "upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's signed metadata"
+      }
+     ],
+     "asset_pattern": null,
+     "host_arch": "x86_64"
+    }
+   },
+   "dnf_test": [
+    {
+     "asset": "ipfs-desktop-0.50.1-linux-x86_64.rpm",
+     "ok": true,
+     "log": " 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[267/271] libcamera-0:0.5.2-5.fc43.x86_ 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[268/271] libyuv-0:0-0.57.20240704git96 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[269/271] lttng-ust-0:2.14.0-4.fc43.x86 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[270/271] numactl-libs-0:2.0.19-3.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[271/271] libcamera-ipa-0:0.5.2-5.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n--------------------------------------------------------------------------------\n[271/271] Total                         100% |   0.0   B/s |   0.0   B |  00m00s\nRunning transaction\nWarning: skipped OpenPGP checks for 1 package from repository: @commandline\nComplete!"
+    }
+   ]
+  },
+  "jupyterlab/jupyterlab-desktop": {
+   "stats": {
+    "rpm": 9187,
+    "rpm_x86": 9187,
+    "releases": 9,
+    "oldest": "2024-02-18T02:12:34Z",
+    "latest_assets": {
+     "JupyterLab-Setup-Fedora-x64.rpm": 869
+    },
+    "days": 1006,
+    "x86_per_day": 9.1
+   },
+   "quai": {
+    "ok": true,
+    "preview": {
+     "forge": "github",
+     "host": "github.com",
+     "project": "jupyterlab/jupyterlab-desktop",
+     "web_url": "https://github.com/jupyterlab/jupyterlab-desktop",
+     "suggested_id": "jupyterlab-desktop",
+     "suggested_name": "Jupyterlab-desktop",
+     "release": {
+      "tag": "v4.6.3-1",
+      "name": "v4.6.3-1",
+      "published_at": "2026-08-26T08:49:57+00:00",
+      "prerelease": false
+     },
+     "packages": [
+      {
+       "name": "jupyterlab-desktop",
+       "evr": "4.6.3~1-1",
+       "arch": "x86_64",
+       "summary": "JupyterLab Desktop",
+       "size": 412014597,
+       "asset_name": "JupyterLab-Setup-Fedora-x64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      }
+     ],
+     "variants": [],
+     "warnings": [
+      {
+       "code": "unsigned_packages",
+       "severity": "info",
+       "message": "upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's signed metadata"
+      }
+     ],
+     "asset_pattern": null,
+     "host_arch": "x86_64"
+    }
+   },
+   "dnf_test": [
+    {
+     "asset": "JupyterLab-Setup-Fedora-x64.rpm",
+     "ok": true,
+     "log": " 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[267/271] libcamera-0:0.5.2-5.fc43.x86_ 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[268/271] libyuv-0:0-0.57.20240704git96 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[269/271] lttng-ust-0:2.14.0-4.fc43.x86 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[270/271] numactl-libs-0:2.0.19-3.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[271/271] libcamera-ipa-0:0.5.2-5.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n--------------------------------------------------------------------------------\n[271/271] Total                         100% |   0.0   B/s |   0.0   B |  00m00s\nRunning transaction\nWarning: skipped OpenPGP checks for 1 package from repository: @commandline\nComplete!"
+    }
+   ]
+  },
+  "bitwarden/clients": {
+   "stats": {
+    "rpm": 4049,
+    "rpm_x86": 4049,
+    "releases": 4,
+    "oldest": "2026-10-29T13:53:08Z",
+    "latest_assets": {
+     "bit-Bitwarden-2026.11.0-x86_64.rpm": 109,
+     "oss-Bitwarden-2026.11.0-x86_64.rpm": 22
+    },
+    "days": 21,
+    "x86_per_day": 192.8
+   },
+   "quai": {
+    "ok": true,
+    "preview": {
+     "forge": "github",
+     "host": "github.com",
+     "project": "bitwarden/clients",
+     "web_url": "https://github.com/bitwarden/clients",
+     "suggested_id": "clients",
+     "suggested_name": "Clients",
+     "release": {
+      "tag": "desktop-v2026.11.0",
+      "name": "Desktop v2026.11.0",
+      "published_at": "2026-11-19T20:49:07+00:00",
+      "prerelease": false
+     },
+     "packages": [
+      {
+       "name": "bitwarden",
+       "evr": "2026.11.0-1",
+       "arch": "x86_64",
+       "summary": "A secure and free password manager for all of your devices.",
+       "size": 108162577,
+       "asset_name": "bit-Bitwarden-2026.11.0-x86_64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      }
+     ],
+     "variants": [],
+     "warnings": [
+      {
+       "code": "unsigned_packages",
+       "severity": "info",
+       "message": "upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's signed metadata"
+      }
+     ],
+     "asset_pattern": "^bit-Bitwarden-.*-x86_64\\.rpm$",
+     "host_arch": "x86_64"
+    }
+   },
+   "dnf_test": [
+    {
+     "asset": "bit-Bitwarden-2026.11.0-x86_64.rpm",
+     "ok": true,
+     "log": "                                         \n[266/271] libcamera-0:0.5.2-5.fc43.x86_ 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[267/271] libyuv-0:0-0.57.20240704git96 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[268/271] lttng-ust-0:2.14.0-4.fc43.x86 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[269/271] numactl-libs-0:2.0.19-3.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[270/271] libcamera-ipa-0:0.5.2-5.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[271/271] libXScrnSaver-0:1.2.4-6.fc43. 100% | 162.4 KiB/s |  25.0 KiB |  00m00s\n--------------------------------------------------------------------------------\n[271/271] Total                         100% |  43.1 KiB/s |  25.0 KiB |  00m01s\nRunning transaction\nWarning: skipped OpenPGP checks for 1 package from repository: @commandline\nComplete!"
+    }
+   ]
+  },
+  "bitwarden/clients#oss": {
+   "stats": {
+    "rpm": 4049,
+    "rpm_x86": 4049,
+    "releases": 4,
+    "oldest": "2026-10-29T13:53:08Z",
+    "latest_assets": {
+     "bit-Bitwarden-2026.11.0-x86_64.rpm": 109,
+     "oss-Bitwarden-2026.11.0-x86_64.rpm": 22
+    },
+    "days": 21,
+    "x86_per_day": 192.8
+   },
+   "quai": {
+    "ok": true,
+    "preview": {
+     "forge": "github",
+     "host": "github.com",
+     "project": "bitwarden/clients",
+     "web_url": "https://github.com/bitwarden/clients",
+     "suggested_id": "clients",
+     "suggested_name": "Clients",
+     "release": {
+      "tag": "desktop-v2026.11.0",
+      "name": "Desktop v2026.11.0",
+      "published_at": "2026-11-19T20:49:07+00:00",
+      "prerelease": false
+     },
+     "packages": [
+      {
+       "name": "bitwarden",
+       "evr": "2026.11.0-1",
+       "arch": "x86_64",
+       "summary": "A secure and free password manager for all of your devices.",
+       "size": 107595485,
+       "asset_name": "oss-Bitwarden-2026.11.0-x86_64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      }
+     ],
+     "variants": [],
+     "warnings": [
+      {
+       "code": "unsigned_packages",
+       "severity": "info",
+       "message": "upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's signed metadata"
+      }
+     ],
+     "asset_pattern": "^oss-Bitwarden-.*-x86_64\\.rpm$",
+     "host_arch": "x86_64"
+    }
+   },
+   "dnf_test": [
+    {
+     "asset": "oss-Bitwarden-2026.11.0-x86_64.rpm",
+     "ok": true,
+     "log": " 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[267/271] libcamera-0:0.5.2-5.fc43.x86_ 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[268/271] libyuv-0:0-0.57.20240704git96 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[269/271] lttng-ust-0:2.14.0-4.fc43.x86 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[270/271] numactl-libs-0:2.0.19-3.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[271/271] libcamera-ipa-0:0.5.2-5.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n--------------------------------------------------------------------------------\n[271/271] Total                         100% |   0.0   B/s |   0.0   B |  00m00s\nRunning transaction\nWarning: skipped OpenPGP checks for 1 package from repository: @commandline\nComplete!"
+    }
+   ]
+  },
+  "kando-menu/kando": {
+   "stats": {
+    "rpm": 9176,
+    "rpm_x86": 8445,
+    "releases": 10,
+    "oldest": "2026-01-03T05:54:51Z",
+    "latest_assets": {
+     "kando-3.0.1-1.arm64.rpm": 39,
+     "kando-3.0.1-1.x86_64.rpm": 1116
+    },
+    "days": 321,
+    "x86_per_day": 26.3
+   },
+   "quai": {
+    "ok": true,
+    "preview": {
+     "forge": "github",
+     "host": "github.com",
+     "project": "kando-menu/kando",
+     "web_url": "https://github.com/kando-menu/kando",
+     "suggested_id": "kando",
+     "suggested_name": "Kando",
+     "release": {
+      "tag": "v3.0.1",
+      "name": "Kando 3.0.1",
+      "published_at": "2026-10-25T05:07:33+00:00",
+      "prerelease": false
+     },
+     "packages": [
+      {
+       "name": "kando",
+       "evr": "3.0.1-1",
+       "arch": "aarch64",
+       "summary": "The Cross-Platform Pie Menu",
+       "size": 127126645,
+       "asset_name": "kando-3.0.1-1.arm64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      },
+      {
+       "name": "kando",
+       "evr": "3.0.1-1",
+       "arch": "x86_64",
+       "summary": "The Cross-Platform Pie Menu",
+       "size": 132304829,
+       "asset_name": "kando-3.0.1-1.x86_64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      }
+     ],
+     "variants": [],
+     "warnings": [
+      {
+       "code": "unsigned_packages",
+       "severity": "info",
+       "message": "upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's signed metadata"
+      }
+     ],
+     "asset_pattern": null,
+     "host_arch": "x86_64"
+    }
+   },
+   "dnf_test": [
+    {
+     "asset": "kando-3.0.1-1.x86_64.rpm",
+     "ok": true,
+     "log": " 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[266/270] libcamera-0:0.5.2-5.fc43.x86_ 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[267/270] libyuv-0:0-0.57.20240704git96 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[268/270] lttng-ust-0:2.14.0-4.fc43.x86 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[269/270] numactl-libs-0:2.0.19-3.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[270/270] libcamera-ipa-0:0.5.2-5.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n--------------------------------------------------------------------------------\n[270/270] Total                         100% |   0.0   B/s |   0.0   B |  00m00s\nRunning transaction\nWarning: skipped OpenPGP checks for 1 package from repository: @commandline\nComplete!"
+    }
+   ]
+  },
+  "olivierkes/manuskript": {
+   "stats": {
+    "rpm": 7413,
+    "rpm_x86": 7413,
+    "releases": 10,
+    "oldest": "2019-04-04T17:17:37Z",
+    "latest_assets": {
+     "manuskript-0.17.0-1.noarch.rpm": 2372
+    },
+    "days": 2786,
+    "x86_per_day": 2.7
+   },
+   "quai": {
+    "ok": true,
+    "preview": {
+     "forge": "github",
+     "host": "github.com",
+     "project": "olivierkes/manuskript",
+     "web_url": "https://github.com/olivierkes/manuskript",
+     "suggested_id": "manuskript",
+     "suggested_name": "Manuskript",
+     "release": {
+      "tag": "0.17.0",
+      "name": "0.17.0",
+      "published_at": "2025-06-30T19:13:12+00:00",
+      "prerelease": false
+     },
+     "packages": [
+      {
+       "name": "manuskript",
+       "evr": "0.17.0-1",
+       "arch": "noarch",
+       "summary": "Manuskript open source tool for writers",
+       "size": 4022540,
+       "asset_name": "manuskript-0.17.0-1.noarch.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      }
+     ],
+     "variants": [],
+     "warnings": [
+      {
+       "code": "unsigned_packages",
+       "severity": "info",
+       "message": "upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's signed metadata"
+      }
+     ],
+     "asset_pattern": null,
+     "host_arch": "x86_64"
+    }
+   },
+   "dnf_test": [
+    {
+     "asset": "manuskript-0.17.0-1.noarch.rpm",
+     "ok": false,
+     "log": "Updating and loading repositories:\nRepositories loaded.\nFailed to resolve the transaction:\nProblem: conflicting requests\n  - nothing provides python3-qt5-webkit needed by manuskript-0.17.0-1.noarch from @commandline\nYou can try to add to command line:\n  --skip-broken to skip uninstallable packages"
+    }
+   ]
+  },
+  "pavlobu/deskreen": {
+   "stats": {
+    "rpm": 6688,
+    "rpm_x86": 3632,
+    "releases": 5,
+    "oldest": "2026-01-25T14:03:43Z",
+    "latest_assets": {
+     "deskreen-ce-3.2.16.aarch64.rpm": 838,
+     "deskreen-ce-3.2.16.armv7l.rpm": 573,
+     "deskreen-ce-3.2.16.x86_64.rpm": 1732
+    },
+    "days": 298,
+    "x86_per_day": 12.2
+   },
+   "quai": {
+    "ok": true,
+    "preview": {
+     "forge": "github",
+     "host": "github.com",
+     "project": "pavlobu/deskreen",
+     "web_url": "https://github.com/pavlobu/deskreen",
+     "suggested_id": "deskreen",
+     "suggested_name": "Deskreen",
+     "release": {
+      "tag": "v3.2.16",
+      "name": "v3.2.16",
+      "published_at": "2026-07-08T16:51:33+00:00",
+      "prerelease": false
+     },
+     "packages": [
+      {
+       "name": "deskreen-ce",
+       "evr": "3.2.16-1",
+       "arch": "aarch64",
+       "summary": "Screen sharing and present screen: Turn any device into a secondary screen for your computer",
+       "size": 93311037,
+       "asset_name": "deskreen-ce-3.2.16.aarch64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      },
+      {
+       "name": "deskreen-ce",
+       "evr": "3.2.16-1",
+       "arch": "armv7l",
+       "summary": "Screen sharing and present screen: Turn any device into a secondary screen for your computer",
+       "size": 91173329,
+       "asset_name": "deskreen-ce-3.2.16.armv7l.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      },
+      {
+       "name": "deskreen-ce",
+       "evr": "3.2.16-1",
+       "arch": "x86_64",
+       "summary": "Screen sharing and present screen: Turn any device into a secondary screen for your computer",
+       "size": 99226369,
+       "asset_name": "deskreen-ce-3.2.16.x86_64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      }
+     ],
+     "variants": [],
+     "warnings": [
+      {
+       "code": "unsigned_packages",
+       "severity": "info",
+       "message": "upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's signed metadata"
+      }
+     ],
+     "asset_pattern": null,
+     "host_arch": "x86_64"
+    }
+   },
+   "dnf_test": [
+    {
+     "asset": "deskreen-ce-3.2.16.x86_64.rpm",
+     "ok": true,
+     "log": " 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[267/271] libcamera-0:0.5.2-5.fc43.x86_ 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[268/271] libyuv-0:0-0.57.20240704git96 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[269/271] lttng-ust-0:2.14.0-4.fc43.x86 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[270/271] numactl-libs-0:2.0.19-3.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[271/271] libcamera-ipa-0:0.5.2-5.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n--------------------------------------------------------------------------------\n[271/271] Total                         100% |   0.0   B/s |   0.0   B |  00m00s\nRunning transaction\nWarning: skipped OpenPGP checks for 1 package from repository: @commandline\nComplete!"
+    }
+   ]
+  },
+  "4gray/iptvnator": {
+   "stats": {
+    "rpm": 4156,
+    "rpm_x86": 4156,
+    "releases": 10,
+    "oldest": "2025-12-11T11:49:22Z",
+    "latest_assets": {
+     "iptvnator-0.25.0-linux-x86_64.rpm": 330
+    },
+    "days": 343,
+    "x86_per_day": 12.1
+   },
+   "quai": {
+    "ok": true,
+    "preview": {
+     "forge": "github",
+     "host": "github.com",
+     "project": "4gray/iptvnator",
+     "web_url": "https://github.com/4gray/iptvnator",
+     "suggested_id": "iptvnator",
+     "suggested_name": "Iptvnator",
+     "release": {
+      "tag": "v0.25.0",
+      "name": "Release v0.25.0",
+      "published_at": "2026-11-08T15:30:03+00:00",
+      "prerelease": false
+     },
+     "packages": [
+      {
+       "name": "iptvnator",
+       "evr": "0.25.0-1",
+       "arch": "x86_64",
+       "summary": "IPTV player application.",
+       "size": 114991741,
+       "asset_name": "iptvnator-0.25.0-linux-x86_64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      }
+     ],
+     "variants": [],
+     "warnings": [
+      {
+       "code": "unsigned_packages",
+       "severity": "info",
+       "message": "upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's signed metadata"
+      }
+     ],
+     "asset_pattern": null,
+     "host_arch": "x86_64"
+    }
+   },
+   "dnf_test": [
+    {
+     "asset": "iptvnator-0.25.0-linux-x86_64.rpm",
+     "ok": true,
+     "log": " 100% |  17.7 MiB/s |   1.3 MiB |  00m00s\n[328/338] python3-websockets-0:15.0.1-9 100% |   4.5 MiB/s | 334.5 KiB |  00m00s\n[329/338] libtomcrypt-0:1.18.2-22.fc43. 100% |   5.3 MiB/s | 397.2 KiB |  00m00s\n[330/338] libtommath-0:1.3.1~rc1-6.fc43 100% | 945.5 KiB/s |  64.3 KiB |  00m00s\n[331/338] python3-charset-normalizer-0: 100% |   2.0 MiB/s | 117.3 KiB |  00m00s\n[332/338] python3-requests-0:2.33.1-1.f 100% |   1.5 MiB/s | 160.6 KiB |  00m00s\n[333/338] python3-urllib3-0:2.8.0-3.fc4 100% |   6.3 MiB/s | 309.9 KiB |  00m00s\n[334/338] python3-brotli-0:1.2.1-1.fc43 100% |   2.6 MiB/s | 355.1 KiB |  00m00s\n[335/338] python3-idna-0:3.18-1.fc43.no 100% |   3.4 MiB/s | 104.3 KiB |  00m00s\n[336/338] python3-urllib3+socks-0:2.8.0 100% | 329.6 KiB/s |   9.6 KiB |  00m00s\n[337/338] python3-pysocks-0:1.7.1-31.fc 100% | 684.5 KiB/s |  39.7 KiB |  00m00s\n[338/338] ffmpeg-free-0:7.1.5-1.fc43.x8 100% |  20.9 MiB/s |   1.9 MiB |  00m00s\n--------------------------------------------------------------------------------\n[338/338] Total                         100% |  11.1 MiB/s |  27.9 MiB |  00m03s\nRunning transaction\nWarning: skipped OpenPGP checks for 1 package from repository: @commandline\nComplete!"
+    }
+   ]
+  },
+  "pulsar-edit/pulsar": {
+   "stats": {
+    "rpm": 4513,
+    "rpm_x86": 3646,
+    "releases": 10,
+    "oldest": "2025-10-08T00:27:55Z",
+    "latest_assets": {
+     "ARM.Linux.pulsar-1.133.1.aarch64.rpm": 22,
+     "Linux.pulsar-1.133.1.x86_64.rpm": 142
+    },
+    "days": 408,
+    "x86_per_day": 8.9
+   },
+   "quai": {
+    "ok": true,
+    "preview": {
+     "forge": "github",
+     "host": "github.com",
+     "project": "pulsar-edit/pulsar",
+     "web_url": "https://github.com/pulsar-edit/pulsar",
+     "suggested_id": "pulsar",
+     "suggested_name": "Pulsar",
+     "release": {
+      "tag": "v1.133.1",
+      "name": "v1.133.1",
+      "published_at": "2026-11-01T21:55:55+00:00",
+      "prerelease": false
+     },
+     "packages": [
+      {
+       "name": "pulsar",
+       "evr": "1.133.1-1",
+       "arch": "aarch64",
+       "summary": "A community-led hyper-hackable text editor",
+       "size": 158807656,
+       "asset_name": "ARM.Linux.pulsar-1.133.1.aarch64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      },
+      {
+       "name": "pulsar",
+       "evr": "1.133.1-1",
+       "arch": "x86_64",
+       "summary": "A community-led hyper-hackable text editor",
+       "size": 172447916,
+       "asset_name": "Linux.pulsar-1.133.1.x86_64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      }
+     ],
+     "variants": [],
+     "warnings": [
+      {
+       "code": "unsigned_packages",
+       "severity": "info",
+       "message": "upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's signed metadata"
+      }
+     ],
+     "asset_pattern": null,
+     "host_arch": "x86_64"
+    }
+   },
+   "dnf_test": [
+    {
+     "asset": "Linux.pulsar-1.133.1.x86_64.rpm",
+     "ok": true,
+     "log": " 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[267/271] libcamera-0:0.5.2-5.fc43.x86_ 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[268/271] libyuv-0:0-0.57.20240704git96 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[269/271] lttng-ust-0:2.14.0-4.fc43.x86 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[270/271] numactl-libs-0:2.0.19-3.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[271/271] libcamera-ipa-0:0.5.2-5.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n--------------------------------------------------------------------------------\n[271/271] Total                         100% |   0.0   B/s |   0.0   B |  00m00s\nRunning transaction\nWarning: skipped OpenPGP checks for 1 package from repository: @commandline\nComplete!"
+    }
+   ]
+  },
+  "freelensapp/freelens": {
+   "stats": {
+    "rpm": 4202,
+    "rpm_x86": 3575,
+    "releases": 10,
+    "oldest": "2025-11-19T11:26:34Z",
+    "latest_assets": {
+     "Freelens-2.0.0-linux-amd64.rpm": 360,
+     "Freelens-2.0.0-linux-arm64.rpm": 65
+    },
+    "days": 365,
+    "x86_per_day": 9.8
+   },
+   "quai": {
+    "ok": true,
+    "preview": {
+     "forge": "github",
+     "host": "github.com",
+     "project": "freelensapp/freelens",
+     "web_url": "https://github.com/freelensapp/freelens",
+     "suggested_id": "freelens",
+     "suggested_name": "Freelens",
+     "release": {
+      "tag": "v2.0.0",
+      "name": "v2.0.0",
+      "published_at": "2026-10-28T11:47:00+00:00",
+      "prerelease": false
+     },
+     "packages": [
+      {
+       "name": "freelens",
+       "evr": "2.0.0-1",
+       "arch": "x86_64",
+       "summary": "Freelens - Free IDE for Kubernetes",
+       "size": 134475701,
+       "asset_name": "Freelens-2.0.0-linux-amd64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      },
+      {
+       "name": "freelens",
+       "evr": "2.0.0-1",
+       "arch": "aarch64",
+       "summary": "Freelens - Free IDE for Kubernetes",
+       "size": 123679137,
+       "asset_name": "Freelens-2.0.0-linux-arm64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      }
+     ],
+     "variants": [],
+     "warnings": [
+      {
+       "code": "unsigned_packages",
+       "severity": "info",
+       "message": "upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's signed metadata"
+      }
+     ],
+     "asset_pattern": null,
+     "host_arch": "x86_64"
+    }
+   },
+   "dnf_test": [
+    {
+     "asset": "Freelens-2.0.0-linux-amd64.rpm",
+     "ok": true,
+     "log": " 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[267/271] libcamera-0:0.5.2-5.fc43.x86_ 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[268/271] libyuv-0:0-0.57.20240704git96 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[269/271] lttng-ust-0:2.14.0-4.fc43.x86 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[270/271] numactl-libs-0:2.0.19-3.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[271/271] libcamera-ipa-0:0.5.2-5.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n--------------------------------------------------------------------------------\n[271/271] Total                         100% |   0.0   B/s |   0.0   B |  00m00s\nRunning transaction\nWarning: skipped OpenPGP checks for 1 package from repository: @commandline\nComplete!"
+    }
+   ]
+  },
+  "ferdium/ferdium-app": {
+   "stats": {
+    "rpm": 5462,
+    "rpm_x86": 3060,
+    "releases": 10,
+    "oldest": "2026-08-20T16:07:17Z",
+    "latest_assets": {
+     "Ferdium-linux-7.2.4-nightly.3-aarch64.rpm": 369,
+     "Ferdium-linux-7.2.4-nightly.3-x86_64.rpm": 427
+    },
+    "days": 91,
+    "x86_per_day": 33.6
+   },
+   "quai": {
+    "ok": true,
+    "preview": {
+     "forge": "github",
+     "host": "github.com",
+     "project": "ferdium/ferdium-app",
+     "web_url": "https://github.com/ferdium/ferdium-app",
+     "suggested_id": "ferdium-app",
+     "suggested_name": "Ferdium-app",
+     "release": {
+      "tag": "v7.2.3",
+      "name": "7.2.3",
+      "published_at": "2026-09-07T16:23:40+00:00",
+      "prerelease": false
+     },
+     "packages": [
+      {
+       "name": "ferdium",
+       "evr": "7.2.3-1",
+       "arch": "aarch64",
+       "summary": "Messaging app for WhatsApp, Slack, Telegram, Gmail, Google Chat, and many more.",
+       "size": 104715589,
+       "asset_name": "Ferdium-linux-7.2.3-aarch64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      },
+      {
+       "name": "ferdium",
+       "evr": "7.2.3-1",
+       "arch": "x86_64",
+       "summary": "Messaging app for WhatsApp, Slack, Telegram, Gmail, Google Chat, and many more.",
+       "size": 110557389,
+       "asset_name": "Ferdium-linux-7.2.3-x86_64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      }
+     ],
+     "variants": [],
+     "warnings": [
+      {
+       "code": "unsigned_packages",
+       "severity": "info",
+       "message": "upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's signed metadata"
+      }
+     ],
+     "asset_pattern": null,
+     "host_arch": "x86_64"
+    }
+   },
+   "dnf_test": [
+    {
+     "asset": "Ferdium-linux-7.2.3-x86_64.rpm",
+     "ok": true,
+     "log": " 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[267/271] libcamera-0:0.5.2-5.fc43.x86_ 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[268/271] libyuv-0:0-0.57.20240704git96 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[269/271] lttng-ust-0:2.14.0-4.fc43.x86 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[270/271] numactl-libs-0:2.0.19-3.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[271/271] libcamera-ipa-0:0.5.2-5.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n--------------------------------------------------------------------------------\n[271/271] Total                         100% |   0.0   B/s |   0.0   B |  00m00s\nRunning transaction\nWarning: skipped OpenPGP checks for 1 package from repository: @commandline\nComplete!"
+    }
+   ]
+  },
+  "CherryHQ/cherry-studio": {
+   "stats": {
+    "rpm": 4503,
+    "rpm_x86": 3030,
+    "releases": 10,
+    "oldest": "2026-10-10T14:27:47Z",
+    "latest_assets": {
+     "Cherry-Studio-2.2.3-linux-arm64.rpm": 50,
+     "Cherry-Studio-2.2.3-linux-x64.rpm": 89
+    },
+    "days": 40,
+    "x86_per_day": 75.8
+   },
+   "quai": {
+    "ok": true,
+    "preview": {
+     "forge": "github",
+     "host": "github.com",
+     "project": "CherryHQ/cherry-studio",
+     "web_url": "https://github.com/CherryHQ/cherry-studio",
+     "suggested_id": "cherry-studio",
+     "suggested_name": "Cherry-studio",
+     "release": {
+      "tag": "v2.2.3",
+      "name": "v2.2.3",
+      "published_at": "2026-11-19T15:07:11+00:00",
+      "prerelease": false
+     },
+     "packages": [
+      {
+       "name": "CherryStudio",
+       "evr": "2.2.3-1",
+       "arch": "aarch64",
+       "summary": "A powerful AI assistant for producer.",
+       "size": 213123494,
+       "asset_name": "Cherry-Studio-2.2.3-linux-arm64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      },
+      {
+       "name": "CherryStudio",
+       "evr": "2.2.3-1",
+       "arch": "x86_64",
+       "summary": "A powerful AI assistant for producer.",
+       "size": 224246754,
+       "asset_name": "Cherry-Studio-2.2.3-linux-x64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      }
+     ],
+     "variants": [],
+     "warnings": [
+      {
+       "code": "unsigned_packages",
+       "severity": "info",
+       "message": "upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's signed metadata"
+      }
+     ],
+     "asset_pattern": null,
+     "host_arch": "x86_64"
+    }
+   },
+   "dnf_test": [
+    {
+     "asset": "Cherry-Studio-2.2.3-linux-x64.rpm",
+     "ok": true,
+     "log": " 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[267/271] libcamera-0:0.5.2-5.fc43.x86_ 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[268/271] libyuv-0:0-0.57.20240704git96 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[269/271] lttng-ust-0:2.14.0-4.fc43.x86 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[270/271] numactl-libs-0:2.0.19-3.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[271/271] libcamera-ipa-0:0.5.2-5.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n--------------------------------------------------------------------------------\n[271/271] Total                         100% |   0.0   B/s |   0.0   B |  00m00s\nRunning transaction\nWarning: skipped OpenPGP checks for 1 package from repository: @commandline\nComplete!"
+    }
+   ]
+  },
+  "marktext/marktext": {
+   "stats": {
+    "rpm": 2005,
+    "rpm_x86": 0,
+    "releases": 10,
+    "oldest": "2026-09-24T02:45:58Z",
+    "latest_assets": {
+     "marktext-linux-0.24.0-rc.2.rpm": 43,
+     "marktext-linux-arm64-0.24.0-rc.2.rpm": 34
+    },
+    "days": 57,
+    "x86_per_day": 0.0
+   },
+   "quai": {
+    "ok": true,
+    "preview": {
+     "forge": "github",
+     "host": "github.com",
+     "project": "marktext/marktext",
+     "web_url": "https://github.com/marktext/marktext",
+     "suggested_id": "marktext",
+     "suggested_name": "Marktext",
+     "release": {
+      "tag": "v0.23.0",
+      "name": "v0.23.0",
+      "published_at": "2026-10-21T05:02:06+00:00",
+      "prerelease": false
+     },
+     "packages": [
+      {
+       "name": "marktext",
+       "evr": "0.23.0-1",
+       "arch": "x86_64",
+       "summary": "A simple and elegant open-source markdown editor that focused on speed and usability.",
+       "size": 110981749,
+       "asset_name": "marktext-linux-0.23.0.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      },
+      {
+       "name": "marktext",
+       "evr": "0.23.0-1",
+       "arch": "aarch64",
+       "summary": "A simple and elegant open-source markdown editor that focused on speed and usability.",
+       "size": 105619233,
+       "asset_name": "marktext-linux-arm64-0.23.0.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      }
+     ],
+     "variants": [],
+     "warnings": [
+      {
+       "code": "unsigned_packages",
+       "severity": "info",
+       "message": "upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's signed metadata"
+      }
+     ],
+     "asset_pattern": null,
+     "host_arch": "x86_64"
+    }
+   },
+   "dnf_test": [
+    {
+     "asset": "marktext-linux-0.23.0.rpm",
+     "ok": true,
+     "log": " 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[267/271] libcamera-0:0.5.2-5.fc43.x86_ 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[268/271] libyuv-0:0-0.57.20240704git96 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[269/271] lttng-ust-0:2.14.0-4.fc43.x86 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[270/271] numactl-libs-0:2.0.19-3.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[271/271] libcamera-ipa-0:0.5.2-5.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n--------------------------------------------------------------------------------\n[271/271] Total                         100% |   0.0   B/s |   0.0   B |  00m00s\nRunning transaction\nWarning: skipped OpenPGP checks for 1 package from repository: @commandline\nComplete!"
+    }
+   ]
+  }
+ }
+}
