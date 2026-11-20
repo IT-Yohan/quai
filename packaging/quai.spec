@@ -194,6 +194,6 @@ fi
 %{_bindir}/quai-kde
 
 %changelog
-* Thu Nov 19 2026 The quai contributors - 0.1.0-1
+* Fri Nov 20 2026 The quai contributors - 0.1.0-1
 - First release: command, service, GTK and Kirigami interfaces; English and
   French

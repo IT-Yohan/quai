@@ -109,7 +109,7 @@
   </screenshots>
 
   <releases>
-    <release version="0.1.0" date="2026-11-19">
+    <release version="0.1.0" date="2026-11-20">
       <url type="details">https://github.com/IT-Yohan/quai/releases/tag/v0.1.0</url>
       <description>
         <p>First release of Quai.</p>
