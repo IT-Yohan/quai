@@ -1,0 +1,413 @@
+{
+ "fedora": "NAME=\"Fedora Linux\"\nVERSION=\"43 (Container Image)\"\nRELEASE_TYPE=stable\nID=fedora\nVERSION_ID=43\nVERSION_CODENAME=\"\"\nPRETTY_NAME=\"Fedora Linux 43 (Container Image)\"\nANSI_COLOR=\"0;38;2;60;110;180\"\nLOGO=fedora-logo-icon\nCPE_NAME=\"cpe:/o:fedoraproject:fedora:43\"\nDEFAULT_HOSTNAME=\"fedora\"\nHOME_URL=\"https://fedoraproject.org/\"\nDOCUMENTATION_URL=\"https://docs.fedoraproject.org/en-US/fedora/f43/\"\nSUPPORT_URL=\"https://ask.fedoraproject.org/\"\nBUG_REPORT_URL=\"https://bugzilla.redhat.com/\"\nREDHAT_BUGZILLA_PRODUCT=\"Fedora\"\nREDHAT_BUGZILLA_PRODUCT_VERSION=43\nREDHAT_SUPPORT_PRODUCT=\"Fedora\"\nREDHAT_SUPPORT_PRODUCT_VERSION=43\nSUPPORT_END=2026-12-02\nVARIANT=\"Container Image\"\nVARIANT_ID=container\n",
+ "quai": "quai 0.1.0",
+ "results": {
+  "readest/readest": {
+   "stats": {
+    "rpm": 3660,
+    "rpm_x86": 2082,
+    "releases": 10,
+    "oldest": "2026-06-29T02:22:17Z",
+    "latest_assets": {
+     "Readest-0.12.20-1.aarch64.rpm": 117,
+     "Readest-0.12.20-1.x86_64.rpm": 218
+    },
+    "days": 144,
+    "x86_per_day": 14.5
+   },
+   "quai": {
+    "ok": true,
+    "preview": {
+     "forge": "github",
+     "host": "github.com",
+     "project": "readest/readest",
+     "web_url": "https://github.com/readest/readest",
+     "suggested_id": "readest",
+     "suggested_name": "Readest",
+     "release": {
+      "tag": "v0.12.20",
+      "name": "Readest 0.12.20",
+      "published_at": "2026-11-05T22:40:01+00:00",
+      "prerelease": false
+     },
+     "packages": [
+      {
+       "name": "readest",
+       "evr": "0.12.20-1",
+       "arch": "aarch64",
+       "summary": "Your online library",
+       "size": 141540780,
+       "asset_name": "Readest-0.12.20-1.aarch64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      },
+      {
+       "name": "readest",
+       "evr": "0.12.20-1",
+       "arch": "x86_64",
+       "summary": "Your online library",
+       "size": 143094783,
+       "asset_name": "Readest-0.12.20-1.x86_64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      }
+     ],
+     "variants": [],
+     "warnings": [
+      {
+       "code": "unsigned_packages",
+       "severity": "info",
+       "message": "upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's signed metadata"
+      }
+     ],
+     "asset_pattern": null,
+     "host_arch": "x86_64"
+    }
+   },
+   "dnf_test": [
+    {
+     "asset": "Readest-0.12.20-1.x86_64.rpm",
+     "ok": true,
+     "log": "                                         \n[262/267] libcamera-0:0.5.2-5.fc43.x86_ 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[263/267] libyuv-0:0-0.57.20240704git96 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[264/267] lttng-ust-0:2.14.0-4.fc43.x86 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[265/267] numactl-libs-0:2.0.19-3.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[266/267] libcamera-ipa-0:0.5.2-5.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[267/267] libxkbcommon-x11-0:1.11.0-1.f 100% | 991.4 KiB/s |  22.8 KiB |  00m00s\n--------------------------------------------------------------------------------\n[267/267] Total                         100% |  39.2 KiB/s |  22.8 KiB |  00m01s\nRunning transaction\nWarning: skipped OpenPGP checks for 1 package from repository: @commandline\nComplete!"
+    }
+   ]
+  },
+  "oldj/SwitchHosts": {
+   "stats": {
+    "rpm": 3661,
+    "rpm_x86": 2197,
+    "releases": 10,
+    "oldest": "2026-06-05T00:38:30Z",
+    "latest_assets": {
+     "SwitchHosts-5.0.3-linux-aarch64.rpm": 381,
+     "SwitchHosts-5.0.3-linux-x86_64.rpm": 747
+    },
+    "days": 168,
+    "x86_per_day": 13.1
+   },
+   "quai": {
+    "ok": true,
+    "preview": {
+     "forge": "github",
+     "host": "github.com",
+     "project": "oldj/SwitchHosts",
+     "web_url": "https://github.com/oldj/SwitchHosts",
+     "suggested_id": "switchhosts",
+     "suggested_name": "SwitchHosts",
+     "release": {
+      "tag": "v5.0.3",
+      "name": "SwitchHosts v5.0.3",
+      "published_at": "2026-10-20T14:03:04+00:00",
+      "prerelease": false
+     },
+     "packages": [
+      {
+       "name": "switch-hosts",
+       "evr": "5.0.3-1",
+       "arch": "aarch64",
+       "summary": "A GUI tool for managing your hosts file",
+       "size": 4967099,
+       "asset_name": "SwitchHosts-5.0.3-linux-aarch64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      },
+      {
+       "name": "switch-hosts",
+       "evr": "5.0.3-1",
+       "arch": "x86_64",
+       "summary": "A GUI tool for managing your hosts file",
+       "size": 5271197,
+       "asset_name": "SwitchHosts-5.0.3-linux-x86_64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      }
+     ],
+     "variants": [],
+     "warnings": [
+      {
+       "code": "unsigned_packages",
+       "severity": "info",
+       "message": "upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's signed metadata"
+      }
+     ],
+     "asset_pattern": null,
+     "host_arch": "x86_64"
+    }
+   },
+   "dnf_test": [
+    {
+     "asset": "SwitchHosts-5.0.3-linux-x86_64.rpm",
+     "ok": true,
+     "log": " 100% |  30.3 MiB/s | 651.3 KiB |  00m00s\n[297/307] soundtouch-0:2.4.0-2.fc43.x86 100% |   4.1 MiB/s |  84.8 KiB |  00m00s\n[298/307] gstreamer1-plugins-bad-free-l 100% |  53.9 MiB/s |   1.0 MiB |  00m00s\n[299/307] gupnp-igd-0:1.6.0-7.fc43.x86_ 100% |   3.3 MiB/s |  33.5 KiB |  00m00s\n[300/307] libnice-0:0.1.22-8.fc43.x86_6 100% |  15.0 MiB/s | 200.2 KiB |  00m00s\n[301/307] libv4l-0:1.32.0-1.fc43.x86_64 100% |  10.3 MiB/s | 136.6 KiB |  00m00s\n[302/307] vulkan-loader-0:1.4.341.0-1.f 100% |  11.3 MiB/s | 161.6 KiB |  00m00s\n[303/307] faad2-libs-1:2.11.2-5.fc43.x8 100% |  17.2 MiB/s | 229.4 KiB |  00m00s\n[304/307] gssdp-0:1.6.6-1.fc43.x86_64   100% |   7.2 MiB/s |  59.4 KiB |  00m00s\n[305/307] gupnp-0:1.6.10-1.fc43.x86_64  100% |   8.6 MiB/s | 106.2 KiB |  00m00s\n[306/307] libdisplay-info-0:0.2.0-4.fc4 100% |   5.2 MiB/s |  85.4 KiB |  00m00s\n[307/307] mesa-vulkan-drivers-0:25.3.6- 100% | 217.9 MiB/s |  24.8 MiB |  00m00s\n--------------------------------------------------------------------------------\n[307/307] Total                         100% | 121.7 MiB/s |  86.7 MiB |  00m01s\nRunning transaction\nWarning: skipped OpenPGP checks for 1 package from repository: @commandline\nComplete!"
+    }
+   ]
+  },
+  "Automattic/simplenote-electron": {
+   "stats": {
+    "rpm": 2394,
+    "rpm_x86": 2394,
+    "releases": 10,
+    "oldest": "2025-11-20T04:38:32Z",
+    "latest_assets": {
+     "Simplenote-linux-2.27.2-md-editor-wysiwyg.1-x86_64.rpm": 18
+    },
+    "days": 365,
+    "x86_per_day": 6.6
+   },
+   "quai": {
+    "ok": true,
+    "preview": {
+     "forge": "github",
+     "host": "github.com",
+     "project": "Automattic/simplenote-electron",
+     "web_url": "https://github.com/Automattic/simplenote-electron",
+     "suggested_id": "simplenote-electron",
+     "suggested_name": "Simplenote-electron",
+     "release": {
+      "tag": "v2.27.1",
+      "name": "2.27.1",
+      "published_at": "2026-07-01T07:51:39+00:00",
+      "prerelease": false
+     },
+     "packages": [
+      {
+       "name": "simplenote",
+       "evr": "2.27.1-1",
+       "arch": "x86_64",
+       "summary": "The simplest way to keep notes",
+       "size": 95350897,
+       "asset_name": "Simplenote-linux-2.27.1-x86_64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      }
+     ],
+     "variants": [],
+     "warnings": [
+      {
+       "code": "unsigned_packages",
+       "severity": "info",
+       "message": "upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's signed metadata"
+      }
+     ],
+     "asset_pattern": null,
+     "host_arch": "x86_64"
+    }
+   },
+   "dnf_test": [
+    {
+     "asset": "Simplenote-linux-2.27.1-x86_64.rpm",
+     "ok": true,
+     "log": " 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[267/271] libcamera-0:0.5.2-5.fc43.x86_ 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[268/271] libyuv-0:0-0.57.20240704git96 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[269/271] lttng-ust-0:2.14.0-4.fc43.x86 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[270/271] numactl-libs-0:2.0.19-3.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[271/271] libcamera-ipa-0:0.5.2-5.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n--------------------------------------------------------------------------------\n[271/271] Total                         100% |   0.0   B/s |   0.0   B |  00m00s\nRunning transaction\nWarning: skipped OpenPGP checks for 1 package from repository: @commandline\nComplete!"
+    }
+   ]
+  },
+  "electron/fiddle": {
+   "stats": {
+    "rpm": 30499,
+    "rpm_x86": 11475,
+    "releases": 10,
+    "oldest": "2024-03-21T20:43:06Z",
+    "latest_assets": {
+     "electron-fiddle-1.0.0.alpha.0-1.arm64.rpm": 8,
+     "electron-fiddle-1.0.0.alpha.0-1.x86_64.rpm": 9
+    },
+    "days": 973,
+    "x86_per_day": 11.8
+   },
+   "quai": {
+    "ok": true,
+    "preview": {
+     "forge": "github",
+     "host": "github.com",
+     "project": "electron/fiddle",
+     "web_url": "https://github.com/electron/fiddle",
+     "suggested_id": "fiddle",
+     "suggested_name": "Fiddle",
+     "release": {
+      "tag": "v0.39.0",
+      "name": "v0.39.0",
+      "published_at": "2026-04-08T20:47:23+00:00",
+      "prerelease": false
+     },
+     "packages": [
+      {
+       "name": "electron-fiddle",
+       "evr": "0.39.0-1",
+       "arch": "aarch64",
+       "summary": "The easiest way to get started with Electron",
+       "size": 90950365,
+       "asset_name": "electron-fiddle-0.39.0-1.arm64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      },
+      {
+       "name": "electron-fiddle",
+       "evr": "0.39.0-1",
+       "arch": "armv7hl",
+       "summary": "The easiest way to get started with Electron",
+       "size": 88759389,
+       "asset_name": "electron-fiddle-0.39.0-1.armv7hl.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      },
+      {
+       "name": "electron-fiddle",
+       "evr": "0.39.0-1",
+       "arch": "x86_64",
+       "summary": "The easiest way to get started with Electron",
+       "size": 96198893,
+       "asset_name": "electron-fiddle-0.39.0-1.x86_64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      }
+     ],
+     "variants": [],
+     "warnings": [
+      {
+       "code": "unsigned_packages",
+       "severity": "info",
+       "message": "upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's signed metadata"
+      }
+     ],
+     "asset_pattern": null,
+     "host_arch": "x86_64"
+    }
+   },
+   "dnf_test": [
+    {
+     "asset": "electron-fiddle-0.39.0-1.x86_64.rpm",
+     "ok": true,
+     "log": " 100% |   7.2 MiB/s |  59.0 KiB |  00m00s\n[260/270] pipewire-jack-audio-connectio 100% |   1.2 MiB/s |  10.9 KiB |  00m00s\n[261/270] pipewire-jack-audio-connectio 100% |  11.8 MiB/s | 144.9 KiB |  00m00s\n[262/270] pipewire-pulseaudio-0:1.4.11- 100% |  15.8 MiB/s | 209.7 KiB |  00m00s\n[263/270] usbmuxd-0:1.1.1^20240915git0b 100% |   5.9 MiB/s |  66.9 KiB |  00m00s\n[264/270] polkit-pkla-compat-0:0.1-31.f 100% |   6.1 MiB/s |  43.9 KiB |  00m00s\n[265/270] pipewire-plugin-libcamera-0:1 100% |   5.5 MiB/s |  73.8 KiB |  00m00s\n[266/270] libcamera-0:0.5.2-5.fc43.x86_ 100% |  44.4 MiB/s | 682.2 KiB |  00m00s\n[267/270] libyuv-0:0-0.57.20240704git96 100% |  15.2 MiB/s | 202.1 KiB |  00m00s\n[268/270] lttng-ust-0:2.14.0-4.fc43.x86 100% |  25.6 MiB/s | 366.3 KiB |  00m00s\n[269/270] numactl-libs-0:2.0.19-3.fc43. 100% |   2.5 MiB/s |  31.1 KiB |  00m00s\n[270/270] libcamera-ipa-0:0.5.2-5.fc43. 100% |  10.9 MiB/s | 179.1 KiB |  00m00s\n--------------------------------------------------------------------------------\n[270/270] Total                         100% |  65.2 MiB/s | 171.9 MiB |  00m03s\nRunning transaction\nWarning: skipped OpenPGP checks for 1 package from repository: @commandline\nComplete!"
+    }
+   ]
+  },
+  "AppFlowy-IO/AppFlowy": {
+   "stats": {
+    "rpm": 1265,
+    "rpm_x86": 1265,
+    "releases": 10,
+    "oldest": "2026-09-15T12:19:08Z",
+    "latest_assets": {
+     "AppFlowy-0.15.1-linux-x86_64.rpm": 83
+    },
+    "days": 65,
+    "x86_per_day": 19.5
+   },
+   "quai": {
+    "ok": true,
+    "preview": {
+     "forge": "github",
+     "host": "github.com",
+     "project": "AppFlowy-IO/AppFlowy",
+     "web_url": "https://github.com/AppFlowy-IO/AppFlowy",
+     "suggested_id": "appflowy",
+     "suggested_name": "AppFlowy",
+     "release": {
+      "tag": "0.15.1",
+      "name": "v0.15.1",
+      "published_at": "2026-11-15T11:08:51+00:00",
+      "prerelease": false
+     },
+     "packages": [
+      {
+       "name": "AppFlowy",
+       "evr": "0.15.1-2",
+       "arch": "x86_64",
+       "summary": "An Open Source Alternative to Notion",
+       "size": 205375887,
+       "asset_name": "AppFlowy-0.15.1-linux-x86_64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      }
+     ],
+     "variants": [],
+     "warnings": [
+      {
+       "code": "unsigned_packages",
+       "severity": "info",
+       "message": "upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's signed metadata"
+      }
+     ],
+     "asset_pattern": null,
+     "host_arch": "x86_64"
+    }
+   },
+   "dnf_test": [
+    {
+     "asset": "AppFlowy-0.15.1-linux-x86_64.rpm",
+     "ok": true,
+     "log": "                                         \n[227/232] polkit-pkla-compat-0:0.1-31.f 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[228/232] libcamera-0:0.5.2-5.fc43.x86_ 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[229/232] libyuv-0:0-0.57.20240704git96 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[230/232] lttng-ust-0:2.14.0-4.fc43.x86 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[231/232] libcamera-ipa-0:0.5.2-5.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[232/232] keybinder3-0:0.3.2-21.fc43.x8 100% | 619.2 KiB/s |  19.8 KiB |  00m00s\n--------------------------------------------------------------------------------\n[232/232] Total                         100% |  33.1 KiB/s |  19.8 KiB |  00m01s\nRunning transaction\nWarning: skipped OpenPGP checks for 1 package from repository: @commandline\nComplete!"
+    }
+   ]
+  },
+  "lutzroeder/netron": {
+   "stats": {
+    "rpm": 1588,
+    "rpm_x86": 1588,
+    "releases": 10,
+    "oldest": "2026-04-03T15:40:10Z",
+    "latest_assets": {
+     "Netron-9.3.6-x86_64.rpm": 126
+    },
+    "days": 230,
+    "x86_per_day": 6.9
+   },
+   "quai": {
+    "ok": true,
+    "preview": {
+     "forge": "github",
+     "host": "github.com",
+     "project": "lutzroeder/netron",
+     "web_url": "https://github.com/lutzroeder/netron",
+     "suggested_id": "netron",
+     "suggested_name": "Netron",
+     "release": {
+      "tag": "v9.3.6",
+      "name": "9.3.6",
+      "published_at": "2026-11-14T02:46:37+00:00",
+      "prerelease": false
+     },
+     "packages": [
+      {
+       "name": "netron",
+       "evr": "9.3.6-1",
+       "arch": "x86_64",
+       "summary": "Visualizer for neural network, deep learning, and machine learning models",
+       "size": 92966925,
+       "asset_name": "Netron-9.3.6-x86_64.rpm",
+       "checksum": "forge",
+       "installed": null,
+       "other_repo": null
+      }
+     ],
+     "variants": [],
+     "warnings": [
+      {
+       "code": "unsigned_packages",
+       "severity": "info",
+       "message": "upstream does not sign these RPMs; integrity rests on the SHA-256 in quai's signed metadata"
+      }
+     ],
+     "asset_pattern": null,
+     "host_arch": "x86_64"
+    }
+   },
+   "dnf_test": [
+    {
+     "asset": "Netron-9.3.6-x86_64.rpm",
+     "ok": true,
+     "log": "                                         \n[266/271] libcamera-0:0.5.2-5.fc43.x86_ 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[267/271] libyuv-0:0-0.57.20240704git96 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[268/271] lttng-ust-0:2.14.0-4.fc43.x86 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[269/271] numactl-libs-0:2.0.19-3.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[270/271] libcamera-ipa-0:0.5.2-5.fc43. 100% |   0.0   B/s |   0.0   B |  00m00s\n>>> Already downloaded                                                          \n[271/271] libXScrnSaver-0:1.2.4-6.fc43. 100% |   1.0 MiB/s |  25.0 KiB |  00m00s\n--------------------------------------------------------------------------------\n[271/271] Total                         100% |  57.5 KiB/s |  25.0 KiB |  00m00s\nRunning transaction\nWarning: skipped OpenPGP checks for 1 package from repository: @commandline\nComplete!"
+    }
+   ]
+  }
+ }
+}
