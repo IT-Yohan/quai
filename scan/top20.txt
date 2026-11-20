@@ -1,0 +1,21 @@
+balena-io/etcher
+winboat-org/winboat
+Heroic-Games-Launcher/HeroicGamesLauncher
+martpie/museeks
+JannisX11/blockbench
+upscayl/upscayl
+pear-devs/pear-desktop
+tom-james-watson/breaktimer-app
+ipfs/ipfs-desktop
+jupyterlab/jupyterlab-desktop
+bitwarden/clients ^bit-Bitwarden-.*-x86_64\.rpm$
+bitwarden/clients#oss ^oss-Bitwarden-.*-x86_64\.rpm$
+kando-menu/kando
+olivierkes/manuskript
+pavlobu/deskreen
+4gray/iptvnator
+pulsar-edit/pulsar
+freelensapp/freelens
+ferdium/ferdium-app
+CherryHQ/cherry-studio
+marktext/marktext

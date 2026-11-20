@@ -15,7 +15,10 @@ import datetime, json, os, subprocess, sys, time, urllib.error, urllib.request
 import concurrent.futures as cf
 
 TOKEN = os.environ["GITHUB_TOKEN"]
-repos = [l.strip() for l in open(sys.argv[1]) if l.strip()]
+# One line per entry: owner/repo[#label] [asset-pattern]
+entries = [l.split() for l in open(sys.argv[1]) if l.strip()]
+repos = [e[0] for e in entries]
+patterns = {e[0]: e[1] for e in entries if len(e) > 1}
 out_path = sys.argv[2]
 TOP = int(os.environ.get("TOP", "40"))
 NOW = datetime.datetime.now(datetime.timezone.utc)
@@ -47,8 +50,9 @@ def is_x86(name):
 
 
 def stats(repo):
+    repo = repo.split("#")[0]
     rels = get(f"https://api.github.com/repos/{repo}/releases?per_page=10") or []
-    o = {"rpm": 0, "rpm_x86": 0, "releases": 0, "oldest": None, "urls": {}}
+    o = {"rpm": 0, "rpm_x86": 0, "releases": 0, "oldest": None, "urls": {}, "latest_assets": None}
     for r in rels:
         if r.get("draft"):
             continue
@@ -59,6 +63,8 @@ def stats(repo):
         o["rpm"] += sum(a["download_count"] for a in rpms)
         o["rpm_x86"] += sum(a["download_count"] for a in rpms if is_x86(a["name"]))
         o["oldest"] = r["published_at"]
+        if o["latest_assets"] is None:
+            o["latest_assets"] = {a["name"]: a["download_count"] for a in rpms}
         for a in rpms:
             o["urls"].setdefault(a["name"], a["browser_download_url"])
     if o["oldest"]:
@@ -69,8 +75,11 @@ def stats(repo):
 
 
 def preview(repo):
+    cmd = ["quai", "--json", "preview", repo.split("#")[0]]
+    if repo in patterns:
+        cmd += ["--asset-pattern", patterns[repo]]
     try:
-        p = subprocess.run(["quai", "--json", "preview", repo], capture_output=True, text=True, timeout=300)
+        p = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
     except subprocess.TimeoutExpired:
         return {"ok": False, "error": "timeout"}
     if p.returncode == 0:
@@ -93,8 +102,8 @@ with cf.ThreadPoolExecutor(6) as ex:
             print(i, repo, flush=True)
 
 # dnf test transaction for the most downloaded apps that quai serves.
-ranked = sorted((r for r, o in results.items() if o["quai"]["ok"] and o["stats"].get("x86_per_day")),
-                key=lambda r: -results[r]["stats"]["x86_per_day"])
+ranked = sorted((r for r, o in results.items() if o["quai"]["ok"]),
+                key=lambda r: -(results[r]["stats"].get("rpm", 0) / results[r]["stats"].get("days", 1)))
 for repo in ranked[:TOP]:
     o = results[repo]
     pkgs = [p for p in o["quai"]["preview"]["packages"] if p["arch"] in ("x86_64", "noarch")]
