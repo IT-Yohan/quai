@@ -24,12 +24,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           TOP: "50"
-        run: python3 scan/usage.py scan/top20.txt scan/top20.json
+        run: python3 scan/usage.py scan/spares.txt scan/spares.json
       - name: Save the results on the branch
         run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git config user.name "github-actions[bot]"
           git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
-          git add scan/top20.json
+          git add scan/spares.json
           git commit -q -m "Usage scan results"
           git push origin HEAD:catalog-scan
